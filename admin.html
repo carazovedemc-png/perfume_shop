@@ -3,76 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Админ-панель | Parfume</title>
+    <title>Админ-панель | Parfume Маркетплейс</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
         .admin-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: var(--space-xl);
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--color-border);
         }
         
         .admin-title {
             font-size: 2rem;
-            background: linear-gradient(135deg, var(--color-primary), #36d1dc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--color-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .admin-nav {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            background: var(--color-surface);
+            padding: 10px;
+            border-radius: var(--radius-md);
+        }
+        
+        .admin-nav a {
+            padding: 10px 20px;
+            text-decoration: none;
+            color: var(--color-text);
+            border-radius: var(--radius-sm);
+            transition: all 0.2s;
+        }
+        
+        .admin-nav a:hover,
+        .admin-nav a.active {
+            background: var(--color-primary);
+            color: white;
         }
         
         .admin-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: var(--space-lg);
-            margin-bottom: var(--space-xl);
+            grid-template-columns: 300px 1fr;
+            gap: 30px;
         }
         
-        .admin-card {
-            composes: glass-card;
-            padding: var(--space-lg);
-            height: 100%;
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
         }
         
-        .admin-card h3 {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            margin-bottom: var(--space-md);
+        .stat-card {
+            background: white;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
             color: var(--color-primary);
+            margin-bottom: 10px;
         }
         
-        .admin-card h3 i {
-            font-size: 1.3rem;
+        .stat-label {
+            color: var(--color-text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .form-container {
+            background: white;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 30px;
+            margin-bottom: 30px;
         }
         
         .form-group {
-            margin-bottom: var(--space-md);
+            margin-bottom: 20px;
         }
         
         .form-label {
             display: block;
-            margin-bottom: var(--space-xs);
+            margin-bottom: 8px;
             font-weight: 600;
             color: var(--color-text);
         }
         
         .form-input, .form-textarea, .form-select {
             width: 100%;
-            padding: 14px 16px;
-            background: var(--color-surface-light);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 12px;
+            border: 1px solid var(--color-border);
             border-radius: var(--radius-sm);
-            color: var(--color-text);
             font-size: 1rem;
-            transition: var(--transition-normal);
+            color: var(--color-text);
+            transition: border-color 0.2s;
         }
         
         .form-input:focus, .form-textarea:focus, .form-select:focus {
             outline: none;
             border-color: var(--color-primary);
-            box-shadow: 0 0 0 3px var(--color-primary-glow);
+            box-shadow: 0 0 0 3px rgba(0, 91, 255, 0.1);
         }
         
         .form-textarea {
@@ -80,363 +126,423 @@
             resize: vertical;
         }
         
-        .form-actions {
-            display: flex;
-            gap: var(--space-sm);
-            margin-top: var(--space-lg);
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .btn-primary, .btn-secondary {
+            padding: 12px 24px;
+            border-radius: var(--radius-sm);
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
         }
         
         .btn-primary {
-            padding: 14px 28px;
-            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-            border: none;
-            border-radius: var(--radius-sm);
+            background: var(--color-primary);
             color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition-normal);
-            flex: 1;
-        }
-        
-        .btn-secondary {
-            padding: 14px 28px;
-            background: var(--color-surface-light);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: var(--radius-sm);
-            color: var(--color-text);
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition-normal);
-            flex: 1;
         }
         
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-glow);
+            background: var(--color-primary-hover);
+        }
+        
+        .btn-secondary {
+            background: var(--color-surface);
+            color: var(--color-text);
+            border: 1px solid var(--color-border);
         }
         
         .btn-secondary:hover {
-            background: var(--color-surface-lighter);
-            border-color: var(--color-primary);
+            background: #e9ecef;
         }
         
-        .perfume-list {
-            margin-top: var(--space-md);
+        .products-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
         }
         
-        .perfume-item {
+        .products-table th,
+        .products-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        .products-table th {
+            background: var(--color-surface);
+            font-weight: 600;
+            color: var(--color-text);
+        }
+        
+        .products-table tr:hover {
+            background: var(--color-surface);
+        }
+        
+        .action-buttons {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: var(--space-sm);
-            background: var(--color-surface-light);
-            border-radius: var(--radius-sm);
-            margin-bottom: var(--space-xs);
-            transition: var(--transition-fast);
+            gap: 8px;
         }
         
-        .perfume-item:hover {
-            background: var(--color-surface-lighter);
-        }
-        
-        .item-actions {
-            display: flex;
-            gap: var(--space-xs);
-        }
-        
-        .action-icon {
+        .btn-action {
             width: 36px;
             height: 36px;
             border-radius: var(--radius-sm);
-            background: rgba(255, 255, 255, 0.05);
+            border: none;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: var(--transition-fast);
-            color: var(--color-text-secondary);
+            transition: all 0.2s;
         }
         
-        .action-icon:hover {
+        .btn-edit {
+            background: rgba(0, 91, 255, 0.1);
+            color: var(--color-primary);
+        }
+        
+        .btn-edit:hover {
             background: var(--color-primary);
+            color: white;
+        }
+        
+        .btn-delete {
+            background: rgba(255, 59, 48, 0.1);
+            color: var(--color-danger);
+        }
+        
+        .btn-delete:hover {
+            background: var(--color-danger);
             color: white;
         }
         
         .back-btn {
             display: inline-flex;
             align-items: center;
-            gap: var(--space-xs);
-            padding: 12px 24px;
-            background: var(--color-surface-light);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
             border-radius: var(--radius-sm);
             color: var(--color-text);
             text-decoration: none;
-            font-weight: 600;
-            transition: var(--transition-normal);
+            font-weight: 500;
+            transition: all 0.2s;
         }
         
         .back-btn:hover {
-            background: var(--color-surface-lighter);
+            background: #e9ecef;
             border-color: var(--color-primary);
-            transform: translateX(-4px);
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: var(--space-md);
-            margin-top: var(--space-md);
-        }
-        
-        .stat-card {
-            background: var(--color-surface-light);
-            padding: var(--space-md);
-            border-radius: var(--radius-sm);
-            text-align: center;
-        }
-        
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
             color: var(--color-primary);
-            margin-bottom: var(--space-xs);
-        }
-        
-        .stat-label {
-            font-size: 0.9rem;
-            color: var(--color-text-muted);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Шапка админки -->
+    <div class="admin-container">
         <header class="admin-header">
             <div>
-                <h1 class="admin-title">Админ-панель</h1>
-                <p class="section-subtitle">Управление каталогом и заказами</p>
+                <h1 class="admin-title">
+                    <i class="fas fa-crown"></i>
+                    Админ-панель Parfume
+                </h1>
+                <p>Управление каталогом, заказами и пользователями</p>
             </div>
             <a href="index.html" class="back-btn">
                 <i class="fas fa-arrow-left"></i>
-                Назад в магазин
+                Вернуться в магазин
             </a>
         </header>
         
-        <main class="main-content">
-            <!-- Сетка админ-функций -->
-            <div class="admin-grid">
-                <!-- Карточка добавления товара -->
-                <div class="admin-card">
-                    <h3><i class="fas fa-plus-circle"></i> Добавить новый товар</h3>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Название товара</label>
-                        <input type="text" class="form-input" id="productName" placeholder="Например: Chanel №5">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Описание</label>
-                        <textarea class="form-textarea" id="productDescription" placeholder="Подробное описание товара"></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Цена (₽)</label>
-                        <input type="number" class="form-input" id="productPrice" placeholder="0">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Категория</label>
-                        <select class="form-select" id="productCategory">
-                            <option value="arabian">Арабские духи</option>
-                            <option value="premium">Премиум коллекция</option>
-                            <option value="affordable">Доступные духи</option>
-                            <option value="new">Новинки</option>
-                            <option value="bestseller">Бестселлеры</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">URL изображения</label>
-                        <input type="text" class="form-input" id="productImage" placeholder="https://example.com/image.jpg">
-                    </div>
-                    
-                    <div class="form-actions">
-                        <button class="btn-secondary" onclick="clearForm()">Очистить</button>
-                        <button class="btn-primary" onclick="addProduct()">Добавить товар</button>
-                    </div>
+        <nav class="admin-nav">
+            <a href="#" class="active" data-tab="products">Товары</a>
+            <a href="#" data-tab="categories">Категории</a>
+            <a href="#" data-tab="orders">Заказы</a>
+            <a href="#" data-tab="users">Пользователи</a>
+            <a href="#" data-tab="stats">Статистика</a>
+        </nav>
+        
+        <!-- Статистика -->
+        <div class="admin-stats">
+            <div class="stat-card">
+                <div class="stat-value">156</div>
+                <div class="stat-label">Всего товаров</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">24</div>
+                <div class="stat-label">Заказов сегодня</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">128,500</div>
+                <div class="stat-label">Выручка за месяц</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">4.8</div>
+                <div class="stat-label">Средний рейтинг</div>
+            </div>
+        </div>
+        
+        <!-- Форма добавления товара -->
+        <div class="form-container" id="productsTab">
+            <h2 style="margin-bottom: 20px;">Добавить новый товар</h2>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Название товара</label>
+                    <input type="text" class="form-input" id="productName" placeholder="Например: Chanel №5">
                 </div>
                 
-                <!-- Карточка управления товарами -->
-                <div class="admin-card">
-                    <h3><i class="fas fa-edit"></i> Управление товарами</h3>
-                    <p>Всего товаров: <strong id="totalProducts">6</strong></p>
-                    
-                    <div class="perfume-list" id="perfumeList">
-                        <!-- Список товаров будет загружен через JS -->
-                    </div>
-                    
-                    <div class="form-actions">
-                        <button class="btn-secondary" onclick="refreshList()">
-                            <i class="fas fa-sync-alt"></i> Обновить
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Карточка управления категориями -->
-                <div class="admin-card">
-                    <h3><i class="fas fa-tags"></i> Управление категориями</h3>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Название категории</label>
-                        <input type="text" class="form-input" id="categoryName" placeholder="Новая категория">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Описание категории</label>
-                        <textarea class="form-textarea" id="categoryDescription" placeholder="Описание для новой категории"></textarea>
-                    </div>
-                    
-                    <div class="form-actions">
-                        <button class="btn-primary" onclick="addCategory()">Добавить категорию</button>
-                    </div>
-                </div>
-                
-                <!-- Карточка статистики -->
-                <div class="admin-card">
-                    <h3><i class="fas fa-chart-line"></i> Статистика</h3>
-                    
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-value">24</div>
-                            <div class="stat-label">Заказов сегодня</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value">156</div>
-                            <div class="stat-label">Товаров в каталоге</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value">4.8</div>
-                            <div class="stat-label">Средний рейтинг</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value">89%</div>
-                            <div class="stat-label">Довольных клиентов</div>
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label class="form-label">Категория</label>
+                    <select class="form-select" id="productCategory">
+                        <option value="arabian">Арабские духи</option>
+                        <option value="premium">Премиум коллекция</option>
+                        <option value="affordable">Доступные духи</option>
+                        <option value="new">Новинки</option>
+                    </select>
                 </div>
             </div>
-        </main>
+            
+            <div class="form-group">
+                <label class="form-label">Описание</label>
+                <textarea class="form-textarea" id="productDescription" placeholder="Подробное описание товара"></textarea>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Цена (₽)</label>
+                    <input type="number" class="form-input" id="productPrice" placeholder="0">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Старая цена (₽)</label>
+                    <input type="number" class="form-input" id="productOldPrice" placeholder="0">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Объем (мл)</label>
+                    <input type="number" class="form-input" id="productVolume" placeholder="100">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Рейтинг</label>
+                    <input type="number" class="form-input" id="productRating" placeholder="4.5" step="0.1" min="0" max="5">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Количество отзывов</label>
+                    <input type="number" class="form-input" id="productReviews" placeholder="100">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Бейдж</label>
+                    <select class="form-select" id="productBadge">
+                        <option value="">Нет</option>
+                        <option value="new">Новинка</option>
+                        <option value="sale">Скидка</option>
+                        <option value="hit">Хит</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">URL изображения</label>
+                <input type="text" class="form-input" id="productImage" placeholder="https://example.com/image.jpg">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Ноты аромата (через запятую)</label>
+                <input type="text" class="form-input" id="productNotes" placeholder="ладан, кожа, специи">
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-top: 30px;">
+                <button class="btn-secondary" onclick="clearProductForm()">Очистить</button>
+                <button class="btn-primary" onclick="addProduct()">Добавить товар</button>
+            </div>
+        </div>
+        
+        <!-- Таблица товаров -->
+        <div class="form-container">
+            <h2 style="margin-bottom: 20px;">Список товаров</h2>
+            <table class="products-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Название</th>
+                        <th>Категория</th>
+                        <th>Цена</th>
+                        <th>Рейтинг</th>
+                        <th>Статус</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody id="productsList">
+                    <!-- Товары будут загружены через JS -->
+                </tbody>
+            </table>
+        </div>
     </div>
     
     <script>
+        // Данные товаров (в реальном приложении загружаются с сервера)
+        let products = [
+            { id: 1, name: 'Amouage Interlude', category: 'Арабские', price: '28 500₽', rating: 4.8, status: 'В наличии' },
+            { id: 2, name: 'Chanel №5 L\'EAU', category: 'Премиум', price: '8 900₽', rating: 4.9, status: 'В наличии' },
+            { id: 3, name: 'Zara Tobacco', category: 'Доступные', price: '1 999₽', rating: 4.3, status: 'В наличии' },
+            { id: 4, name: 'Oud Ispahan Dior', category: 'Арабские', price: '42 000₽', rating: 4.9, status: 'В наличии' },
+            { id: 5, name: 'Jo Malone Wood Sage', category: 'Премиум', price: '12 500₽', rating: 4.7, status: 'В наличии' },
+            { id: 6, name: 'Montblanc Explorer', category: 'Доступные', price: '6 500₽', rating: 4.5, status: 'В наличии' }
+        ];
+        
         // Загрузка списка товаров
-        function loadPerfumeList() {
-            const perfumeList = document.getElementById('perfumeList');
-            const totalProducts = document.getElementById('totalProducts');
+        function loadProductsList() {
+            const tableBody = document.getElementById('productsList');
+            if (!tableBody) return;
             
-            // В реальном приложении здесь был бы fetch на сервер
-            const perfumes = [
-                { id: 1, name: 'Amouage Interlude', price: '28 500₽', category: 'Арабские' },
-                { id: 2, name: 'Chanel №5 L\'EAU', price: '8 900₽', category: 'Премиум' },
-                { id: 3, name: 'Zara Tobacco', price: '1 999₽', category: 'Доступные' },
-                { id: 4, name: 'Oud Ispahan Dior', price: '42 000₽', category: 'Арабские' },
-                { id: 5, name: 'Jo Malone Wood Sage', price: '12 500₽', category: 'Премиум' },
-                { id: 6, name: 'Montblanc Explorer', price: '6 500₽', category: 'Доступные' }
-            ];
+            tableBody.innerHTML = '';
             
-            perfumeList.innerHTML = '';
-            totalProducts.textContent = perfumes.length;
-            
-            perfumes.forEach(perfume => {
-                const item = document.createElement('div');
-                item.className = 'perfume-item';
-                item.innerHTML = `
-                    <div>
-                        <div style="font-weight: 600;">${perfume.name}</div>
-                        <div style="font-size: 0.9rem; color: var(--color-text-muted);">
-                            ${perfume.category} • ${perfume.price}
+            products.forEach(product => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${product.id}</td>
+                    <td>${product.name}</td>
+                    <td>${product.category}</td>
+                    <td>${product.price}</td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <span style="color: #ffa900;">★</span>
+                            ${product.rating}
                         </div>
-                    </div>
-                    <div class="item-actions">
-                        <div class="action-icon" onclick="editPerfume(${perfume.id})">
-                            <i class="fas fa-edit"></i>
+                    </td>
+                    <td>
+                        <span style="color: #00a650; font-weight: 600;">${product.status}</span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-action btn-edit" onclick="editProduct(${product.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-action btn-delete" onclick="deleteProduct(${product.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </div>
-                        <div class="action-icon" onclick="deletePerfume(${perfume.id})">
-                            <i class="fas fa-trash"></i>
-                        </div>
-                    </div>
+                    </td>
                 `;
-                perfumeList.appendChild(item);
+                tableBody.appendChild(row);
             });
         }
         
-        // Функции админ-панели
+        // Добавление товара
         function addProduct() {
             const name = document.getElementById('productName').value;
+            const category = document.getElementById('productCategory').value;
             const description = document.getElementById('productDescription').value;
             const price = document.getElementById('productPrice').value;
-            const category = document.getElementById('productCategory').value;
+            const oldPrice = document.getElementById('productOldPrice').value;
+            const volume = document.getElementById('productVolume').value;
+            const rating = document.getElementById('productRating').value;
+            const reviews = document.getElementById('productReviews').value;
+            const badge = document.getElementById('productBadge').value;
             const image = document.getElementById('productImage').value;
+            const notes = document.getElementById('productNotes').value;
             
-            if (!name || !description || !price) {
-                alert('Пожалуйста, заполните все обязательные поля');
+            if (!name || !price) {
+                alert('Пожалуйста, заполните обязательные поля');
                 return;
             }
             
-            // В реальном приложении здесь был бы fetch на сервер
-            console.log('Добавлен товар:', { name, description, price, category, image });
+            // В реальном приложении здесь отправка на сервер
+            const newProduct = {
+                id: products.length + 1,
+                name,
+                category: getCategoryName(category),
+                price: `${parseInt(price).toLocaleString()}₽`,
+                rating: parseFloat(rating) || 4.5,
+                status: 'В наличии'
+            };
             
-            alert(`Товар "${name}" успешно добавлен в каталог!`);
-            clearForm();
-            loadPerfumeList();
+            products.push(newProduct);
+            loadProductsList();
+            
+            alert(`Товар "${name}" успешно добавлен!`);
+            clearProductForm();
         }
         
-        function clearForm() {
+        // Редактирование товара
+        function editProduct(id) {
+            const product = products.find(p => p.id === id);
+            if (product) {
+                // Заполняем форму данными товара
+                document.getElementById('productName').value = product.name.replace('₽', '');
+                // и т.д.
+                
+                alert(`Редактирование товара #${id}\nВ реальном приложении здесь открывается форма редактирования.`);
+            }
+        }
+        
+        // Удаление товара
+        function deleteProduct(id) {
+            if (confirm('Вы уверены, что хотите удалить этот товар?')) {
+                products = products.filter(p => p.id !== id);
+                loadProductsList();
+                alert('Товар успешно удален');
+            }
+        }
+        
+        // Очистка формы
+        function clearProductForm() {
             document.getElementById('productName').value = '';
             document.getElementById('productDescription').value = '';
             document.getElementById('productPrice').value = '';
+            document.getElementById('productOldPrice').value = '';
+            document.getElementById('productVolume').value = '';
+            document.getElementById('productRating').value = '';
+            document.getElementById('productReviews').value = '';
             document.getElementById('productImage').value = '';
+            document.getElementById('productNotes').value = '';
         }
         
-        function refreshList() {
-            loadPerfumeList();
-            alert('Список товаров обновлен');
+        // Получение названия категории
+        function getCategoryName(category) {
+            const categories = {
+                arabian: 'Арабские',
+                premium: 'Премиум',
+                affordable: 'Доступные',
+                new: 'Новинки'
+            };
+            return categories[category] || category;
         }
         
-        function editPerfume(id) {
-            alert(`Редактирование товара #${id}\n\nВ реальном приложении здесь открывается форма редактирования.`);
-        }
-        
-        function deletePerfume(id) {
-            if (confirm('Вы уверены, что хотите удалить этот товар?')) {
-                // В реальном приложении здесь был бы fetch на сервер
-                console.log('Удален товар #', id);
-                alert('Товар успешно удален');
-                loadPerfumeList();
-            }
-        }
-        
-        function addCategory() {
-            const name = document.getElementById('categoryName').value;
-            const description = document.getElementById('categoryDescription').value;
-            
-            if (!name) {
-                alert('Пожалуйста, введите название категории');
-                return;
-            }
-            
-            // В реальном приложении здесь был бы fetch на сервер
-            console.log('Добавлена категория:', { name, description });
-            
-            alert(`Категория "${name}" успешно добавлена!`);
-            document.getElementById('categoryName').value = '';
-            document.getElementById('categoryDescription').value = '';
-        }
+        // Переключение вкладок
+        document.querySelectorAll('.admin-nav a').forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Обновляем активную вкладку
+                document.querySelectorAll('.admin-nav a').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Показываем соответствующий контент
+                const tabId = this.dataset.tab;
+                document.querySelectorAll('[id$="Tab"]').forEach(content => {
+                    content.style.display = 'none';
+                });
+                
+                document.getElementById(`${tabId}Tab`).style.display = 'block';
+            });
+        });
         
         // Инициализация
         document.addEventListener('DOMContentLoaded', function() {
-            loadPerfumeList();
+            loadProductsList();
         });
     </script>
 </body>
