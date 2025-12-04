@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parfume World - Каталог духов</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Шапка -->
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-wind"></i>
+                <h1>Parfume World</h1>
+            </div>
+            <div class="user-menu" id="userMenu">
+                <i class="fas fa-user"></i>
+            </div>
+        </header>
+
+        <!-- Главное меню -->
+        <main class="main-content">
+            <div class="hero-section">
+                <h2>Найди свой аромат</h2>
+                <p>Эксклюзивная коллекция духов со всего мира</p>
+            </div>
+
+            <div class="actions">
+                <button class="btn-primary" id="catalogBtn">
+                    <i class="fas fa-store"></i> Каталог духов
+                </button>
+                <button class="btn-secondary" id="filtersBtn">
+                    <i class="fas fa-filter"></i> Фильтры
+                </button>
+                <button class="btn-secondary" id="ordersBtn">
+                    <i class="fas fa-shopping-bag"></i> Мои заказы
+                </button>
+            </div>
+
+            <!-- Каталог (появится при нажатии) -->
+            <div class="catalog-container" id="catalogContainer" style="display: none;">
+                <div class="catalog-header">
+                    <h3>Каталог духов</h3>
+                    <button class="btn-close" id="closeCatalog">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="filters">
+                    <select id="categoryFilter" class="filter-select">
+                        <option value="all">Все категории</option>
+                        <option value="arabian">Арабские духи</option>
+                        <option value="premium">Премиум</option>
+                        <option value="affordable">Доступные</option>
+                    </select>
+                    <select id="priceFilter" class="filter-select">
+                        <option value="all">Любая цена</option>
+                        <option value="low">До 3000₽</option>
+                        <option value="medium">3000-10000₽</option>
+                        <option value="high">От 10000₽</option>
+                    </select>
+                </div>
+                <div class="perfumes-grid" id="perfumesGrid">
+                    <!-- Карточки будут загружаться через JS -->
+                </div>
+            </div>
+
+            <!-- Модальное окно товара -->
+            <div class="modal" id="productModal" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 id="modalTitle"></h3>
+                        <button class="btn-close" id="closeModal">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <img id="modalImage" src="" alt="">
+                        <div class="product-info">
+                            <p id="modalDescription"></p>
+                            <div class="price-tag" id="modalPrice"></div>
+                            <div class="product-meta">
+                                <span><i class="fas fa-tag"></i> <span id="modalCategory"></span></span>
+                                <span><i class="fas fa-star"></i> <span id="modalRating"></span></span>
+                            </div>
+                            <button class="btn-order" id="orderBtn">
+                                <i class="fas fa-cart-plus"></i> Заказать
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Футер -->
+        <footer class="footer">
+            <p>© 2024 Parfume World. Все права защищены.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
