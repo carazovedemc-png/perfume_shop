@@ -594,4 +594,426 @@ function updateFavoritesCount() {
 }
 
 function updateFavoritesPopup() {
-    const favItems = document.getElementByI
+    const favItems = document.getElementById('favoritesItems');
+    const favEmpty = document.getElementById('favEmpty');
+    
+    if (!favItems || !favEmpty) return;
+    
+    if (favorites.length === 0) {
+        favEmpty.style.display = 'block';
+        favItems.innerHTML = '';
+    } else {
+        favEmpty.style.display = 'none';
+        favItems.innerHTML = '';
+        
+        favorites.forEach(product => {
+            const item = document.createElement('div');
+            item.className = 'cart-item';
+            item.innerHTML = `
+                <img src="${product.image}" alt="${product.name}" class="cart-item-img">
+                <div class="cart-item-details">
+                    <h4 class="cart-item-title">${product.name}</h4>
+                    <div class="cart-item-price">${product.price.toLocaleString()} ₽</div>
+                    <div class="cart-item-controls">
+                        <button class="btn-cart" onclick="toggleCart(${product.id}, event)">
+                            <i class="fas fa-shopping-cart"></i> В корзину
+                        </button>
+                        <div class="remove-item" onclick="removeFromFavorites(${product.id})">
+                            <i class="fas fa-trash"></i>
+                        </div>
+                    </div>
+                </div>
+            `;
+            favItems.appendChild(item);
+        });
+    }
+}
+
+function removeFromFavorites(productId) {
+    favorites = favorites.filter(item => item.id !== productId);
+    
+    // Сохраняем
+    saveToStorage(STORAGE_KEYS.FAVORITES, favorites);
+    
+    // Обновляем UI
+    updateFavoritesCount();
+    updateFavoritesPopup();
+    renderProducts();
+    
+    showNotification('Товар удален из избранного', 'info');
+}
+
+// ===== ФИЛЬТРЫ И ПОИСК =====
+function filterProducts() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const category = currentCategory;
+    const priceMin = parseInt(document.getElementById('priceMin').value) || 0;
+    const priceMax = parseInt(document.getElementById('priceMax').value) || 50000;
+    const sortBy = document.getElementById('sortBy').value;
+    const selectedCategories = Array.from(document.querySelectorAll('.checkbox-group input[type="checkbox"]:checked'))
+        .map(cb => cb.value);
+    
+    // Фильтрация
+    filteredProducts = allProducts.filter(product => {
+        // Поиск
+        if (searchTerm && !product.name.toLowerCase().includes(searchTerm) && 
+            !product.description.toLowerCase().includes(searchTerm)) {
+            return false;
+        }
+        
+        // Категория в навигации
+        if (category !== 'all' && product.category !== category) {
+            return false;
+        }
+        
+        // Категории в фильтрах
+        if (selectedCategories.length > 0 && !selectedCategories.includes(product.category)) {
+            return false;
+        }
+        
+        // Цена
+        if (product.price < priceMin || product.price > priceMax) {
+            return false;
+        }
+        
+        // Рейтинг
+        const selectedRating = document.querySelector('input[name="rating"]:checked');
+        if (selectedRating && product.rating < parseFloat(selectedRating.value)) {
+            return false;
+        }
+        
+        return true;
+    });
+    
+    // Сортировка
+    switch(sortBy) {
+        case 'new':
+            filteredProducts.sort((a, b) => b.id - a.id);
+            break;
+        case 'price-low':
+            filteredProducts.sort((a, b) => a.price - b.price);
+            break;
+        case 'price-high':
+            filteredProducts.sort((a, b) => b.price - a.price);
+            break;
+        case 'rating':
+            filteredProducts.sort((a, b) => b.rating - a.rating);
+            break;
+        case 'discount':
+            filteredProducts.sort((a, b) => {
+                const discountA = a.oldPrice > 0 ? (a.oldPrice - a.price) / a.oldPrice : 0;
+                const discountB = b.oldPrice > 0 ? (b.oldPrice - b.price) / b.oldPrice : 0;
+                return discountB - discountA;
+            });
+            break;
+        case 'popular':
+        default:
+            filteredProducts.sort((a, b) => {
+                if (a.popular && !b.popular) return -1;
+                if (!a.popular && b.popular) return 1;
+                return b.reviews - a.reviews;
+            });
+            break;
+    }
+    
+    renderProducts();
+}
+
+function resetFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('priceMin').value = '';
+    document.getElementById('priceMax').value = '';
+    document.getElementById('sortBy').value = 'popular';
+    
+    // Сбрасываем чекбоксы
+    document.querySelectorAll('.checkbox-group input[type="checkbox"]').forEach(cb => {
+        cb.checked = true;
+    });
+    
+    // Сбрасываем рейтинг
+    document.querySelector('input[name="rating"][value="3"]').checked = true;
+    
+    // Сбрасываем категорию
+    currentCategory = 'all';
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+        if (link.dataset.category === 'all') {
+            link.classList.add('active');
+        }
+    });
+    
+    // Обновляем заголовок
+    document.getElementById('categoryTitle').textContent = 'Все духи';
+    
+    filterProducts();
+}
+
+// ===== МОДАЛЬНОЕ ОКНО ТОВАРА =====
+function showProductModal(product) {
+    const modal = document.getElementById('productModal');
+    const modalBody = document.getElementById('modalBody');
+    
+    if (!modal || !modalBody) return;
+    
+    const isInCart = cart.some(item => item.id === product.id);
+    const isInFavorites = favorites.some(item => item.id === product.id);
+    
+    const discountPercent = product.oldPrice > 0 
+        ? Math.round((1 - product.price / product.oldPrice) * 100)
+        : 0;
+    
+    modalBody.innerHTML = `
+        <div class="modal-product">
+            <div class="modal-product-images">
+                <img src="${product.image}" alt="${product.name}" class="modal-main-image">
+                <div class="modal-thumbnails">
+                    <img src="${product.image}" alt="${product.name}" class="modal-thumbnail active">
+                    <img src="${product.image}" alt="${product.name}" class="modal-thumbnail">
+                    <img src="${product.image}" alt="${product.name}" class="modal-thumbnail">
+                </div>
+            </div>
+            <div class="modal-product-info">
+                <div class="modal-badges">
+                    ${product.badge === 'new' ? '<span class="badge-new">Новинка</span>' : ''}
+                    ${product.badge === 'sale' ? '<span class="badge-sale">Скидка</span>' : ''}
+                    ${product.badge === 'hit' ? '<span class="badge-hit">Хит</span>' : ''}
+                </div>
+                <h2 class="modal-product-title">${product.name}</h2>
+                <div class="modal-product-meta">
+                    <span class="modal-category">${getCategoryName(product.category)}</span>
+                    <span class="modal-volume">${product.volume} мл</span>
+                    <div class="modal-rating">
+                        ${renderStars(product.rating)}
+                        <span>${product.rating} (${product.reviews} отзывов)</span>
+                    </div>
+                </div>
+                
+                <div class="modal-description">
+                    <h3>Описание</h3>
+                    <p>${product.description}</p>
+                </div>
+                
+                <div class="modal-notes">
+                    <h3>Ноты аромата</h3>
+                    <div class="notes-tags">
+                        ${product.notes.map(note => `<span class="note-tag">${note}</span>`).join('')}
+                    </div>
+                </div>
+                
+                <div class="modal-prices">
+                    <div class="modal-price-current">
+                        ${product.price.toLocaleString()} ₽
+                    </div>
+                    ${product.oldPrice > 0 ? `
+                        <div class="modal-price-old">
+                            <span>${product.oldPrice.toLocaleString()} ₽</span>
+                            <span class="modal-discount">-${discountPercent}%</span>
+                        </div>
+                    ` : ''}
+                </div>
+                
+                <div class="modal-actions">
+                    <button class="modal-btn-cart ${isInCart ? 'in-cart' : ''}" onclick="toggleCart(${product.id})">
+                        ${isInCart ? '<i class="fas fa-check"></i> В корзине' : '<i class="fas fa-shopping-cart"></i> В корзину'}
+                    </button>
+                    <button class="modal-btn-fav ${isInFavorites ? 'active' : ''}" onclick="toggleFavorite(${product.id})">
+                        <i class="${isInFavorites ? 'fas' : 'far'} fa-heart"></i>
+                        ${isInFavorites ? 'В избранном' : 'В избранное'}
+                    </button>
+                </div>
+                
+                <div class="modal-features">
+                    <div class="feature-item">
+                        <i class="fas fa-truck"></i>
+                        <span>Бесплатная доставка от 5000₽</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Гарантия подлинности 100%</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-undo"></i>
+                        <span>Возврат в течение 14 дней</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeProductModal() {
+    const modal = document.getElementById('productModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+}
+
+// ===== УТИЛИТЫ =====
+function getCategoryName(category) {
+    const categories = {
+        arabian: 'Арабские духи',
+        premium: 'Премиум коллекция',
+        affordable: 'Доступные духи',
+        new: 'Новинки',
+        sale: 'Акции'
+    };
+    return categories[category] || category;
+}
+
+function showNotification(message, type = 'info') {
+    // Создаем уведомление
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'}"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    // Добавляем стили
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#00a650' : '#005bff'};
+        color: white;
+        padding: 16px 24px;
+        border-radius: 8px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        z-index: 10000;
+        animation: slideInRight 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+        max-width: 400px;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Удаляем через 3 секунды
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+        }
+    }, 3000);
+}
+
+// ===== ОБРАБОТЧИКИ СОБЫТИЙ =====
+function initEventListeners() {
+    // Поиск
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+    
+    if (searchInput) {
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                filterProducts();
+            }
+        });
+    }
+    
+    if (searchBtn) {
+        searchBtn.addEventListener('click', filterProducts);
+    }
+    
+    // Навигация по категориям
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Обновляем активный элемент
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Обновляем категорию
+            currentCategory = this.dataset.category;
+            document.getElementById('categoryTitle').textContent = this.textContent.trim();
+            
+            filterProducts();
+        });
+    });
+    
+    // Фильтры
+    document.getElementById('applyFilters').addEventListener('click', filterProducts);
+    document.getElementById('resetFilters').addEventListener('click', resetFilters);
+    
+    // Сортировка
+    document.getElementById('sortBy').addEventListener('change', filterProducts);
+    
+    // Корзина
+    document.getElementById('cartBtn').addEventListener('click', function() {
+        document.getElementById('cartPopup').classList.add('show');
+        updateCartPopup();
+    });
+    
+    document.getElementById('closeCart').addEventListener('click', closeCartPopup);
+    
+    // Избранное
+    document.getElementById('favoritesBtn').addEventListener('click', function() {
+        document.getElementById('favoritesPopup').classList.add('show');
+        updateFavoritesPopup();
+    });
+    
+    document.getElementById('closeFav').addEventListener('click', closeFavoritesPopup);
+    document.getElementById('browseBtn')?.addEventListener('click', function() {
+        closeFavoritesPopup();
+        resetFilters();
+    });
+    
+    // Модальное окно
+    document.getElementById('closeModal').addEventListener('click', closeProductModal);
+    
+    // Оформление заказа
+    document.getElementById('checkoutBtn')?.addEventListener('click', function() {
+        if (cart.length === 0) {
+            showNotification('Добавьте товары в корзину', 'info');
+            return;
+        }
+        
+        const orderData = {
+            userId: user.id,
+            username: user.username,
+            items: cart,
+            total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+            timestamp: new Date().toISOString()
+        };
+        
+        // Отправляем в Telegram
+        if (tg.sendData) {
+            tg.sendData(JSON.stringify(orderData));
+        }
+        
+        // Показываем уведомление
+        tg.showAlert(`Заказ оформлен!\n\nСумма: ${orderData.total.toLocaleString()}₽\nТоваров: ${cart.length}\n\nС вами свяжется менеджер для подтверждения.`);
+        
+        // Очищаем корзину
+        cart = [];
+        saveToStorage(STORAGE_KEYS.CART, cart);
+        updateCartCount();
+        updateCartPopup();
+        renderProducts();
+        
+        closeCartPopup();
+    });
+    
+    // Клик вне попапов
+    window.addEventListener('click', function(e) {
+        const cartPopup = document.getElementById('cartPopup');
+        const favPopup = document.getElementById('favoritesPopup');
+        const modal = document.getElementById('productModal');
+        
+        if (cartPopup && e.target === cartPopup) {
+            closeCartPopup();
+        }
+        
+        if (favPopup && e.target === favPopup) {
+            closeFavoritesPopup();
+        }
+        
+        if (modal && e.target === modal) {
+            closeProductModal();
+        }
+    });
+}
