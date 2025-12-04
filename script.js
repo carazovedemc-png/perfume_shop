@@ -1,47 +1,70 @@
-// ===== КОНФИГУРАЦИЯ И ИНИЦИАЛИЗАЦИЯ =====
+// ===== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ И КОНСТАНТЫ =====
 const tg = window.Telegram.WebApp;
 let user = null;
-let perfumes = [];
-let adminList = ['@your_username']; // Замените на ваш юзернейм
+let allProducts = [];
+let cart = [];
+let favorites = [];
+let filteredProducts = [];
+let currentCategory = 'all';
+let adminList = ['@ваш_username']; // Замените на ваш юзернейм
 let isAdmin = false;
 
-// Примеры духов для демонстрации
-const samplePerfumes = [
+// Ключи для localStorage
+const STORAGE_KEYS = {
+    CART: 'parfume_cart',
+    FAVORITES: 'parfume_favorites',
+    USER: 'parfume_user'
+};
+
+// Примеры товаров (в реальном приложении загружаются с сервера)
+const PRODUCTS_DATA = [
     {
         id: 1,
         name: "Amouage Interlude",
-        description: "Эксклюзивный арабский парфюм с нотами ладана, кожи и специй. Создан для истинных ценителей роскоши.",
+        description: "Эксклюзивный арабский парфюм с нотами ладана, кожи и специй. Для настоящих ценителей роскоши.",
         price: 28500,
         oldPrice: 32000,
         category: "arabian",
         volume: 100,
         rating: 4.8,
-        image: "https://images.unsplash.com/photo-1541643600914-78b084683601?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-        badge: "Эксклюзив"
+        reviews: 128,
+        image: "https://images.unsplash.com/photo-1541643600914-78b084683601?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+        badge: "sale",
+        inStock: true,
+        popular: true,
+        notes: ["ладан", "кожа", "специи"]
     },
     {
         id: 2,
         name: "Chanel №5 L'EAU",
-        description: "Современная интерпретация классики. Лёгкий, свежий цветочный аромат с цитрусовыми нотами.",
+        description: "Современная интерпретация классики с цитрусовыми и цветочными нотами.",
         price: 8900,
         oldPrice: 10500,
         category: "premium",
         volume: 100,
         rating: 4.9,
-        image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-        badge: "Бестселлер"
+        reviews: 256,
+        image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+        badge: "hit",
+        inStock: true,
+        popular: true,
+        notes: ["цитрус", "цветы", "мускус"]
     },
     {
         id: 3,
         name: "Zara Tobacco Collection",
-        description: "Современный доступный аромат с нотами табака, ванили и древесины. Идеальный выбор на каждый день.",
+        description: "Доступный аромат с нотами табака, ванили и древесины. Идеален на каждый день.",
         price: 1999,
         oldPrice: 2499,
         category: "affordable",
         volume: 100,
         rating: 4.3,
-        image: "https://images.unsplash.com/photo-1590736969956-6d9c2a8d6971?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-        badge: "Хит продаж"
+        reviews: 89,
+        image: "https://images.unsplash.com/photo-1590736969956-6d9c2a8d6971?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+        badge: "sale",
+        inStock: true,
+        popular: false,
+        notes: ["табак", "ваниль", "древесина"]
     },
     {
         id: 4,
@@ -52,20 +75,28 @@ const samplePerfumes = [
         category: "arabian",
         volume: 75,
         rating: 4.9,
-        image: "https://images.unsplash.com/photo-1590736969956-6d9c2a8d6971?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-        badge: "Лимитированная серия"
+        reviews: 67,
+        image: "https://images.unsplash.com/photo-1590736969956-6d9c2a8d6971?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+        badge: "new",
+        inStock: true,
+        popular: true,
+        notes: ["уд", "роза", "сандал"]
     },
     {
         id: 5,
         name: "Jo Malone Wood Sage",
-        description: "Уникальный аромат с нотами шалфея, морской соли и древесины. Свежий и естественный.",
+        description: "Уникальный аромат с нотами шалфея, морской соли и древесины.",
         price: 12500,
         oldPrice: 14500,
         category: "premium",
         volume: 100,
         rating: 4.7,
-        image: "https://images.unsplash.com/photo-1541643600914-78b084683601?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-        badge: "Новинка"
+        reviews: 187,
+        image: "https://images.unsplash.com/photo-1541643600914-78b084683601?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+        badge: "hit",
+        inStock: true,
+        popular: true,
+        notes: ["шалфей", "морская соль", "древесина"]
     },
     {
         id: 6,
@@ -76,21 +107,123 @@ const samplePerfumes = [
         category: "affordable",
         volume: 100,
         rating: 4.5,
-        image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-        badge: "Популярный"
+        reviews: 92,
+        image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+        badge: null,
+        inStock: true,
+        popular: false,
+        notes: ["бергамот", "кедр", "пачули"]
+    },
+    {
+        id: 7,
+        name: "Tom Ford Black Orchid",
+        description: "Чувственный аромат с нотами черной трюфели, орхидеи и пачули.",
+        price: 18500,
+        oldPrice: 21000,
+        category: "premium",
+        volume: 100,
+        rating: 4.8,
+        reviews: 143,
+        image: "https://images.unsplash.com/photo-1541643600914-78b084683601?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+        badge: "sale",
+        inStock: true,
+        popular: true,
+        notes: ["трюфель", "орхидея", "пачули"]
+    },
+    {
+        id: 8,
+        name: "Lattafa Oud Mood",
+        description: "Аутентичный арабский аромат с глубокими нотами уда и розы.",
+        price: 3500,
+        oldPrice: 0,
+        category: "arabian",
+        volume: 100,
+        rating: 4.6,
+        reviews: 56,
+        image: "https://images.unsplash.com/photo-1590736969956-6d9c2a8d6971?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+        badge: "new",
+        inStock: true,
+        popular: true,
+        notes: ["уд", "роза", "амбра"]
+    },
+    {
+        id: 9,
+        name: "Davidoff Cool Water",
+        description: "Классический свежий аромат с нотами моря и свежести.",
+        price: 3800,
+        oldPrice: 4500,
+        category: "affordable",
+        volume: 125,
+        rating: 4.4,
+        reviews: 234,
+        image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+        badge: "sale",
+        inStock: true,
+        popular: true,
+        notes: ["морские ноты", "свежесть", "мускус"]
+    },
+    {
+        id: 10,
+        name: "Creed Aventus",
+        description: "Культовый аромат с нотами ананаса, черной смородины и мускуса.",
+        price: 35000,
+        oldPrice: 0,
+        category: "premium",
+        volume: 100,
+        rating: 4.9,
+        reviews: 189,
+        image: "https://images.unsplash.com/photo-1541643600914-78b084683601?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+        badge: "hit",
+        inStock: true,
+        popular: true,
+        notes: ["ананас", "смородина", "мускус"]
+    },
+    {
+        id: 11,
+        name: "Rasasi Hawas",
+        description: "Современный арабский аромат с акватическими и фруктовыми нотами.",
+        price: 4200,
+        oldPrice: 0,
+        category: "arabian",
+        volume: 100,
+        rating: 4.5,
+        reviews: 78,
+        image: "https://images.unsplash.com/photo-1590736969956-6d9c2a8d6971?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+        badge: null,
+        inStock: true,
+        popular: false,
+        notes: ["акватик", "фрукты", "мускус"]
+    },
+    {
+        id: 12,
+        name: "Bvlgari Man In Black",
+        description: "Темный и загадочный аромат с нотами рома, кожи и ванили.",
+        price: 9200,
+        oldPrice: 11000,
+        category: "premium",
+        volume: 100,
+        rating: 4.6,
+        reviews: 112,
+        image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+        badge: "sale",
+        inStock: true,
+        popular: true,
+        notes: ["ром", "кожа", "ваниль"]
     }
 ];
 
 // ===== ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ =====
 document.addEventListener('DOMContentLoaded', function() {
-    initTelegramApp();
+    initApp();
+    loadData();
     initEventListeners();
-    loadPerfumes();
-    updateUserInterface();
+    renderProducts();
+    updateCartCount();
+    updateFavoritesCount();
 });
 
-// ===== ОСНОВНЫЕ ФУНКЦИИ =====
-function initTelegramApp() {
+function initApp() {
+    // Инициализация Telegram WebApp
     if (tg.initDataUnsafe?.user) {
         user = {
             id: tg.initDataUnsafe.user.id,
@@ -100,11 +233,12 @@ function initTelegramApp() {
         };
         
         tg.expand();
-        tg.setHeaderColor('#111118');
-        tg.setBackgroundColor('#0a0a0f');
+        tg.setHeaderColor('#ffffff');
+        tg.setBackgroundColor('#f8f9fa');
         
         console.log('Пользователь Telegram:', user);
     } else {
+        // Режим демо (вне Telegram)
         user = {
             id: 1,
             username: 'demo_user',
@@ -114,7 +248,11 @@ function initTelegramApp() {
         console.log('Режим демо (вне Telegram)');
     }
     
+    // Проверка админских прав
     checkAdminStatus();
+    
+    // Сохраняем пользователя в localStorage
+    saveToStorage(STORAGE_KEYS.USER, user);
 }
 
 function checkAdminStatus() {
@@ -128,308 +266,332 @@ function checkAdminStatus() {
 }
 
 function showAdminFeatures() {
-    const mainActions = document.querySelector('.main-actions');
+    // Добавляем кнопку админ-панели в навигацию
+    const navLeft = document.querySelector('.nav-left');
+    const adminLink = document.createElement('a');
+    adminLink.href = 'admin.html';
+    adminLink.className = 'nav-link';
+    adminLink.innerHTML = '<i class="fas fa-crown"></i> Админ';
+    adminLink.target = '_blank';
+    navLeft.appendChild(adminLink);
+}
+
+// ===== LOCALSTORAGE ФУНКЦИИ =====
+function saveToStorage(key, data) {
+    try {
+        localStorage.setItem(key, JSON.stringify(data));
+        console.log(`Данные сохранены в localStorage: ${key}`);
+    } catch (e) {
+        console.error('Ошибка сохранения в localStorage:', e);
+    }
+}
+
+function loadFromStorage(key, defaultValue = null) {
+    try {
+        const data = localStorage.getItem(key);
+        return data ? JSON.parse(data) : defaultValue;
+    } catch (e) {
+        console.error('Ошибка загрузки из localStorage:', e);
+        return defaultValue;
+    }
+}
+
+function loadData() {
+    // Загружаем товары
+    allProducts = PRODUCTS_DATA;
+    filteredProducts = [...allProducts];
     
-    const adminBtn = document.createElement('div');
-    adminBtn.className = 'action-btn glass-card';
-    adminBtn.id = 'adminBtn';
-    adminBtn.innerHTML = `
-        <div class="action-icon">
-            <i class="fas fa-crown"></i>
-        </div>
-        <h3>Админ-панель</h3>
-        <p>Управление каталогом и заказами</p>
-    `;
+    // Загружаем корзину из localStorage
+    cart = loadFromStorage(STORAGE_KEYS.CART, []);
     
-    adminBtn.addEventListener('click', function() {
-        window.location.href = 'admin.html';
+    // Загружаем избранное из localStorage
+    favorites = loadFromStorage(STORAGE_KEYS.FAVORITES, []);
+    
+    console.log('Данные загружены:', {
+        products: allProducts.length,
+        cart: cart.length,
+        favorites: favorites.length
     });
-    
-    mainActions.appendChild(adminBtn);
 }
 
-function initEventListeners() {
-    // Кнопки главного меню
-    document.getElementById('catalogBtn').addEventListener('click', showCatalog);
-    document.getElementById('filtersBtn').addEventListener('click', showAdvancedFilters);
-    document.getElementById('ordersBtn').addEventListener('click', showOrders);
+// ===== РЕНДЕРИНГ ТОВАРОВ =====
+function renderProducts() {
+    const grid = document.getElementById('productsGrid');
+    if (!grid) return;
     
-    // Кнопки закрытия
-    document.getElementById('closeCatalog').addEventListener('click', hideCatalog);
-    document.getElementById('closeModal').addEventListener('click', hideModal);
-    
-    // Кнопка заказа
-    document.getElementById('orderBtn').addEventListener('click', placeOrder);
-    
-    // Фильтры
-    document.getElementById('categoryFilter').addEventListener('change', filterPerfumes);
-    document.getElementById('priceFilter').addEventListener('change', filterPerfumes);
-    document.getElementById('sortFilter').addEventListener('change', filterPerfumes);
-    
-    // Клик по оверлею модального окна
-    document.getElementById('productModal').addEventListener('click', function(event) {
-        if (event.target === this) {
-            hideModal();
-        }
-    });
-    
-    // Аватар пользователя
-    document.getElementById('userAvatar').addEventListener('click', showUserMenu);
-}
-
-function loadPerfumes() {
-    perfumes = [...samplePerfumes];
-    displayPerfumes(perfumes);
-}
-
-function displayPerfumes(perfumesList) {
-    const grid = document.getElementById('perfumesGrid');
     grid.innerHTML = '';
     
-    if (perfumesList.length === 0) {
+    if (filteredProducts.length === 0) {
         grid.innerHTML = `
-            <div class="empty-state glass-card" style="grid-column: 1/-1; padding: 60px 20px; text-align: center;">
+            <div class="empty-state" style="grid-column: 1/-1; text-align: center; padding: 60px 20px;">
                 <i class="fas fa-search" style="font-size: 3rem; color: var(--color-text-muted); margin-bottom: 20px;"></i>
-                <h3 style="margin-bottom: 10px;">Ничего не найдено</h3>
-                <p>Попробуйте изменить параметры фильтра</p>
+                <h3 style="margin-bottom: 10px; color: var(--color-text);">Товары не найдены</h3>
+                <p style="color: var(--color-text-secondary); margin-bottom: 20px;">Попробуйте изменить параметры поиска или фильтры</p>
+                <button class="btn-filter-reset" onclick="resetFilters()" style="margin: 0 auto;">Сбросить фильтры</button>
             </div>
         `;
         return;
     }
     
-    perfumesList.forEach((perfume, index) => {
+    filteredProducts.forEach(product => {
+        const isInCart = cart.some(item => item.id === product.id);
+        const isInFavorites = favorites.some(item => item.id === product.id);
+        
         const card = document.createElement('div');
-        card.className = 'perfume-card';
-        card.style.animationDelay = `${index * 0.1}s`;
+        card.className = 'product-card';
+        card.dataset.id = product.id;
+        
+        // Определяем бейдж
+        let badgeHtml = '';
+        if (product.badge === 'new') {
+            badgeHtml = '<span class="badge-new">Новинка</span>';
+        } else if (product.badge === 'sale') {
+            badgeHtml = '<span class="badge-sale">Скидка</span>';
+        } else if (product.badge === 'hit') {
+            badgeHtml = '<span class="badge-hit">Хит</span>';
+        }
+        
+        // Расчет скидки
+        const discountPercent = product.oldPrice > 0 
+            ? Math.round((1 - product.price / product.oldPrice) * 100)
+            : 0;
         
         card.innerHTML = `
-            <div class="card-image-container">
-                <img src="${perfume.image}" alt="${perfume.name}" class="card-image">
-                <span class="card-badge">${perfume.badge}</span>
+            <div class="product-badges">
+                ${badgeHtml}
             </div>
-            <div class="card-content">
-                <h3 class="card-title">${perfume.name}</h3>
-                <p class="card-description">${perfume.description}</p>
-                <div class="card-footer">
-                    <div class="price">${perfume.price.toLocaleString()}₽</div>
-                    <div class="rating">
-                        <i class="fas fa-star"></i> ${perfume.rating}
-                    </div>
+            <img src="${product.image}" alt="${product.name}" class="product-image">
+            <h3 class="product-title">${product.name}</h3>
+            <div class="product-category">${getCategoryName(product.category)} • ${product.volume} мл</div>
+            <div class="product-rating">
+                <div class="stars-filled">
+                    ${renderStars(product.rating)}
                 </div>
+                <span class="rating-value">${product.rating}</span>
+                <span class="reviews-count">(${product.reviews})</span>
+            </div>
+            <div class="product-prices">
+                <span class="price-current">${product.price.toLocaleString()} ₽</span>
+                ${product.oldPrice > 0 ? `
+                    <span class="price-old">${product.oldPrice.toLocaleString()} ₽</span>
+                    <span class="discount-percent">-${discountPercent}%</span>
+                ` : ''}
+            </div>
+            <div class="product-actions">
+                <button class="btn-cart ${isInCart ? 'in-cart' : ''}" onclick="toggleCart(${product.id}, event)">
+                    ${isInCart ? '<i class="fas fa-check"></i> В корзине' : '<i class="fas fa-shopping-cart"></i> В корзину'}
+                </button>
+                <button class="btn-fav ${isInFavorites ? 'active' : ''}" onclick="toggleFavorite(${product.id}, event)">
+                    <i class="${isInFavorites ? 'fas' : 'far'} fa-heart"></i>
+                </button>
             </div>
         `;
         
-        card.addEventListener('click', () => showProductModal(perfume));
+        // Добавляем обработчик клика на карточку
+        card.addEventListener('click', function(e) {
+            if (!e.target.closest('.product-actions')) {
+                showProductModal(product);
+            }
+        });
+        
         grid.appendChild(card);
     });
 }
 
-function getCategoryName(category) {
-    const categories = {
-        arabian: 'Арабские духи',
-        premium: 'Премиум',
-        affordable: 'Доступные',
-        new: 'Новинки',
-        bestseller: 'Бестселлеры'
-    };
-    return categories[category] || category;
-}
-
-// ===== УПРАВЛЕНИЕ ИНТЕРФЕЙСОМ =====
-function showCatalog() {
-    document.getElementById('catalogContainer').style.display = 'block';
-    document.querySelector('.hero-section').style.display = 'none';
-    document.querySelector('.main-actions').style.display = 'none';
+function renderStars(rating) {
+    let stars = '';
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
     
-    // Прокрутка к каталогу
-    document.getElementById('catalogContainer').scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'start'
-    });
-}
-
-function hideCatalog() {
-    document.getElementById('catalogContainer').style.display = 'none';
-    document.querySelector('.hero-section').style.display = 'block';
-    document.querySelector('.main-actions').style.display = 'grid';
-    
-    // Прокрутка к началу
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function showProductModal(perfume) {
-    const modal = document.getElementById('productModal');
-    const title = document.getElementById('modalTitle');
-    const description = document.getElementById('modalDescription');
-    const price = document.getElementById('modalPrice');
-    const oldPrice = document.getElementById('modalOldPrice');
-    const category = document.getElementById('modalCategory');
-    const rating = document.getElementById('modalRating');
-    const volume = document.getElementById('modalVolume');
-    const image = document.getElementById('modalImage');
-    const badge = document.getElementById('modalBadge');
-    
-    title.textContent = perfume.name;
-    description.textContent = perfume.description;
-    price.textContent = `${perfume.price.toLocaleString()} ₽`;
-    category.textContent = getCategoryName(perfume.category);
-    rating.textContent = perfume.rating;
-    volume.textContent = perfume.volume;
-    image.src = perfume.image;
-    image.alt = perfume.name;
-    badge.textContent = perfume.badge;
-    
-    if (perfume.oldPrice && perfume.oldPrice > perfume.price) {
-        oldPrice.textContent = `${perfume.oldPrice.toLocaleString()} ₽`;
-        oldPrice.style.display = 'inline';
-    } else {
-        oldPrice.style.display = 'none';
-    }
-    
-    modal.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-}
-
-function hideModal() {
-    document.getElementById('productModal').style.display = 'none';
-    document.body.style.overflow = 'auto';
-}
-
-function filterPerfumes() {
-    const category = document.getElementById('categoryFilter').value;
-    const price = document.getElementById('priceFilter').value;
-    const sort = document.getElementById('sortFilter').value;
-    
-    let filtered = [...perfumes];
-    
-    // Фильтрация по категории
-    if (category !== 'all') {
-        filtered = filtered.filter(p => p.category === category);
-    }
-    
-    // Фильтрация по цене
-    if (price !== 'all') {
-        switch(price) {
-            case 'low':
-                filtered = filtered.filter(p => p.price < 3000);
-                break;
-            case 'medium':
-                filtered = filtered.filter(p => p.price >= 3000 && p.price <= 10000);
-                break;
-            case 'high':
-                filtered = filtered.filter(p => p.price > 10000 && p.price <= 25000);
-                break;
-            case 'luxury':
-                filtered = filtered.filter(p => p.price > 25000);
-                break;
+    for (let i = 0; i < 5; i++) {
+        if (i < fullStars) {
+            stars += '<i class="fas fa-star"></i>';
+        } else if (i === fullStars && hasHalfStar) {
+            stars += '<i class="fas fa-star-half-alt"></i>';
+        } else {
+            stars += '<i class="far fa-star"></i>';
         }
     }
     
-    // Сортировка
-    switch(sort) {
-        case 'newest':
-            filtered.sort((a, b) => b.id - a.id);
-            break;
-        case 'price-low':
-            filtered.sort((a, b) => a.price - b.price);
-            break;
-        case 'price-high':
-            filtered.sort((a, b) => b.price - a.price);
-            break;
-        case 'popular':
-        default:
-            filtered.sort((a, b) => b.rating - a.rating);
-            break;
-    }
-    
-    displayPerfumes(filtered);
+    return stars;
 }
 
-function placeOrder() {
-    const perfumeName = document.getElementById('modalTitle').textContent;
-    const price = document.getElementById('modalPrice').textContent;
+// ===== КОРЗИНА =====
+function toggleCart(productId, event) {
+    if (event) event.stopPropagation();
     
-    const orderData = {
-        user: user.username,
-        userId: user.id,
-        perfume: perfumeName,
-        price: price,
-        timestamp: new Date().toISOString(),
-        status: 'pending'
-    };
+    const product = allProducts.find(p => p.id === productId);
+    if (!product) return;
     
-    // В реальном приложении здесь был бы fetch на сервер
-    console.log('Заказ создан:', orderData);
+    const existingItem = cart.find(item => item.id === productId);
     
-    // Отправка данных в Telegram
-    if (tg.sendData) {
-        tg.sendData(JSON.stringify(orderData));
-    }
-    
-    // Показать уведомление
-    tg.showAlert(`Заказ оформлен!\n\n${perfumeName}\n${price}\n\nС вами свяжется наш менеджер для подтверждения.`);
-    
-    hideModal();
-}
-
-function showAdvancedFilters() {
-    tg.showAlert('Расширенные фильтры:\n\n• По нотам (цветочные, древесные, восточные)\n• По полу (мужские, женские, унисекс)\n• По сезону (летние, зимние, всесезонные)\n\nЭта функция будет доступна в следующем обновлении!');
-}
-
-function showOrders() {
-    const orders = [
-        { id: 1, name: 'Chanel №5', date: '15.03.2024', status: 'Доставлен', price: '8 900₽' },
-        { id: 2, name: 'Zara Tobacco', date: '10.03.2024', status: 'В пути', price: '1 999₽' }
-    ];
-    
-    let message = '🛍️ **Ваши заказы:**\n\n';
-    
-    if (orders.length === 0) {
-        message += 'У вас пока нет заказов.\nПерейдите в каталог, чтобы сделать первый заказ!';
+    if (existingItem) {
+        // Удаляем из корзины
+        cart = cart.filter(item => item.id !== productId);
+        showNotification(`${product.name} удален из корзины`, 'info');
     } else {
-        orders.forEach(order => {
-            message += `📦 **${order.name}**\n`;
-            message += `📅 ${order.date} | ${order.status}\n`;
-            message += `💰 ${order.price}\n\n`;
+        // Добавляем в корзину
+        cart.push({
+            ...product,
+            quantity: 1,
+            addedAt: new Date().toISOString()
         });
+        showNotification(`${product.name} добавлен в корзину`, 'success');
     }
     
-    tg.showAlert(message);
-}
-
-function showUserMenu() {
-    const menuItems = [
-        `👤 **${user.firstName} ${user.lastName || ''}**`,
-        `@${user.username}`,
-        '',
-        isAdmin ? '👑 Администратор' : '👤 Пользователь',
-        '',
-        '⚙️ Настройки',
-        '📞 Поддержка',
-        '🚪 Выйти'
-    ];
+    // Сохраняем в localStorage
+    saveToStorage(STORAGE_KEYS.CART, cart);
     
-    tg.showAlert(menuItems.join('\n'));
+    // Обновляем UI
+    updateCartCount();
+    updateCartPopup();
+    renderProducts(); // Обновляем кнопки в карточках
 }
 
-function updateUserInterface() {
-    // Обновляем аватар пользователя
-    const userAvatar = document.getElementById('userAvatar');
-    if (user.firstName) {
-        userAvatar.innerHTML = `<span>${user.firstName.charAt(0)}</span>`;
+function updateCartCount() {
+    const cartCount = document.getElementById('cartCount');
+    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+    
+    if (cartCount) {
+        cartCount.textContent = totalItems;
+        cartCount.style.display = totalItems > 0 ? 'flex' : 'none';
     }
 }
 
-// ===== ГЛОБАЛЬНЫЙ ЭКСПОРТ ДЛЯ ОТЛАДКИ =====
-window.app = {
-    user,
-    perfumes,
-    isAdmin,
-    showCatalog,
-    hideCatalog,
-    filterPerfumes,
-    showProductModal,
-    hideModal
-};
+function updateCartPopup() {
+    const cartItems = document.getElementById('cartItems');
+    const cartTotal = document.getElementById('cartTotal');
+    const cartFinal = document.getElementById('cartFinal');
+    
+    if (!cartItems || !cartTotal || !cartFinal) return;
+    
+    if (cart.length === 0) {
+        cartItems.innerHTML = `
+            <div class="empty-cart" style="text-align: center; padding: 40px 20px;">
+                <i class="fas fa-shopping-cart" style="font-size: 3rem; color: var(--color-text-muted); margin-bottom: 20px; opacity: 0.3;"></i>
+                <p style="color: var(--color-text-secondary); margin-bottom: 20px;">Ваша корзина пуста</p>
+                <button class="btn-browse" onclick="closeCartPopup()">Перейти к покупкам</button>
+            </div>
+        `;
+        cartTotal.textContent = '0 ₽';
+        cartFinal.textContent = '0 ₽';
+        return;
+    }
+    
+    // Рассчитываем итоги
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const discount = cart.reduce((sum, item) => {
+        if (item.oldPrice > 0) {
+            return sum + ((item.oldPrice - item.price) * item.quantity);
+        }
+        return sum;
+    }, 0);
+    const total = subtotal;
+    
+    // Рендерим товары
+    cartItems.innerHTML = '';
+    cart.forEach(item => {
+        const itemElement = document.createElement('div');
+        itemElement.className = 'cart-item';
+        itemElement.innerHTML = `
+            <img src="${item.image}" alt="${item.name}" class="cart-item-img">
+            <div class="cart-item-details">
+                <h4 class="cart-item-title">${item.name}</h4>
+                <div class="cart-item-price">${item.price.toLocaleString()} ₽</div>
+                <div class="cart-item-controls">
+                    <button class="quantity-btn" onclick="updateQuantity(${item.id}, -1)">-</button>
+                    <input type="number" class="quantity-input" value="${item.quantity}" min="1" max="10" onchange="updateQuantity(${item.id}, 0, this.value)">
+                    <button class="quantity-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
+                    <div class="remove-item" onclick="removeFromCart(${item.id})">
+                        <i class="fas fa-trash"></i>
+                    </div>
+                </div>
+            </div>
+        `;
+        cartItems.appendChild(itemElement);
+    });
+    
+    // Обновляем суммы
+    cartTotal.textContent = `${subtotal.toLocaleString()} ₽`;
+    cartFinal.textContent = `${total.toLocaleString()} ₽`;
+}
 
-console.log('Parfume WebApp инициализирован');
+function updateQuantity(productId, delta, newValue = null) {
+    const item = cart.find(item => item.id === productId);
+    if (!item) return;
+    
+    if (newValue !== null) {
+        item.quantity = parseInt(newValue) || 1;
+    } else {
+        item.quantity += delta;
+    }
+    
+    // Ограничения
+    if (item.quantity < 1) item.quantity = 1;
+    if (item.quantity > 10) item.quantity = 10;
+    
+    // Сохраняем
+    saveToStorage(STORAGE_KEYS.CART, cart);
+    
+    // Обновляем UI
+    updateCartCount();
+    updateCartPopup();
+    renderProducts();
+}
+
+function removeFromCart(productId) {
+    cart = cart.filter(item => item.id !== productId);
+    
+    // Сохраняем
+    saveToStorage(STORAGE_KEYS.CART, cart);
+    
+    // Обновляем UI
+    updateCartCount();
+    updateCartPopup();
+    renderProducts();
+    
+    showNotification('Товар удален из корзины', 'info');
+}
+
+// ===== ИЗБРАННОЕ =====
+function toggleFavorite(productId, event) {
+    if (event) event.stopPropagation();
+    
+    const product = allProducts.find(p => p.id === productId);
+    if (!product) return;
+    
+    const existingIndex = favorites.findIndex(item => item.id === productId);
+    
+    if (existingIndex !== -1) {
+        // Удаляем из избранного
+        favorites.splice(existingIndex, 1);
+        showNotification(`${product.name} удален из избранного`, 'info');
+    } else {
+        // Добавляем в избранное
+        favorites.push({
+            ...product,
+            addedAt: new Date().toISOString()
+        });
+        showNotification(`${product.name} добавлен в избранное`, 'success');
+    }
+    
+    // Сохраняем в localStorage
+    saveToStorage(STORAGE_KEYS.FAVORITES, favorites);
+    
+    // Обновляем UI
+    updateFavoritesCount();
+    updateFavoritesPopup();
+    renderProducts();
+}
+
+function updateFavoritesCount() {
+    const favCount = document.getElementById('favoritesCount');
+    
+    if (favCount) {
+        favCount.textContent = favorites.length;
+        favCount.style.display = favorites.length > 0 ? 'flex' : 'none';
+    }
+}
+
+function updateFavoritesPopup() {
+    const favItems = document.getElementByI
