@@ -369,12 +369,7 @@ function renderProducts() {
             </div>
         `;
         
-        // Добавляем обработчик клика на карточку
-        card.addEventListener('click', function(e) {
-            if (!e.target.closest('.product-actions')) {
-                showProductModal(product);
-            }
-        });
+       
         
         grid.appendChild(card);
     });
