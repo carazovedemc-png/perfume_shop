@@ -20,7 +20,7 @@ const STORAGE_KEYS = {
 const PRODUCTS_DATA = [
     {
         id: 1,
-        name: "Amouage Interlude",
+        name: "Demirel lox",
         description: "Эксклюзивный арабский парфюм с нотами ладана, кожи и специй. Для настоящих ценителей роскоши.",
         price: 28500,
         oldPrice: 32000,
