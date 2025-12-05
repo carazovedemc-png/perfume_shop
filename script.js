@@ -21,9 +21,9 @@ const PRODUCTS_DATA = [
     {
         id: 1,
         name: "Aris 222 VIP Bleck",
-        description: "Хуйня ",
-        price: 28500,
-        oldPrice: 32000,
+        description: "демо",
+        price: 450,
+        oldPrice: 500,
         category: "arabian",
         volume: 100,
         rating: 4.8,
