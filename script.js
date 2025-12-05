@@ -28,7 +28,7 @@ const PRODUCTS_DATA = [
         volume: 100,
         rating: 4.8,
         reviews: 128,
-        image: "https://sun9-52.userapi.com/s/v1/ig2/aZIAh8bmpgWtlwKqOUMRUM9Sp5njhlQB8LI5SCK_R2xfAbeAqa72IybaeZrSO_ayy6rCM0te0YHgshF_ghJO1yQT.jpg?quality=95&as=32x17,48x26,72x39,108x59,160x87,240x130,360x196,480x261,540x293,640x348,720x391,1080x587,1280x696,1440x783,1597x868&from=bu&u=eNJv4b539BIsJDK4QqRYcm9yfaY8wAf-hnFRw-VswEA&cs=640x0",
+        image: "https://images.satu.kz/227064425_w700_h500_maslyanye-duhi-al.jpg",
         badge: "sale",
         inStock: true,
         popular: true,
