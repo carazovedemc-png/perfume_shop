@@ -100,7 +100,7 @@ body {
     align-items: center;
     gap: var(--space-sm);
     flex-shrink: 0;
-    min-width: 160px;
+    min-width: 140px;
 }
 
 .logo-icon-wrapper {
@@ -144,11 +144,12 @@ body {
     50% { transform: translateY(-5px); }
 }
 
-/* Поиск - правильное позиционирование для Android */
+/* Поиск - теперь занимает всё доступное пространство */
 .search-container {
     flex: 1;
-    max-width: 400px;
-    margin: 0 var(--space-sm);
+    min-width: 0;
+    max-width: none; /* Убрали ограничение */
+    margin-left: var(--space-md);
 }
 
 .search-box {
@@ -162,6 +163,8 @@ body {
     overflow: hidden;
     transition: all 0.3s ease;
     padding: 0 var(--space-sm);
+    width: 100%;
+    max-width: 100%; /* Не выходит за экран */
 }
 
 .search-box:focus-within {
@@ -178,6 +181,8 @@ body {
     font-size: 0.9rem;
     outline: none;
     color: var(--color-text);
+    min-width: 0;
+    width: 100%;
 }
 
 .search-box input::placeholder {
@@ -192,6 +197,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .search-glass-circle {
