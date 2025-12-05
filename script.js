@@ -20,15 +20,15 @@ const STORAGE_KEYS = {
 const PRODUCTS_DATA = [
     {
         id: 1,
-        name: "Demirel lox",
-        description: "Эксклюзивный арабский парфюм с нотами ладана, кожи и специй. Для настоящих ценителей роскоши.",
+        name: "Aris 222 VIP Bleck",
+        description: "Хуйня ",
         price: 28500,
         oldPrice: 32000,
         category: "arabian",
         volume: 100,
         rating: 4.8,
         reviews: 128,
-        image: "https://images.unsplash.com/photo-1541643600914-78b084683601?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+        image: "https://images.satu.kz/227064425_w700_h500_maslyanye-duhi-al.jpg",
         badge: "sale",
         inStock: true,
         popular: true,
