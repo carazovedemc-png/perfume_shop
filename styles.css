@@ -1206,7 +1206,7 @@ body {
 }
 
 /* ===== АДАПТИВНОСТЬ ДЛЯ ANDROID ===== */
-@media (max-width: 768px) {
+@media (max-width: 480px) {
     .container {
         padding: 0 var(--space-sm);
     }
@@ -1233,6 +1233,11 @@ body {
     .search-box input {
         font-size: 0.85rem;
         padding: 10px;
+    }
+    
+    .search-glass-circle {
+        width: 30px; /* Уменьшили для маленьких экранов */
+        height: 30px; /* Уменьшили для маленьких экранов */
     }
     
     .products-grid {
@@ -1344,7 +1349,7 @@ body {
     }
     
     .logo-text {
-        display: flex !important; /* Принудительно показываем на маленьких экранах */
+        display: flex !important;
     }
     
     .logo-main {
@@ -1359,6 +1364,16 @@ body {
     .search-box input {
         padding: 8px;
         font-size: 0.8rem;
+        margin-right: 6px; /* Уменьшили отступ на маленьких экранах */
+    }
+    
+    .search-glass-circle {
+        width: 28px; /* Ещё меньше на очень маленьких экранах */
+        height: 28px; /* Ещё меньше на очень маленьких экранах */
+    }
+    
+    .search-glass-circle i {
+        font-size: 0.8rem; /* Ещё меньше иконка */
     }
     
     .bottom-nav-glass {
