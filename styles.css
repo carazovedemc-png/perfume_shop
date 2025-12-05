@@ -148,7 +148,7 @@ body {
 .search-container {
     flex: 1;
     min-width: 0;
-    max-width: none; /* Убрали ограничение */
+    max-width: none;
     margin-left: var(--space-md);
 }
 
@@ -162,9 +162,9 @@ body {
     border-radius: 30px;
     overflow: hidden;
     transition: all 0.3s ease;
-    padding: 0 var(--space-sm);
+    padding: 0 12px 0 var(--space-sm); /* Увеличили правый отступ */
     width: 100%;
-    max-width: 100%; /* Не выходит за экран */
+    max-width: 100%;
 }
 
 .search-box:focus-within {
@@ -183,6 +183,7 @@ body {
     color: var(--color-text);
     min-width: 0;
     width: 100%;
+    margin-right: 8px; /* Добавили отступ от кнопки */
 }
 
 .search-box input::placeholder {
@@ -201,19 +202,20 @@ body {
 }
 
 .search-glass-circle {
-    width: 36px;
-    height: 36px;
+    width: 32px; /* Уменьшили размер */
+    height: 32px; /* Уменьшили размер */
     background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
     border-radius: var(--radius-circle);
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
+    margin-left: auto; /* Сдвигаем вправо */
 }
 
 .search-glass-circle i {
     color: white;
-    font-size: 1rem;
+    font-size: 0.9rem; /* Уменьшили иконку */
 }
 
 /* Профиль - правильное позиционирование */
