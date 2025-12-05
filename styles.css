@@ -1,14 +1,13 @@
 /* ===== БАЗОВЫЕ СТИЛИ И ПЕРЕМЕННЫЕ ===== */
 :root {
-    /* Цветовая палитра */
-    --color-primary: #8A2BE2; /* Фиолетовый */
+    --color-primary: #8A2BE2;
     --color-primary-light: #9D4EDD;
     --color-primary-dark: #6A0DAD;
-    --color-secondary: #00CED1; /* Бирюзовый */
+    --color-secondary: #00CED1;
     --color-secondary-light: #5CE1E6;
     --color-secondary-dark: #009999;
-    --color-accent: #FF6B8B; /* Розовый акцент */
-    --color-bg: #0F0F1E; /* Темный фон */
+    --color-accent: #FF6B8B;
+    --color-bg: #0F0F1E;
     --color-surface: rgba(255, 255, 255, 0.05);
     --color-surface-light: rgba(255, 255, 255, 0.08);
     --color-border: rgba(255, 255, 255, 0.1);
@@ -21,31 +20,26 @@
     --color-sale: #FF3D71;
     --color-rating: #FFAA00;
     
-    /* Тени для glass effect */
     --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
     --shadow-glass-light: 0 4px 16px 0 rgba(31, 38, 135, 0.2);
     --shadow-popup: 0 20px 60px rgba(0, 0, 0, 0.5);
     
-    /* Градиенты */
     --gradient-primary: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
     --gradient-accent: linear-gradient(135deg, var(--color-accent), var(--color-primary-light));
     --gradient-bg: linear-gradient(135deg, #0F0F1E, #1A1A2E, #16213E);
     
-    /* Скругления */
     --radius-sm: 10px;
     --radius-md: 16px;
     --radius-lg: 24px;
     --radius-xl: 32px;
     --radius-circle: 50%;
     
-    /* Отступы для мобильных */
     --space-xs: 8px;
     --space-sm: 12px;
     --space-md: 16px;
     --space-lg: 20px;
     --space-xl: 24px;
     
-    /* Шрифты */
     --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
@@ -64,7 +58,7 @@ body {
     font-family: var(--font-family);
     line-height: 1.5;
     min-height: 100vh;
-    padding-bottom: 80px; /* Для нижнего меню */
+    padding-bottom: 100px;
     overflow-x: hidden;
 }
 
@@ -80,7 +74,7 @@ body {
     padding: 0 var(--space-md);
 }
 
-/* ===== ВЕРХНЯЯ ПАНЕЛЬ (КОМПАКТНАЯ) ===== */
+/* ===== ВЕРХНЯЯ ПАНЕЛЬ (ИСПРАВЛЕНА ДЛЯ ANDROID) ===== */
 .top-header {
     background: rgba(15, 15, 30, 0.9);
     backdrop-filter: blur(20px);
@@ -97,38 +91,38 @@ body {
     align-items: center;
     justify-content: space-between;
     gap: var(--space-sm);
-    height: 50px;
+    height: 56px;
 }
 
-/* Логотип */
+/* Логотип - ВСЕГДА виден на Android */
 .logo {
     display: flex;
     align-items: center;
     gap: var(--space-sm);
     flex-shrink: 0;
-    min-width: 0;
+    min-width: 160px;
 }
 
 .logo-icon-wrapper {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     background: var(--gradient-primary);
     border-radius: var(--radius-circle);
     display: flex;
     align-items: center;
     justify-content: center;
     animation: float 3s ease-in-out infinite;
+    flex-shrink: 0;
 }
 
 .logo-icon {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     color: white;
 }
 
 .logo-text {
     display: flex;
     flex-direction: column;
-    min-width: 0;
 }
 
 .logo-main {
@@ -137,8 +131,6 @@ body {
     color: var(--color-text);
     line-height: 1.1;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .logo-sub {
@@ -152,11 +144,11 @@ body {
     50% { transform: translateY(-5px); }
 }
 
-/* Поиск в стиле liquid glass */
+/* Поиск - правильное позиционирование для Android */
 .search-container {
     flex: 1;
-    min-width: 0;
-    max-width: 300px;
+    max-width: 400px;
+    margin: 0 var(--space-sm);
 }
 
 .search-box {
@@ -186,7 +178,6 @@ body {
     font-size: 0.9rem;
     outline: none;
     color: var(--color-text);
-    min-width: 0;
 }
 
 .search-box input::placeholder {
@@ -219,12 +210,7 @@ body {
     font-size: 1rem;
 }
 
-.search-btn-glass:hover .search-glass-circle {
-    transform: scale(1.1);
-    box-shadow: 0 0 15px rgba(0, 206, 209, 0.5);
-}
-
-/* Профиль в правом верхнем углу */
+/* Профиль - правильное позиционирование */
 .profile-container {
     flex-shrink: 0;
 }
@@ -255,72 +241,59 @@ body {
     font-size: 1.1rem;
 }
 
-.profile-btn-glass:hover .profile-icon-circle {
-    transform: scale(1.1);
-    box-shadow: 0 0 20px rgba(138, 43, 226, 0.5);
-}
-
-/* Описание компании */
+/* Убираем старое описание компании (перенесем в баннер) */
 .company-description {
-    margin-top: var(--space-sm);
-    padding: var(--space-sm);
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-border);
+    display: none; /* Скрываем старое описание */
+}
+
+/* ===== БАННЕР С ПЕРЕКЛЮЧЕНИЕМ ===== */
+.banner-container {
+    position: relative;
+    height: 180px;
+    margin: var(--space-lg) 0;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.banner-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    padding: var(--space-xl) var(--space-lg);
     text-align: center;
-    font-size: 0.85rem;
-    line-height: 1.4;
 }
 
-.company-description p {
-    color: var(--color-text-secondary);
+.banner-slide.active {
+    opacity: 1;
 }
 
-.company-description strong {
-    color: var(--color-secondary-light);
-    font-weight: 600;
-}
-
-.company-description a {
-    color: var(--color-primary-light);
-    text-decoration: none;
-    word-break: break-all;
-}
-
-.company-description a:hover {
-    text-decoration: underline;
-}
-
-/* ===== БАННЕР С ГРАДИЕНТОМ ===== */
-.gradient-banner {
+.banner-slide.exclusive {
     background: linear-gradient(135deg, 
         rgba(138, 43, 226, 0.9), 
         rgba(0, 206, 209, 0.8), 
         rgba(255, 107, 139, 0.7));
     background-size: 200% 200%;
     animation: gradientMove 8s ease infinite;
-    border-radius: var(--radius-lg);
-    margin: var(--space-lg) 0;
-    padding: var(--space-xl) var(--space-lg);
-    text-align: center;
-    position: relative;
-    overflow: hidden;
 }
 
-.gradient-banner::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    z-index: 1;
+.banner-slide.contacts {
+    background: linear-gradient(135deg, 
+        rgba(0, 206, 209, 0.9), 
+        rgba(255, 107, 139, 0.8), 
+        rgba(138, 43, 226, 0.7));
+    background-size: 200% 200%;
+    animation: gradientMove 8s ease infinite 4s;
 }
 
 .banner-content {
+    max-width: 600px;
     position: relative;
     z-index: 2;
 }
@@ -330,12 +303,39 @@ body {
     font-weight: 800;
     margin-bottom: var(--space-sm);
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    line-height: 1.2;
 }
 
 .banner-content p {
-    font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.95);
     text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+    line-height: 1.4;
+}
+
+.banner-contacts {
+    font-size: 0.9rem;
+    margin-top: var(--space-sm);
+}
+
+.banner-contacts strong {
+    color: white;
+    font-weight: 700;
+    display: inline-block;
+    margin: 0 5px;
+}
+
+.banner-contacts a {
+    color: white;
+    text-decoration: underline;
+    font-weight: 600;
+    word-break: break-all;
+}
+
+.banner-contacts br {
+    display: block;
+    margin: 8px 0;
+    content: "";
 }
 
 /* ===== ОСНОВНОЙ КОНТЕНТ ===== */
@@ -356,7 +356,7 @@ body {
     color: var(--color-text);
 }
 
-/* Сортировка в стиле glass */
+/* Сортировка */
 .sort-select-glass {
     position: relative;
     min-width: 150px;
@@ -378,11 +378,6 @@ body {
     transition: all 0.3s ease;
 }
 
-.sort-select-glass select:focus {
-    border-color: var(--color-primary-light);
-    box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.2);
-}
-
 .sort-select-glass i {
     position: absolute;
     right: 16px;
@@ -392,27 +387,12 @@ body {
     pointer-events: none;
 }
 
-/* ===== СЕТКА ТОВАРОВ (МАЛЕНЬКИЕ КАРТОЧКИ) ===== */
+/* ===== СЕТКА ТОВАРОВ ===== */
 .products-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: var(--space-md);
-    margin-bottom: var(--space-lg);
-}
-
-/* Для планшетов */
-@media (min-width: 768px) {
-    .products-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: var(--space-lg);
-    }
-}
-
-/* Для десктопов */
-@media (min-width: 1024px) {
-    .products-grid {
-        grid-template-columns: repeat(4, 1fr);
-    }
+    margin-bottom: var(--space-xl);
 }
 
 .product-card {
@@ -420,25 +400,18 @@ body {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-md);
     padding: var(--space-md);
     transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
     position: relative;
-    overflow: hidden;
-}
-
-.product-card:hover {
-    transform: translateY(-5px);
-    border-color: var(--color-primary-light);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .product-badges {
     position: absolute;
-    top: var(--space-sm);
-    left: var(--space-sm);
+    top: var(--space-md);
+    left: var(--space-md);
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -447,51 +420,42 @@ body {
 
 .badge-new, .badge-sale, .badge-hit {
     padding: 4px 8px;
-    border-radius: 6px;
+    border-radius: 4px;
     font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
     color: white;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-.badge-new { 
-    background: linear-gradient(135deg, var(--color-secondary), #00A86B);
-}
-
-.badge-sale { 
-    background: linear-gradient(135deg, var(--color-accent), #FF3860);
-}
-
-.badge-hit { 
-    background: linear-gradient(135deg, var(--color-warning), #FF8C00);
-}
+.badge-new { background: var(--color-success); }
+.badge-sale { background: var(--color-sale); }
+.badge-hit { background: var(--color-warning); }
 
 .product-image {
     width: 100%;
-    height: 140px;
+    height: 200px;
     object-fit: contain;
     margin-bottom: var(--space-md);
     background: rgba(255, 255, 255, 0.05);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-sm);
     padding: var(--space-sm);
 }
 
 .product-title {
-    font-size: 0.9rem;
-    font-weight: 600;
-    margin-bottom: 6px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: var(--space-xs);
     color: var(--color-text);
     line-height: 1.4;
+    flex: 1;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    flex: 1;
 }
 
 .product-category {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     color: var(--color-text-muted);
     margin-bottom: var(--space-sm);
 }
@@ -505,46 +469,39 @@ body {
 
 .stars-filled {
     color: var(--color-rating);
-    font-size: 0.85rem;
+    font-size: 0.9rem;
 }
 
 .rating-value {
     font-size: 0.8rem;
     color: var(--color-text-secondary);
-    margin-left: 4px;
-}
-
-.reviews-count {
-    font-size: 0.75rem;
-    color: var(--color-text-muted);
 }
 
 .product-prices {
-    margin-bottom: var(--space-md);
+    margin-bottom: var(--space-sm);
 }
 
 .price-current {
-    font-size: 1.1rem;
+    font-size: 1.3rem;
     font-weight: 700;
     color: var(--color-text);
-    margin-right: 6px;
+    margin-right: var(--space-xs);
 }
 
 .price-old {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     color: var(--color-text-muted);
     text-decoration: line-through;
-    display: inline-block;
-    margin-right: 6px;
 }
 
 .discount-percent {
-    background: linear-gradient(135deg, var(--color-accent), #FF3860);
+    background: var(--color-sale);
     color: white;
     padding: 2px 6px;
     border-radius: 4px;
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     font-weight: 700;
+    margin-left: var(--space-xs);
 }
 
 .product-actions {
@@ -556,64 +513,41 @@ body {
 .btn-cart {
     flex: 1;
     padding: 10px;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+    background: var(--color-primary);
     color: white;
     border: none;
-    border-radius: var(--radius-md);
-    font-weight: 600;
-    font-size: 0.85rem;
+    border-radius: var(--radius-sm);
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: background 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
-}
-
-.btn-cart:hover {
-    background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary));
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
+    font-size: 0.9rem;
 }
 
 .btn-cart.in-cart {
-    background: linear-gradient(135deg, var(--color-success), #00A86B);
-}
-
-.btn-cart.in-cart:hover {
-    background: linear-gradient(135deg, #00D68F, var(--color-success));
+    background: var(--color-success);
 }
 
 .btn-fav {
     width: 40px;
     height: 40px;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s;
     color: var(--color-text-secondary);
 }
 
-.btn-fav:hover {
-    border-color: var(--color-accent);
-    color: var(--color-accent);
-    transform: scale(1.1);
-}
-
 .btn-fav.active {
-    background: linear-gradient(135deg, var(--color-accent), #FF3860);
+    color: var(--color-accent);
     border-color: var(--color-accent);
-    color: white;
-}
-
-.btn-fav.active:hover {
-    background: linear-gradient(135deg, #FF6B8B, var(--color-accent));
 }
 
 /* ===== ПАГИНАЦИЯ ===== */
@@ -635,30 +569,25 @@ body {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-sm);
     cursor: pointer;
     color: var(--color-text);
-    font-weight: 600;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
+    transition: all 0.2s;
 }
 
 .page-btn:hover:not(:disabled) {
-    background: rgba(138, 43, 226, 0.2);
-    border-color: var(--color-primary-light);
-    color: var(--color-primary-light);
-    transform: translateY(-2px);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
 }
 
 .page-btn.active {
-    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+    background: var(--color-primary);
     color: white;
     border-color: var(--color-primary);
-    box-shadow: 0 4px 12px rgba(138, 43, 226, 0.3);
 }
 
 .page-btn:disabled {
-    opacity: 0.3;
+    opacity: 0.5;
     cursor: not-allowed;
 }
 
@@ -667,10 +596,10 @@ body {
     gap: var(--space-xs);
 }
 
-/* ===== НИЖНЕЕ МЕНЮ В СТИЛЕ LIQUID GLASS ===== */
+/* ===== НИЖНЯЯ ПАНЕЛЬ (ИСПРАВЛЕНА ДЛЯ ANDROID) ===== */
 .bottom-nav-glass {
     position: fixed;
-    bottom: var(--space-md);
+    bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
     width: calc(100% - 32px);
@@ -682,7 +611,8 @@ body {
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-glass);
     z-index: 999;
-    padding: var(--space-sm);
+    padding: 12px;
+    overflow: hidden; /* Важно! Не даем кнопкам вылезти */
 }
 
 .nav-inner {
@@ -690,6 +620,8 @@ body {
     align-items: center;
     justify-content: space-around;
     position: relative;
+    width: 100%;
+    min-width: 0; /* Предотвращаем растягивание на Android */
 }
 
 .nav-btn {
@@ -701,17 +633,16 @@ body {
     justify-content: center;
     gap: 4px;
     cursor: pointer;
-    padding: var(--space-xs) var(--space-sm);
+    padding: 8px 12px;
     color: var(--color-text-secondary);
     transition: all 0.3s ease;
     position: relative;
     flex: 1;
     text-decoration: none;
     font-family: inherit;
-}
-
-.nav-btn:hover {
-    color: var(--color-text);
+    min-width: 0; /* Критично для Android! */
+    max-width: 25%; /* Ограничиваем ширину каждой кнопки */
+    overflow: hidden; /* Обрезаем если что-то вылазит */
 }
 
 .nav-btn i {
@@ -723,49 +654,247 @@ body {
     font-size: 0.7rem;
     font-weight: 500;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%; /* Не даем тексту выйти за границы */
+    display: block;
 }
 
-.nav-btn:hover i {
-    color: var(--color-primary-light);
-    transform: translateY(-2px);
-}
-
+/* ПЕРЕГОРОДКИ между кнопками - всегда видны */
 .nav-divider {
     width: 1px;
     height: 24px;
     background: rgba(255, 255, 255, 0.1);
-    margin: 0 var(--space-xs);
+    flex-shrink: 0;
+    display: block !important; /* Принудительно показываем на Android */
 }
 
 .nav-badge {
     position: absolute;
-    top: 0;
-    right: 20%;
-    background: linear-gradient(135deg, var(--color-accent), #FF3860);
+    top: -5px;
+    right: 25%;
+    background: var(--color-accent);
     color: white;
-    font-size: 0.6rem;
+    font-size: 0.7rem;
     padding: 2px 6px;
     border-radius: 10px;
     min-width: 18px;
     text-align: center;
     font-weight: 700;
-    box-shadow: 0 2px 8px rgba(255, 61, 113, 0.3);
 }
 
-/* ===== ОБЩИЕ СТИЛИ ПОПАПОВ (GLASS EFFECT) ===== */
+/* ===== ПОПАП ФИЛЬТРОВ (КОМПАКТНЫЙ ДЛЯ ANDROID) ===== */
+.filter-popup.glass-popup {
+    max-height: 70vh; /* Уменьшаем высоту */
+    overflow-y: auto;
+}
+
+.filter-content {
+    padding: var(--space-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.filter-group {
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.filter-group:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.filter-group h4 {
+    margin-bottom: var(--space-sm);
+    color: var(--color-text);
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.price-range {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.range-inputs {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.range-inputs input {
+    flex: 1;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-sm);
+    text-align: center;
+    color: var(--color-text);
+    font-size: 0.9rem;
+    max-width: 100px;
+}
+
+.range-divider {
+    color: var(--color-text-muted);
+    padding: 0 var(--space-xs);
+}
+
+.range-slider {
+    padding: var(--space-sm) 0;
+}
+
+.range-slider input {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.range-slider input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--color-primary);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--color-text);
+    position: relative;
+    padding-left: 32px;
+    user-select: none;
+}
+
+.checkbox input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.checkmark {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 20px;
+    width: 20px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.checkbox input:checked ~ .checkmark {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.checkbox input:checked ~ .checkmark:after {
+    display: block;
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.rating-filter {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.star-rating {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    cursor: pointer;
+    padding: 4px 0;
+}
+
+.star-rating input {
+    display: none;
+}
+
+.stars {
+    color: var(--color-rating);
+    font-size: 0.9rem;
+}
+
+.rating-text {
+    font-size: 0.9rem;
+    color: var(--color-text);
+}
+
+.filter-buttons {
+    display: flex;
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+}
+
+.btn-filter-apply {
+    flex: 1;
+    padding: 12px;
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-filter-reset {
+    flex: 1;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-md);
+    color: var(--color-text);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* ===== ОБЩИЕ СТИЛИ ПОПАПОВ ===== */
 .glass-popup {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0.9);
     width: 90%;
-    max-width: 400px;
-    max-height: 80vh;
+    max-width: 380px; /* Уменьшил для компактности */
+    max-height: 70vh; /* Уменьшил высоту */
     background: rgba(30, 30, 46, 0.95);
     backdrop-filter: blur(30px);
     -webkit-backdrop-filter: blur(30px);
     border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-lg);
     box-shadow: var(--shadow-popup);
     z-index: 1002;
     opacity: 0;
@@ -809,7 +938,7 @@ body {
 }
 
 .popup-header h3 {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     font-weight: 700;
     color: var(--color-text);
 }
@@ -829,20 +958,12 @@ body {
     font-size: 1.2rem;
 }
 
-.close-popup:hover {
-    background: rgba(255, 61, 113, 0.2);
-    border-color: var(--color-danger);
-    color: var(--color-danger);
-    transform: rotate(90deg);
-}
-
 .popup-body {
     padding: var(--space-lg);
-    max-height: calc(80vh - 80px);
+    max-height: calc(70vh - 80px); /* Уменьшил для компактности */
     overflow-y: auto;
 }
 
-/* Стили для скроллбара */
 .popup-body::-webkit-scrollbar {
     width: 6px;
 }
@@ -855,10 +976,6 @@ body {
 .popup-body::-webkit-scrollbar-thumb {
     background: var(--color-primary);
     border-radius: 3px;
-}
-
-.popup-body::-webkit-scrollbar-thumb:hover {
-    background: var(--color-primary-light);
 }
 
 /* ===== ПОПАП КОРЗИНЫ ===== */
@@ -896,7 +1013,7 @@ body {
 .cart-item-title {
     font-size: 0.9rem;
     font-weight: 600;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
     color: var(--color-text);
     line-height: 1.4;
     display: -webkit-box;
@@ -923,7 +1040,7 @@ body {
     height: 28px;
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 6px;
+    border-radius: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -933,18 +1050,12 @@ body {
     transition: all 0.2s;
 }
 
-.quantity-btn:hover {
-    background: rgba(138, 43, 226, 0.2);
-    border-color: var(--color-primary-light);
-}
-
 .quantity-input {
     width: 40px;
-    height: 28px;
     text-align: center;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 6px;
+    border-radius: 4px;
     color: var(--color-text);
     font-size: 0.9rem;
 }
@@ -959,13 +1070,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 6px;
+    border-radius: 4px;
     transition: all 0.2s;
-}
-
-.remove-item:hover {
-    color: var(--color-danger);
-    background: rgba(255, 61, 113, 0.1);
 }
 
 .cart-summary {
@@ -992,25 +1098,19 @@ body {
 .btn-checkout-glass {
     width: 100%;
     padding: 16px;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+    background: var(--color-primary);
     color: white;
     border: none;
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-md);
     font-weight: 700;
     font-size: 1rem;
     cursor: pointer;
     margin-top: var(--space-md);
-    transition: all 0.3s ease;
+    transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
-}
-
-.btn-checkout-glass:hover {
-    background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary));
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(138, 43, 226, 0.4);
 }
 
 /* ===== ПОПАП ИЗБРАННОГО ===== */
@@ -1035,229 +1135,12 @@ body {
 .btn-browse-glass {
     margin-top: var(--space-md);
     padding: 12px 24px;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+    background: var(--color-primary);
     color: white;
     border: none;
     border-radius: var(--radius-md);
-    font-weight: 600;
-    font-size: 0.95rem;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-
-.btn-browse-glass:hover {
-    background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary));
-    transform: translateY(-2px);
-}
-
-/* ===== ПОПАП ФИЛЬТРОВ ===== */
-.filter-content {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-lg);
-}
-
-.filter-group {
-    margin-bottom: var(--space-lg);
-    padding-bottom: var(--space-lg);
-    border-bottom: 1px solid var(--color-border);
-}
-
-.filter-group:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
-}
-
-.filter-group h4 {
-    margin-bottom: var(--space-sm);
-    color: var(--color-text);
-    font-size: 1rem;
-    font-weight: 600;
-}
-
-.price-range {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-sm);
-}
-
-.range-inputs {
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-}
-
-.range-inputs input {
-    flex: 1;
-    padding: 10px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: var(--radius-sm);
-    text-align: center;
-    color: var(--color-text);
-    font-size: 0.9rem;
-}
-
-.range-divider {
-    color: var(--color-text-muted);
-    padding: 0 var(--space-xs);
-}
-
-.range-slider {
-    padding: var(--space-sm) 0;
-}
-
-.range-slider input {
-    width: 100%;
-    height: 6px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 3px;
-    outline: none;
-    -webkit-appearance: none;
-}
-
-.range-slider input::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 22px;
-    height: 22px;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
-    border-radius: 50%;
-    cursor: pointer;
-    border: 3px solid white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-.checkbox-group {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.checkbox {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    font-size: 0.9rem;
-    color: var(--color-text);
-    position: relative;
-    padding-left: 32px;
-    user-select: none;
-}
-
-.checkbox input {
-    position: absolute;
-    opacity: 0;
-    cursor: pointer;
-}
-
-.checkmark {
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 22px;
-    width: 22px;
-    background-color: rgba(255, 255, 255, 0.05);
-    border: 2px solid rgba(255, 255, 255, 0.15);
-    border-radius: 6px;
-    transition: all 0.2s;
-}
-
-.checkbox:hover input ~ .checkmark {
-    border-color: var(--color-primary-light);
-}
-
-.checkbox input:checked ~ .checkmark {
-    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-    border-color: var(--color-primary);
-}
-
-.checkmark:after {
-    content: "";
-    position: absolute;
-    display: none;
-}
-
-.checkbox input:checked ~ .checkmark:after {
-    display: block;
-    left: 7px;
-    top: 3px;
-    width: 6px;
-    height: 12px;
-    border: solid white;
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
-}
-
-.rating-filter {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.star-rating {
-    display: flex;
-    align-items: center;
-    gap: var(--space-xs);
-    cursor: pointer;
-    padding: 8px 0;
-}
-
-.star-rating input {
-    display: none;
-}
-
-.stars {
-    color: var(--color-rating);
-    font-size: 0.95rem;
-}
-
-.rating-text {
-    font-size: 0.9rem;
-    color: var(--color-text);
-}
-
-.filter-buttons {
-    display: flex;
-    gap: var(--space-sm);
-    margin-top: var(--space-lg);
-}
-
-.btn-filter-apply {
-    flex: 1;
-    padding: 14px;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-    color: white;
-    border: none;
-    border-radius: var(--radius-md);
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.btn-filter-apply:hover {
-    background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary));
-}
-
-.btn-filter-reset {
-    flex: 1;
-    padding: 14px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: var(--radius-md);
-    color: var(--color-text);
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.btn-filter-reset:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: var(--color-text-muted);
 }
 
 /* ===== МОДАЛЬНОЕ ОКНО ТОВАРА ===== */
@@ -1282,68 +1165,60 @@ body {
 }
 
 .modal-content {
+    background: white;
+    border-radius: var(--radius-lg);
+    max-width: 900px;
     width: 100%;
-    max-width: 500px;
     max-height: 90vh;
     overflow: hidden;
+    position: relative;
 }
 
 .modal-close {
     position: absolute;
     top: 20px;
     right: 20px;
+    background: white;
+    border: none;
+    font-size: 1.8rem;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    z-index: 1;
     width: 40px;
     height: 40px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: var(--radius-circle);
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    color: var(--color-text);
-    font-size: 1.5rem;
-    z-index: 1;
-    transition: all 0.3s ease;
-}
-
-.modal-close:hover {
-    background: rgba(255, 61, 113, 0.2);
-    border-color: var(--color-danger);
-    color: var(--color-danger);
-    transform: rotate(90deg);
+    transition: background 0.2s;
 }
 
 .modal-body {
     padding: var(--space-xl);
-    max-height: calc(90vh - 80px);
-    overflow-y: auto;
 }
 
-/* ===== АДАПТИВНОСТЬ ===== */
-@media (max-width: 480px) {
+/* ===== АДАПТИВНОСТЬ ДЛЯ ANDROID ===== */
+@media (max-width: 768px) {
     .container {
         padding: 0 var(--space-sm);
     }
     
     .header-top-row {
-        height: 45px;
+        flex-direction: row;
+        height: auto;
+        padding: var(--space-xs) 0;
     }
     
-    .logo-icon-wrapper {
-        width: 32px;
-        height: 32px;
+    .logo {
+        min-width: 140px;
     }
     
     .logo-main {
         font-size: 1rem;
     }
     
-    .logo-sub {
-        font-size: 0.65rem;
-    }
-    
     .search-container {
+        margin: 0 var(--space-xs);
         max-width: 180px;
     }
     
@@ -1352,26 +1227,8 @@ body {
         padding: 10px;
     }
     
-    .search-glass-circle {
-        width: 32px;
-        height: 32px;
-    }
-    
-    .profile-icon-circle {
-        width: 36px;
-        height: 36px;
-    }
-    
-    .gradient-banner {
-        padding: var(--space-lg) var(--space-md);
-    }
-    
-    .banner-content h1 {
-        font-size: 1.5rem;
-    }
-    
     .products-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
         gap: var(--space-sm);
     }
     
@@ -1380,16 +1237,17 @@ body {
     }
     
     .product-image {
-        height: 120px;
-    }
-    
-    .product-title {
-        font-size: 0.85rem;
+        height: 150px;
     }
     
     .bottom-nav-glass {
         width: calc(100% - 20px);
         padding: 10px;
+        bottom: 15px;
+    }
+    
+    .nav-btn {
+        padding: 6px 8px;
     }
     
     .nav-btn span {
@@ -1402,6 +1260,73 @@ body {
     
     .glass-popup {
         width: 95%;
+        max-width: 350px;
+    }
+    
+    .banner-container {
+        height: 150px;
+        margin: var(--space-md) 0;
+    }
+    
+    .banner-content h1 {
+        font-size: 1.5rem;
+    }
+    
+    .banner-content p {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .logo {
+        min-width: 120px;
+    }
+    
+    .logo-text {
+        display: flex !important;
+    }
+    
+    .logo-main {
+        font-size: 0.9rem;
+    }
+    
+    .logo-icon-wrapper {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .search-container {
+        max-width: 140px;
+    }
+    
+    .search-glass-circle {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .profile-icon-circle {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .banner-container {
+        height: 140px;
+    }
+    
+    .banner-content h1 {
+        font-size: 1.3rem;
+    }
+    
+    .banner-content p {
+        font-size: 0.85rem;
+    }
+    
+    .banner-contacts {
+        font-size: 0.8rem;
     }
 }
 
@@ -1411,72 +1336,181 @@ body {
     }
     
     .logo-text {
-        display: none;
+        display: flex !important; /* Принудительно показываем на маленьких экранах */
+    }
+    
+    .logo-main {
+        font-size: 0.85rem;
+        max-width: 90px;
     }
     
     .search-container {
-        max-width: 140px;
+        max-width: 120px;
+    }
+    
+    .search-box input {
+        padding: 8px;
+        font-size: 0.8rem;
+    }
+    
+    .bottom-nav-glass {
+        width: calc(100% - 16px);
+        padding: 8px;
+        bottom: 12px;
+    }
+    
+    .nav-btn {
+        padding: 4px 6px;
+    }
+    
+    .nav-btn span {
+        font-size: 0.6rem;
+    }
+    
+    .nav-btn i {
+        font-size: 1rem;
+    }
+    
+    .banner-container {
+        height: 130px;
+    }
+    
+    .banner-content h1 {
+        font-size: 1.2rem;
+    }
+    
+    .banner-content p {
+        font-size: 0.8rem;
     }
 }
 
-/* ===== АНИМАЦИЯ ЗАГРУЗКИ ===== */
-.loading-spinner {
-    display: inline-block;
-    width: 40px;
-    height: 40px;
-    border: 3px solid rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-    border-top-color: var(--color-primary);
-    animation: spin 1s ease-in-out infinite;
+/* ===== ИСПРАВЛЕНИЯ ДЛЯ КОНКРЕТНЫХ БАГОВ ANDROID ===== */
+/* Фикс для текста, который пропадает на Android */
+.android-fix-logo {
+    display: flex !important;
+    visibility: visible !important;
 }
 
-@keyframes spin {
-    to { transform: rotate(360deg); }
+/* Фикс для нижней панели - перегородки всегда видны */
+.android-fix-divider {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
-/* ===== УВЕДОМЛЕНИЯ ===== */
-.notification {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: rgba(30, 30, 46, 0.95);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: var(--radius-lg);
-    padding: var(--space-md) var(--space-lg);
-    color: var(--color-text);
-    font-weight: 500;
-    z-index: 10000;
-    box-shadow: var(--shadow-popup);
-    animation: slideInRight 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
-    max-width: 300px;
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
+/* Фикс для кнопок, вылезающих за границы */
+.android-fix-button-container {
+    overflow: hidden !important;
+    max-width: 100% !important;
 }
 
-.notification i {
-    color: var(--color-success);
-    font-size: 1.2rem;
-}
-
-@keyframes slideInRight {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
+/* Фикс для поиска - правильное позиционирование */
+@media screen and (max-device-width: 1024px) {
+    .header-top-row {
+        display: flex !important;
+        justify-content: space-between !important;
     }
-    to {
-        transform: translateX(0);
-        opacity: 1;
+    
+    .search-container {
+        margin-left: auto !important;
+        margin-right: var(--space-md) !important;
     }
 }
 
-@keyframes fadeOut {
-    from {
-        opacity: 1;
+/* ===== ОСОБЫЕ ПРАВИЛА ДЛЯ ANDROID WEBVIEW ===== */
+/* Это поможет на устройствах с WebView (Telegram на Android) */
+_::-webkit-full-page-media, _:future, :root .logo-text {
+    display: flex !important;
+}
+
+_::-webkit-full-page-media, _:future, :root .nav-divider {
+    display: block !important;
+}
+
+/* ===== АНИМАЦИИ ДЛЯ БАННЕРОВ ===== */
+@keyframes bannerFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes bannerFadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+.banner-slide {
+    animation-duration: 1s;
+    animation-fill-mode: both;
+}
+
+.banner-slide.fade-in {
+    animation-name: bannerFadeIn;
+}
+
+.banner-slide.fade-out {
+    animation-name: bannerFadeOut;
+}
+
+/* ===== СТИЛИ ДЛЯ КНОПКИ СВЯЗИ В НИЖНЕЙ ПАНЕЛИ ===== */
+/* Убедимся что кнопка "Связь" не вылазит */
+#navContact.nav-btn {
+    min-width: 0;
+    max-width: 25%;
+    overflow: hidden;
+}
+
+#navContact.nav-btn span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    display: block;
+}
+
+/* ===== ФИНАЛЬНЫЕ ОБЩИЕ ПРАВИЛА ===== */
+/* Гарантируем что все элементы остаются в своих контейнерах */
+* {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+img, svg, video {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Фикс для flex-элементов на Android */
+.flex-fix-android {
+    min-width: 0;
+    flex-shrink: 1;
+}
+
+/* Улучшаем читаемость на маленьких экранах */
+@media (max-width: 400px) {
+    body {
+        font-size: 14px;
     }
-    to {
-        opacity: 0;
+    
+    h1, h2, h3, h4 {
+        word-break: break-word;
+    }
+    
+    .btn-cart, .btn-fav, .nav-btn {
+        touch-action: manipulation; /* Улучшаем тач-события на Android */
     }
 }
+
+/* Фикс для безопасных зон (вырезов на iPhone) */
+@supports (padding: max(0px)) {
+    body {
+        padding-left: max(0px, env(safe-area-inset-left));
+        padding-right: max(0px, env(safe-area-inset-right));
+        padding-top: max(0px, env(safe-area-inset-top));
+    }
+    
+    .bottom-nav-glass {
+        bottom: max(20px, env(safe-area-inset-bottom));
+    }
+}
+
+/* Конец файла styles.css */
