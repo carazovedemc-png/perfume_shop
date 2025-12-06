@@ -1226,13 +1226,13 @@ function initEventListeners() {
         ).join('\n');
         
         const orderText = `
-🎁 *Новый заказ в Aura Atelier*
+📨 *Новый заказ в Aura Atelier*
 
-📦 *Товары:*
+📦 **Товары:**
 ${orderItems}
 
-💰 *Итого:* ${total.toLocaleString()}₽
-📅 *Дата:* ${new Date().toLocaleString('ru-RU')}
+🧾 **Итого:** ${total.toLocaleString()}₽
+📅 **Дата:** ${new Date().toLocaleString('ru-RU')}
         `.trim();
         
         // Если в Telegram, отправляем через WebApp
