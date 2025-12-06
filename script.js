@@ -1228,17 +1228,11 @@ function initEventListeners() {
         const orderText = `
 🎁 *Новый заказ в Aura Atelier*
 
-👤 *Клиент:* ${user.firstName} ${user.lastName}
-📞 *Телеграм:* @${user.username}
-🆔 *ID:* ${user.id}
-
 📦 *Товары:*
 ${orderItems}
 
 💰 *Итого:* ${total.toLocaleString()}₽
 📅 *Дата:* ${new Date().toLocaleString('ru-RU')}
-
-Для связи: @Ayder505 или @Ma1traher
         `.trim();
         
         // Если в Telegram, отправляем через WebApp
