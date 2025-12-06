@@ -1226,7 +1226,7 @@ function initEventListeners() {
         ).join('\n');
         
         const orderText = `
-📨 *Новый заказ в Aura Atelier*
+📨 **Новый заказ в Aura Atelier**
 
 📦 **Товары:**
 ${orderItems}
