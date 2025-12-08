@@ -162,7 +162,7 @@ body {
     border-radius: 30px;
     overflow: hidden;
     transition: all 0.3s ease;
-    padding: 0 12px 0 var(--space-sm); /* Увеличили правый отступ */
+    padding: 0 12px 0 var(--space-sm);
     width: 100%;
     max-width: 100%;
 }
@@ -183,7 +183,7 @@ body {
     color: var(--color-text);
     min-width: 0;
     width: 100%;
-    margin-right: 8px; /* Добавили отступ от кнопки */
+    margin-right: 8px;
 }
 
 .search-box input::placeholder {
@@ -202,20 +202,20 @@ body {
 }
 
 .search-glass-circle {
-    width: 32px; /* Уменьшили размер */
-    height: 32px; /* Уменьшили размер */
+    width: 32px;
+    height: 32px;
     background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
     border-radius: var(--radius-circle);
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
-    margin-left: auto; /* Сдвигаем вправо */
+    margin-left: auto;
 }
 
 .search-glass-circle i {
     color: white;
-    font-size: 0.9rem; /* Уменьшили иконку */
+    font-size: 0.9rem;
 }
 
 /* Профиль - правильное позиционирование */
@@ -251,7 +251,7 @@ body {
 
 /* Убираем старое описание компании (перенесем в баннер) */
 .company-description {
-    display: none; /* Скрываем старое описание */
+    display: none;
 }
 
 /* ===== БАННЕР С ПЕРЕКЛЮЧЕНИЕМ ===== */
@@ -353,33 +353,41 @@ body {
 
 .products-header {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
     margin-bottom: var(--space-lg);
+    text-align: center;
+    gap: var(--space-sm);
 }
 
 .products-header h2 {
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     font-weight: 700;
     color: var(--color-text);
+    width: 100%;
+    text-align: center;
+    order: -1;
 }
 
-/* Сортировка */
+/* Сортировка - УМЕНЬШЕННАЯ ВЕРСИЯ */
 .sort-select-glass {
     position: relative;
-    min-width: 150px;
+    min-width: 140px;
+    max-width: 200px;
+    width: auto;
 }
 
 .sort-select-glass select {
     width: 100%;
-    padding: 12px 40px 12px 16px;
+    padding: 10px 32px 10px 12px;
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: var(--radius-md);
     color: var(--color-text);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     cursor: pointer;
     appearance: none;
     outline: none;
@@ -388,11 +396,12 @@ body {
 
 .sort-select-glass i {
     position: absolute;
-    right: 16px;
+    right: 12px;
     top: 50%;
     transform: translateY(-50%);
     color: var(--color-text-muted);
     pointer-events: none;
+    font-size: 0.8rem;
 }
 
 /* ===== СЕТКА ТОВАРОВ ===== */
@@ -620,7 +629,7 @@ body {
     box-shadow: var(--shadow-glass);
     z-index: 999;
     padding: 12px;
-    overflow: hidden; /* Важно! Не даем кнопкам вылезти */
+    overflow: hidden;
 }
 
 .nav-inner {
@@ -629,7 +638,7 @@ body {
     justify-content: space-around;
     position: relative;
     width: 100%;
-    min-width: 0; /* Предотвращаем растягивание на Android */
+    min-width: 0;
 }
 
 .nav-btn {
@@ -648,9 +657,9 @@ body {
     flex: 1;
     text-decoration: none;
     font-family: inherit;
-    min-width: 0; /* Критично для Android! */
-    max-width: 25%; /* Ограничиваем ширину каждой кнопки */
-    overflow: hidden; /* Обрезаем если что-то вылазит */
+    min-width: 0;
+    max-width: 25%;
+    overflow: hidden;
 }
 
 .nav-btn i {
@@ -664,7 +673,7 @@ body {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 100%; /* Не даем тексту выйти за границы */
+    max-width: 100%;
     display: block;
 }
 
@@ -674,7 +683,7 @@ body {
     height: 24px;
     background: rgba(255, 255, 255, 0.1);
     flex-shrink: 0;
-    display: block !important; /* Принудительно показываем на Android */
+    display: block !important;
 }
 
 .nav-badge {
@@ -693,7 +702,7 @@ body {
 
 /* ===== ПОПАП ФИЛЬТРОВ (КОМПАКТНЫЙ ДЛЯ ANDROID) ===== */
 .filter-popup.glass-popup {
-    max-height: 70vh; /* Уменьшаем высоту */
+    max-height: 70vh;
     overflow-y: auto;
 }
 
@@ -896,8 +905,8 @@ body {
     left: 50%;
     transform: translate(-50%, -50%) scale(0.9);
     width: 90%;
-    max-width: 380px; /* Уменьшил для компактности */
-    max-height: 70vh; /* Уменьшил высоту */
+    max-width: 380px;
+    max-height: 70vh;
     background: rgba(30, 30, 46, 0.95);
     backdrop-filter: blur(30px);
     -webkit-backdrop-filter: blur(30px);
@@ -968,7 +977,7 @@ body {
 
 .popup-body {
     padding: var(--space-lg);
-    max-height: calc(70vh - 80px); /* Уменьшил для компактности */
+    max-height: calc(70vh - 80px);
     overflow-y: auto;
 }
 
@@ -1236,8 +1245,8 @@ body {
     }
     
     .search-glass-circle {
-        width: 30px; /* Уменьшили для маленьких экранов */
-        height: 30px; /* Уменьшили для маленьких экранов */
+        width: 30px;
+        height: 30px;
     }
     
     .products-grid {
@@ -1287,6 +1296,20 @@ body {
     
     .banner-content p {
         font-size: 0.9rem;
+    }
+    
+    /* Адаптивность для заголовка рекомендаций */
+    .products-header h2 {
+        font-size: 1.2rem;
+    }
+    
+    .sort-select-glass {
+        min-width: 130px;
+    }
+    
+    .sort-select-glass select {
+        padding: 9px 28px 9px 10px;
+        font-size: 0.8rem;
     }
 }
 
@@ -1364,16 +1387,16 @@ body {
     .search-box input {
         padding: 8px;
         font-size: 0.8rem;
-        margin-right: 6px; /* Уменьшили отступ на маленьких экранах */
+        margin-right: 6px;
     }
     
     .search-glass-circle {
-        width: 28px; /* Ещё меньше на очень маленьких экранах */
-        height: 28px; /* Ещё меньше на очень маленьких экранах */
+        width: 28px;
+        height: 28px;
     }
     
     .search-glass-circle i {
-        font-size: 0.8rem; /* Ещё меньше иконка */
+        font-size: 0.8rem;
     }
     
     .bottom-nav-glass {
@@ -1405,29 +1428,44 @@ body {
     .banner-content p {
         font-size: 0.8rem;
     }
+    
+    /* Для очень маленьких экранов */
+    .products-header h2 {
+        font-size: 1.1rem;
+    }
+    
+    .sort-select-glass {
+        min-width: 110px;
+    }
+    
+    .sort-select-glass select {
+        padding: 7px 24px 7px 8px;
+        font-size: 0.75rem;
+    }
+    
+    .sort-select-glass i {
+        right: 8px;
+        font-size: 0.7rem;
+    }
 }
 
 /* ===== ИСПРАВЛЕНИЯ ДЛЯ КОНКРЕТНЫХ БАГОВ ANDROID ===== */
-/* Фикс для текста, который пропадает на Android */
 .android-fix-logo {
     display: flex !important;
     visibility: visible !important;
 }
 
-/* Фикс для нижней панели - перегородки всегда видны */
 .android-fix-divider {
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
 }
 
-/* Фикс для кнопок, вылезающих за границы */
 .android-fix-button-container {
     overflow: hidden !important;
     max-width: 100% !important;
 }
 
-/* Фикс для поиска - правильное позиционирование */
 @media screen and (max-device-width: 1024px) {
     .header-top-row {
         display: flex !important;
@@ -1441,7 +1479,6 @@ body {
 }
 
 /* ===== ОСОБЫЕ ПРАВИЛА ДЛЯ ANDROID WEBVIEW ===== */
-/* Это поможет на устройствах с WebView (Telegram на Android) */
 _::-webkit-full-page-media, _:future, :root .logo-text {
     display: flex !important;
 }
@@ -1475,7 +1512,6 @@ _::-webkit-full-page-media, _:future, :root .nav-divider {
 }
 
 /* ===== СТИЛИ ДЛЯ КНОПКИ СВЯЗИ В НИЖНЕЙ ПАНЕЛИ ===== */
-/* Убедимся что кнопка "Связь" не вылазит */
 #navContact.nav-btn {
     min-width: 0;
     max-width: 25%;
@@ -1491,7 +1527,6 @@ _::-webkit-full-page-media, _:future, :root .nav-divider {
 }
 
 /* ===== ФИНАЛЬНЫЕ ОБЩИЕ ПРАВИЛА ===== */
-/* Гарантируем что все элементы остаются в своих контейнерах */
 * {
     max-width: 100%;
     box-sizing: border-box;
@@ -1502,13 +1537,11 @@ img, svg, video {
     height: auto;
 }
 
-/* Фикс для flex-элементов на Android */
 .flex-fix-android {
     min-width: 0;
     flex-shrink: 1;
 }
 
-/* Улучшаем читаемость на маленьких экранах */
 @media (max-width: 400px) {
     body {
         font-size: 14px;
@@ -1519,11 +1552,10 @@ img, svg, video {
     }
     
     .btn-cart, .btn-fav, .nav-btn {
-        touch-action: manipulation; /* Улучшаем тач-события на Android */
+        touch-action: manipulation;
     }
 }
 
-/* Фикс для безопасных зон (вырезов на iPhone) */
 @supports (padding: max(0px)) {
     body {
         padding-left: max(0px, env(safe-area-inset-left));
@@ -1534,6 +1566,4 @@ img, svg, video {
     .bottom-nav-glass {
         bottom: max(20px, env(safe-area-inset-bottom));
     }
-}
-
-/* Конец файла styles.css */
+            }
