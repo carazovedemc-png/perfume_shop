@@ -211,7 +211,7 @@ const PRODUCTS_DATA = [
         notes: ["ром", "кожа", "ваниль"]
     },
     {
-      id: 12,
+      id: 13,
         name: "ffff",
         description: "Темный и загадочный аромат с нотами рома, кожи и ванили.",
         price: 400
