@@ -211,20 +211,20 @@ const PRODUCTS_DATA = [
         notes: ["ром", "кожа", "ваниль"]
     },
     {
-      id: ,
-        name: "",
-        description: "",
-        price: 0,
-        oldPrice: 0,
-        category: "",
-        volume: ,
-        rating: ,
-        reviews: ,
+      id: 13,
+        name: "лох демик",
+        description: "ебалал",
+        price: 100,
+        oldPrice: 199,
+        category: "arabian",
+        volume: 50,
+        rating: 4.5,
+        reviews: 1,
         image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-        badge: "",
-        inStock: ,
-        popular: ,
-        notes: ["", "", ""]
+        badge: "new",
+        inStock: true,
+        popular: true,
+        notes: ["ваниль", "клубника", "хуйня"]
     }
 ];
  
