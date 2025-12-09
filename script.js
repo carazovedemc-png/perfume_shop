@@ -738,3 +738,515 @@ function removeFromFavorites(productId) {
     
     showNotification('Товар удален из избранного', 'info');
 }
+
+// ===== ФИЛЬТРЫ И ПОИСК =====
+function filterProducts() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const priceMin = parseInt(document.getElementById('filterPriceMin').value) || 0;
+    const priceMax = parseInt(document.getElementById('filterPriceMax').value) || 50000;
+    const sortBy = document.getElementById('sortBy').value;
+    
+    // Получаем выбранные категории
+    const selectedCategories = Array.from(document.querySelectorAll('.filter-category:checked'))
+        .map(cb => cb.value);
+    
+    // Получаем выбранные объемы
+    const selectedVolumes = Array.from(document.querySelectorAll('.filter-volume:checked'))
+        .map(cb => parseInt(cb.value));
+    
+    // Получаем выбранный рейтинг
+    const selectedRating = document.querySelector('input[name="filterRating"]:checked');
+    const minRating = selectedRating ? parseFloat(selectedRating.value) : 0;
+
+    // Фильтрация
+    filteredProducts = allProducts.filter(product => {
+        // Поиск
+        if (searchTerm && !product.name.toLowerCase().includes(searchTerm) && 
+            !product.description.toLowerCase().includes(searchTerm)) {
+            return false;
+        }
+        
+        // Категории
+        if (selectedCategories.length > 0 && !selectedCategories.includes(product.category)) {
+            return false;
+        }
+        
+        // Цена
+        if (product.price < priceMin || product.price > priceMax) {
+            return false;
+        }
+        
+        // Объем
+        if (selectedVolumes.length > 0 && !selectedVolumes.includes(product.volume)) {
+            return false;
+        }
+        
+        // Рейтинг
+        if (product.rating < minRating) {
+            return false;
+        }
+        
+        return true;
+    });
+    
+    // Сортировка
+    switch(sortBy) {
+        case 'new':
+            filteredProducts.sort((a, b) => b.id - a.id);
+            break;
+        case 'price-low':
+            filteredProducts.sort((a, b) => a.price - b.price);
+            break;
+        case 'price-high':
+            filteredProducts.sort((a, b) => b.price - a.price);
+            break;
+        case 'rating':
+            filteredProducts.sort((a, b) => b.rating - a.rating);
+            break;
+        case 'popular':
+        default:
+            filteredProducts.sort((a, b) => {
+                if (a.popular && !b.popular) return -1;
+                if (!a.popular && b.popular) return 1;
+                return b.reviews - a.reviews;
+            });
+            break;
+    }
+    
+    // Сбрасываем на первую страницу
+    currentPage = 1;
+    renderProducts();
+}
+
+function resetFilters() {
+    // Сбрасываем значения фильтров
+    document.getElementById('searchInput').value = '';
+    document.getElementById('filterPriceMin').value = '';
+    document.getElementById('filterPriceMax').value = '';
+    document.getElementById('sortBy').value = 'popular';
+    
+    // Сбрасываем чекбоксы категорий
+    document.querySelectorAll('.filter-category').forEach(cb => {
+        cb.checked = true;
+    });
+    
+    // Сбрасываем чекбоксы объемов
+    document.querySelectorAll('.filter-volume').forEach(cb => {
+        cb.checked = false;
+    });
+    
+    // Сбрасываем рейтинг
+    document.querySelector('input[name="filterRating"][value="0"]').checked = true;
+    
+    // Закрываем попап фильтров
+    closeFilterPopup();
+    
+    // Применяем фильтры
+    filterProducts();
+    
+    showNotification('Фильтры сброшены', 'info');
+}
+
+function setupFilterPopup() {
+    const filterContent = document.querySelector('.filter-content');
+    if (!filterContent) return;
+    
+    // Создаем HTML для фильтров
+    filterContent.innerHTML = `
+        <div class="filter-group">
+            <h4>Категории</h4>
+            <div class="checkbox-group">
+                <label class="checkbox">
+                    <input type="checkbox" class="filter-category" value="arabian" checked>
+                    <span class="checkmark"></span>
+                    Арабские духи
+                </label>
+                <label class="checkbox">
+                    <input type="checkbox" class="filter-category" value="premium" checked>
+                    <span class="checkmark"></span>
+                    Премиум
+                </label>
+                <label class="checkbox">
+                    <input type="checkbox" class="filter-category" value="affordable" checked>
+                    <span class="checkmark"></span>
+                    Доступные
+                </label>
+            </div>
+        </div>
+        
+        <div class="filter-group">
+            <h4>Цена, ₽</h4>
+            <div class="price-range">
+                <div class="range-inputs">
+                    <input type="number" id="filterPriceMin" placeholder="0" min="0">
+                    <span class="range-divider">-</span>
+                    <input type="number" id="filterPriceMax" placeholder="50000" min="0">
+                </div>
+                <div class="range-slider">
+                    <input type="range" id="filterPriceRange" min="0" max="50000" value="25000">
+                </div>
+            </div>
+        </div>
+        
+        <div class="filter-group">
+            <h4>Объем, мл</h4>
+            <div class="checkbox-group">
+                <label class="checkbox">
+                    <input type="checkbox" class="filter-volume" value="30">
+                    <span class="checkmark"></span>
+                    30 мл
+                </label>
+                <label class="checkbox">
+                    <input type="checkbox" class="filter-volume" value="50">
+                    <span class="checkmark"></span>
+                    50 мл
+                </label>
+                <label class="checkbox">
+                    <input type="checkbox" class="filter-volume" value="100">
+                    <span class="checkmark"></span>
+                    100 мл
+                </label>
+                <label class="checkbox">
+                    <input type="checkbox" class="filter-volume" value="200">
+                    <span class="checkmark"></span>
+                    200 мл
+                </label>
+            </div>
+        </div>
+        
+        <div class="filter-group">
+            <h4>Рейтинг</h4>
+            <div class="rating-filter">
+                <label class="star-rating">
+                    <input type="radio" name="filterRating" value="0" checked>
+                    <span class="stars">
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>
+                    </span>
+                    <span class="rating-text">Любой</span>
+                </label>
+                <label class="star-rating">
+                    <input type="radio" name="filterRating" value="3">
+                    <span class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>
+                    </span>
+                    <span class="rating-text">3 и выше</span>
+                </label>
+                <label class="star-rating">
+                    <input type="radio" name="filterRating" value="4">
+                    <span class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="far fa-star"></i>
+                    </span>
+                    <span class="rating-text">4 и выше</span>
+                </label>
+                <label class="star-rating">
+                    <input type="radio" name="filterRating" value="4.5">
+                    <span class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </span>
+                    <span class="rating-text">4.5 и выше</span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="filter-buttons">
+            <button class="btn-filter-apply" id="applyFilterBtn">
+                <i class="fas fa-check"></i> Применить
+            </button>
+            <button class="btn-filter-reset" id="resetFilterBtn">
+                <i class="fas fa-redo"></i> Сбросить
+            </button>
+        </div>
+    `;
+    
+    // Настройка слайдера цены
+    const priceRange = document.getElementById('filterPriceRange');
+    const priceMinInput = document.getElementById('filterPriceMin');
+    const priceMaxInput = document.getElementById('filterPriceMax');
+    
+    if (priceRange && priceMinInput && priceMaxInput) {
+        priceRange.addEventListener('input', function() {
+            const value = parseInt(this.value);
+            priceMinInput.value = Math.max(0, value - 10000);
+            priceMaxInput.value = Math.min(50000, value + 10000);
+        });
+        
+        priceMinInput.addEventListener('change', function() {
+            const min = parseInt(this.value) || 0;
+            const max = parseInt(priceMaxInput.value) || 50000;
+            priceRange.value = Math.floor((min + max) / 2);
+        });
+        
+        priceMaxInput.addEventListener('change', function() {
+            const min = parseInt(priceMinInput.value) || 0;
+            const max = parseInt(this.value) || 50000;
+            priceRange.value = Math.floor((min + max) / 2);
+        });
+    }
+    
+    // Обработчики для кнопок фильтра
+    document.getElementById('applyFilterBtn')?.addEventListener('click', function() {
+        filterProducts();
+        closeFilterPopup();
+        showNotification('Фильтры применены', 'success');
+    });
+    
+    document.getElementById('resetFilterBtn')?.addEventListener('click', resetFilters);
+}
+
+// ===== МОДАЛЬНОЕ ОКНО С ДЕТАЛЯМИ ТОВАРА =====
+function showProductDetailsModal(product) {
+    // Закрываем другие модальные окна
+    closeCartPopup();
+    closeFavoritesPopup();
+    closeFilterPopup();
+    
+    const modal = document.createElement('div');
+    modal.className = 'product-details-modal';
+    modal.id = 'productDetailsModal';
+    
+    const isInCart = cart.some(item => item.id === product.id);
+    const isInFavorites = favorites.some(item => item.id === product.id);
+    
+    // Расчет скидки
+    const discountPercent = product.oldPrice > 0 
+        ? Math.round((1 - product.price / product.oldPrice) * 100)
+        : 0;
+    
+    // Определяем бейдж
+    let badgeHtml = '';
+    if (product.badge === 'new') {
+        badgeHtml = '<span class="modal-badge modal-badge-new">Новинка</span>';
+    } else if (product.badge === 'sale') {
+        badgeHtml = '<span class="modal-badge modal-badge-sale">Скидка</span>';
+    } else if (product.badge === 'hit') {
+        badgeHtml = '<span class="modal-badge modal-badge-hit">Хит</span>';
+    }
+    
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="modal-close-btn" id="closeDetailsModal">
+                    <i class="fas fa-times"></i>
+                </button>
+                ${badgeHtml}
+            </div>
+            
+            <div class="modal-body">
+                <div class="product-image-section">
+                    <img src="${product.image}" alt="${product.name}" class="modal-product-image">
+                </div>
+                
+                <div class="product-info-section">
+                    <h2 class="modal-product-title">${product.name}</h2>
+                    
+                    <div class="product-meta">
+                        <span class="meta-category">
+                            <i class="fas fa-tag"></i> ${getCategoryName(product.category)}
+                        </span>
+                        <span class="meta-volume">
+                            <i class="fas fa-weight"></i> ${product.volume} мл
+                        </span>
+                        <span class="meta-stock ${product.inStock ? 'in-stock' : 'out-of-stock'}">
+                            <i class="fas ${product.inStock ? 'fa-check-circle' : 'fa-times-circle'}"></i> 
+                            ${product.inStock ? 'В наличии' : 'Нет в наличии'}
+                        </span>
+                    </div>
+                    
+                    <div class="product-rating-section">
+                        <div class="modal-rating">
+                            <div class="modal-stars">
+                                ${renderStars(product.rating)}
+                            </div>
+                            <span class="modal-rating-value">${product.rating}</span>
+                            <span class="modal-reviews">(${product.reviews} отзывов)</span>
+                        </div>
+                    </div>
+                    
+                    <div class="product-description">
+                        <h3><i class="fas fa-info-circle"></i> Описание</h3>
+                        <p>${product.description}</p>
+                    </div>
+                    
+                    <div class="product-notes">
+                        <h3><i class="fas fa-wind"></i> Ноты аромата</h3>
+                        <div class="notes-container">
+                            ${product.notes.map(note => `<span class="note-tag">${note}</span>`).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="product-pricing">
+                        <div class="price-section">
+                            <div class="current-price">${product.price.toLocaleString()} ₽</div>
+                            ${product.oldPrice > 0 ? `
+                                <div class="old-price-section">
+                                    <span class="old-price">${product.oldPrice.toLocaleString()} ₽</span>
+                                    <span class="discount-badge">-${discountPercent}%</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                    
+                    <div class="product-actions-modal">
+                        <button class="btn-add-to-cart ${isInCart ? 'in-cart' : ''}" data-id="${product.id}">
+                            <i class="fas ${isInCart ? 'fa-check' : 'fa-shopping-cart'}"></i>
+                            ${isInCart ? 'В корзине' : 'Добавить в корзину'}
+                        </button>
+                        <button class="btn-add-to-fav ${isInFavorites ? 'active' : ''}" data-id="${product.id}">
+                            <i class="${isInFavorites ? 'fas' : 'far'} fa-heart"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="product-features">
+                        <div class="feature">
+                            <i class="fas fa-shipping-fast"></i>
+                            <span>Бесплатная доставка по Симферополю</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>100% оригинальная продукция</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-award"></i>
+                            <span>Гарантия качества</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Добавляем оверлей
+    const overlay = document.createElement('div');
+    overlay.className = 'product-modal-overlay';
+    overlay.id = 'productModalOverlay';
+    document.body.appendChild(overlay);
+    
+    // Показываем с анимацией
+    setTimeout(() => {
+        modal.classList.add('show');
+        overlay.classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }, 10);
+    
+    // Добавляем обработчики для кнопок в модальном окне
+    setTimeout(() => {
+        const closeBtn = document.getElementById('closeDetailsModal');
+        const overlay = document.getElementById('productModalOverlay');
+        const cartBtn = modal.querySelector('.btn-add-to-cart');
+        const favBtn = modal.querySelector('.btn-add-to-fav');
+        
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closeProductDetailsModal);
+        }
+        
+        if (overlay) {
+            overlay.addEventListener('click', closeProductDetailsModal);
+        }
+        
+        if (cartBtn) {
+            cartBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const productId = parseInt(this.dataset.id);
+                toggleCart(productId, e);
+                
+                // Обновляем состояние кнопки
+                setTimeout(() => {
+                    const isNowInCart = cart.some(item => item.id === productId);
+                    if (isNowInCart) {
+                        this.innerHTML = '<i class="fas fa-check"></i> В корзине';
+                        this.classList.add('in-cart');
+                    } else {
+                        this.innerHTML = '<i class="fas fa-shopping-cart"></i> Добавить в корзину';
+                        this.classList.remove('in-cart');
+                    }
+                }, 100);
+            });
+        }
+        
+        if (favBtn) {
+            favBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const productId = parseInt(this.dataset.id);
+                toggleFavorite(productId, e);
+                
+                // Обновляем состояние кнопки
+                setTimeout(() => {
+                    const isNowInFav = favorites.some(item => item.id === productId);
+                    if (isNowInFav) {
+                        this.innerHTML = '<i class="fas fa-heart"></i>';
+                        this.classList.add('active');
+                    } else {
+                        this.innerHTML = '<i class="far fa-heart"></i>';
+                        this.classList.remove('active');
+                    }
+                }, 100);
+            });
+        }
+        
+        // Обработчик клавиши ESC
+        const escHandler = function(e) {
+            if (e.key === 'Escape') {
+                closeProductDetailsModal();
+            }
+        };
+        document.addEventListener('keydown', escHandler);
+        
+        // Сохраняем обработчик для удаления
+        modal._escHandler = escHandler;
+    }, 20);
+}
+
+function closeProductDetailsModal() {
+    const modal = document.getElementById('productDetailsModal');
+    const overlay = document.getElementById('productModalOverlay');
+    
+    if (modal) {
+        modal.classList.remove('show');
+        // Удаляем обработчик ESC
+        if (modal._escHandler) {
+            document.removeEventListener('keydown', modal._escHandler);
+        }
+        
+        setTimeout(() => {
+            if (modal.parentNode) {
+                modal.parentNode.removeChild(modal);
+            }
+        }, 300);
+    }
+    
+    if (overlay) {
+        overlay.classList.remove('show');
+        setTimeout(() => {
+            if (overlay.parentNode) {
+                overlay.parentNode.removeChild(overlay);
+            }
+        }, 300);
+    }
+    
+    document.body.style.overflow = 'auto';
+}
+
+// ===== УТИЛИТЫ =====
+function getCategoryName(category) {
+    const categories = {
+        arabian: 'Арабские духи',
+        premium: 'Премиум коллекция',
+        affordable: 'Доступ
