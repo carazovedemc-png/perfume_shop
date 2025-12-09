@@ -1789,4 +1789,190 @@ function closeFavoritesPopup() {
 
 function openFilterPopup() {
     document.getElementById('filterPopup').classList.add('show');
-    document.getElementById('overl
+    document.getElementById('overlay').classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeFilterPopup() {
+    document.getElementById('filterPopup').classList.remove('show');
+    document.getElementById('overlay').classList.remove('show');
+    document.body.style.overflow = 'auto';
+}
+
+// ===== СТАРОЕ МОДАЛЬНОЕ ОКНО ТОВАРА (ОСТАВЛЕНО ДЛЯ СОВМЕСТИМОСТИ) =====
+function showProductModal(product) {
+    const modal = document.getElementById('productModal');
+    const modalBody = document.getElementById('modalBody');
+    
+    if (!modal || !modalBody) return;
+    
+    const isInCart = cart.some(item => item.id === product.id);
+    const isInFavorites = favorites.some(item => item.id === product.id);
+    
+    const discountPercent = product.oldPrice > 0 
+        ? Math.round((1 - product.price / product.oldPrice) * 100)
+        : 0;
+    
+    modalBody.innerHTML = `
+        <div class="modal-product">
+            <div class="modal-product-images">
+                <img src="${product.image}" alt="${product.name}" class="modal-main-image">
+            </div>
+            <div class="modal-product-info">
+                <div class="modal-badges">
+                    ${product.badge === 'new' ? '<span class="badge-new">Новинка</span>' : ''}
+                    ${product.badge === 'sale' ? '<span class="badge-sale">Скидка</span>' : ''}
+                    ${product.badge === 'hit' ? '<span class="badge-hit">Хит</span>' : ''}
+                </div>
+                <h2 class="modal-product-title">${product.name}</h2>
+                <div class="modal-product-meta">
+                    <span class="modal-category">${getCategoryName(product.category)}</span>
+                    <span class="modal-volume">${product.volume} мл</span>
+                    <div class="modal-rating">
+                        ${renderStars(product.rating)}
+                        <span>${product.rating} (${product.reviews} отзывов)</span>
+                    </div>
+                </div>
+                
+                <div class="modal-description">
+                    <h3>Описание</h3>
+                    <p>${product.description}</p>
+                </div>
+                
+                <div class="modal-notes">
+                    <h3>Ноты аромата</h3>
+                    <div class="notes-tags">
+                        ${product.notes.map(note => `<span class="note-tag">${note}</span>`).join('')}
+                    </div>
+                </div>
+                
+                <div class="modal-prices">
+                    <div class="modal-price-current">
+                        ${product.price.toLocaleString()} ₽
+                    </div>
+                    ${product.oldPrice > 0 ? `
+                        <div class="modal-price-old">
+                            <span>${product.oldPrice.toLocaleString()} ₽</span>
+                            <span class="modal-discount">-${discountPercent}%</span>
+                        </div>
+                    ` : ''}
+                </div>
+                
+                <div class="modal-actions">
+                    <button class="modal-btn-cart ${isInCart ? 'in-cart' : ''}" onclick="toggleCart(${product.id})">
+                        ${isInCart ? '<i class="fas fa-check"></i> В корзине' : '<i class="fas fa-shopping-cart"></i> В корзину'}
+                    </button>
+                    <button class="modal-btn-fav ${isInFavorites ? 'active' : ''}" onclick="toggleFavorite(${product.id})">
+                        <i class="${isInFavorites ? 'fas' : 'far'} fa-heart"></i>
+                        ${isInFavorites ? 'В избранном' : 'В избранное'}
+                    </button>
+                </div>
+                
+                <div class="modal-features">
+                    <div class="feature-item">
+                        <i class="fas fa-truck"></i>
+                        <span>Бесплатная доставка от 5000₽</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Гарантия подлинности 100%</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-undo"></i>
+                        <span>Возврат в течение 14 дней</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    modal.classList.add('show');
+    document.getElementById('overlay').classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeProductModal() {
+    const modal = document.getElementById('productModal');
+    if (modal) {
+        modal.classList.remove('show');
+        document.getElementById('overlay').classList.remove('show');
+        document.body.style.overflow = 'auto';
+    }
+}
+
+// ===== ИНИЦИАЛИЗАЦИЯ =====
+// Добавляем стили для анимаций
+const animationStyles = document.createElement('style');
+animationStyles.textContent = `
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes fadeOut {
+        from {
+            opacity: 1;
+        }
+        to {
+            opacity: 0;
+        }
+    }
+    
+    @keyframes modalSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes modalFadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+`;
+document.head.appendChild(animationStyles);
+
+// ===== ГЛОБАЛЬНЫЙ ЭКСПОРТ ДЛЯ ОТЛАДКИ =====
+window.app = {
+    user,
+    allProducts,
+    cart,
+    favorites,
+    filteredProducts,
+    filterProducts,
+    toggleCart,
+    toggleFavorite,
+    showProductModal,
+    closeProductModal,
+    closeProductDetailsModal,
+    showProductDetailsModal,
+    resetFilters,
+    openCartPopup,
+    openFavoritesPopup,
+    openFilterPopup,
+    updateCartPopup,
+    updateFavoritesPopup,
+    updateQuantity,
+    removeFromCart,
+    removeFromFavorites,
+    updateCartCount,
+    updateFavoritesCount,
+    goToPage,
+    renderProducts
+};
+
+console.log('Aura Atelier приложение инициализировано');
