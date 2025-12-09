@@ -226,7 +226,7 @@ const PRODUCTS_DATA = [
     badge: null,  // или "new", "sale", "hit"
     inStock: true,
     popular: false,
-    notes: ["нота1", "нота2", "нота3"]
+    notes: ["нота1", "нота", "нота3"]
 },  // <- ЗАПЯТАЯ ЗДЕСЬ ОБЯЗАТЕЛЬНО!
 
 ];  // закрывающая скобка массива
