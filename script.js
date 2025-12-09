@@ -224,8 +224,8 @@ const PRODUCTS_DATA = [
         inStock: true,
         popular: false,
         notes: "кожа" "сладкие"
-        },
-       {;
+        };
+ 
 // ===== ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ =====
 document.addEventListener('DOMContentLoaded', function() {
     initApp();
