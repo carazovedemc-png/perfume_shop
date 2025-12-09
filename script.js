@@ -21,7 +21,7 @@ const PRODUCTS_DATA = [
     {
         id: 1,
         name: "Aris 222 VIP Bleck",
-        description: "демо",
+        description: "доставка по Симферополю бесплатно",
         price: 350,
         oldPrice: 500,
         category: "arabian",
@@ -36,7 +36,7 @@ const PRODUCTS_DATA = [
     },
     {
         id: 2,
-        name: "DALAL",
+        name: "Dalal",
         description: "Доставка по Симферополю бесплатно.",
         price: 350,
         oldPrice: 0,
@@ -52,9 +52,9 @@ const PRODUCTS_DATA = [
     },
     {
         id: 3,
-        name: "Lacosta green",
+        name: "Black Opium",
         description: "доставка по Симферополю бесплатно",
-        price: 359,
+        price: 350,
         oldPrice: 0,
         category: "affordable",
         volume: 100,
