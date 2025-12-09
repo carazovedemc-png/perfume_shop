@@ -44,7 +44,7 @@ const PRODUCTS_DATA = [
         volume: 100,
         rating: 4.9,
         reviews: 100,
-        image: "https://iimg.su/i/ebd6aA",
+        image: "https://sun9-41.userapi.com/s/v1/ig2/vkEyo2KDCGJhawzJ2PSYbdY9h4EOrh30HrjwefVSCbYOSqJPoXruX0WobRyxKbRBw8BvdlL8sejPGZ4p-RrVjUOO.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=m0AEgal8BacMT-TAXZva7xEf1ZAAdIa_7ZvmQJYgIsY&cs=360x0",
         badge: "hit",
         inStock: true,
         popular: true,
