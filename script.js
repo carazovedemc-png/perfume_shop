@@ -209,8 +209,21 @@ const PRODUCTS_DATA = [
         inStock: true,
         popular: true,
         notes: ["ром", "кожа", "ваниль"]
-    }
-];
+    },
+    {
+      id: 12,
+        name: "ffff",
+        description: "Темный и загадочный аромат с нотами рома, кожи и ванили.",
+        price: 400
+        category: "arabian",
+        volume: 50,
+        rating: 1.1,
+        reviews: 1.
+        image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+        badge: null,
+        inStock: true,
+        popular: false,
+        notes: "кожа" "сладкие"
 
 // ===== ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ =====
 document.addEventListener('DOMContentLoaded', function() {
