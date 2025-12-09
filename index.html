@@ -463,5 +463,19 @@
             }
         });
     </script>
+
+<script>
+    // Инициализация клика по карточкам товаров
+    document.addEventListener('DOMContentLoaded', function() {
+        // Эта функция уже добавлена в script.js
+        // Добавляем обработчик клика на карточки товаров
+        setTimeout(() => {
+            if (window.app && window.app.setupProductCardClick) {
+                window.app.setupProductCardClick();
+            }
+        }, 1000);
+    });
+</script>
+
 </body>
             </html>
