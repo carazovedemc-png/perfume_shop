@@ -16,7 +16,7 @@ const STORAGE_KEYS = {
     USER: 'aura_atelier_user'
 };
 
-// Примеры товаров (в реальном приложении загружаются с сервера)
+// РЕДАКТОР КАРТОЧЕК
 const PRODUCTS_DATA = [
     {
         id: 1,
