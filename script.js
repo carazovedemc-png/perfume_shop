@@ -209,8 +209,27 @@ const PRODUCTS_DATA = [
         inStock: true,
         popular: true,
         notes: ["ром", "кожа", "ваниль"]
-    }
-];
+    },
+// ... существующие товары 1-12
+
+{
+    id: 13,  // УВЕЛИЧЬ ID на 1
+    name: "ТВОЙ НОВЫЙ ТОВАР",
+    description: "Описание",
+    price: 5000,
+    oldPrice: 0,  // если нет старой цены - оставь 0
+    category: "arabian",  // или "premium", "affordable"
+    volume: 100,
+    rating: 4.5,
+    reviews: 0,
+    image: "ССЫЛКА_НА_КАРТИНКУ.jpg",
+    badge: null,  // или "new", "sale", "hit"
+    inStock: true,
+    popular: false,
+    notes: ["нота1", "нота2", "нота3"]
+},  // <- ЗАПЯТАЯ ЗДЕСЬ ОБЯЗАТЕЛЬНО!
+
+];  // закрывающая скобка массива
 
 // ===== ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ =====
 document.addEventListener('DOMContentLoaded', function() {
