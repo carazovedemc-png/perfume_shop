@@ -1544,4 +1544,205 @@ window.app = {
     openFilterPopup
 };
 
+// ===== ОБРАБОТЧИК КЛИКА НА КАРТОЧКУ ТОВАРА =====
+function setupProductCardClick() {
+    document.addEventListener('click', function(event) {
+        const productCard = event.target.closest('.product-card');
+        if (productCard && !event.target.closest('.btn-cart') && !event.target.closest('.btn-fav')) {
+            const productId = parseInt(productCard.dataset.id);
+            const product = allProducts.find(p => p.id === productId);
+            if (product) {
+                showProductDetailsModal(product);
+            }
+        }
+    });
+}
+
+// ===== МОДАЛЬНОЕ ОКНО С ДЕТАЛЯМИ ТОВАРА =====
+function showProductDetailsModal(product) {
+    const modal = document.createElement('div');
+    modal.className = 'product-details-modal';
+    modal.id = 'productDetailsModal';
+    
+    const isInCart = cart.some(item => item.id === product.id);
+    const isInFavorites = favorites.some(item => item.id === product.id);
+    
+    // Расчет скидки
+    const discountPercent = product.oldPrice > 0 
+        ? Math.round((1 - product.price / product.oldPrice) * 100)
+        : 0;
+    
+    // Определяем бейдж
+    let badgeHtml = '';
+    if (product.badge === 'new') {
+        badgeHtml = '<span class="modal-badge modal-badge-new">Новинка</span>';
+    } else if (product.badge === 'sale') {
+        badgeHtml = '<span class="modal-badge modal-badge-sale">Скидка</span>';
+    } else if (product.badge === 'hit') {
+        badgeHtml = '<span class="modal-badge modal-badge-hit">Хит</span>';
+    }
+    
+    // Создаем HTML для нот аромата
+    const notesHtml = product.notes ? 
+        product.notes.map(note => `<span class="note-tag">${note}</span>`).join('') : 
+        '';
+    
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="modal-close-btn" onclick="closeProductDetailsModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+                ${badgeHtml}
+            </div>
+            
+            <div class="modal-body">
+                <div class="product-image-section">
+                    <img src="${product.image}" alt="${product.name}" class="modal-product-image">
+                </div>
+                
+                <div class="product-info-section">
+                    <h2 class="modal-product-title">${product.name}</h2>
+                    
+                    <div class="product-meta">
+                        <span class="meta-category">
+                            <i class="fas fa-tag"></i> ${getCategoryName(product.category)}
+                        </span>
+                        <span class="meta-volume">
+                            <i class="fas fa-weight"></i> ${product.volume} мл
+                        </span>
+                        <span class="meta-stock ${product.inStock ? 'in-stock' : 'out-of-stock'}">
+                            <i class="fas ${product.inStock ? 'fa-check-circle' : 'fa-times-circle'}"></i> 
+                            ${product.inStock ? 'В наличии' : 'Нет в наличии'}
+                        </span>
+                    </div>
+                    
+                    <div class="product-rating-section">
+                        <div class="modal-rating">
+                            <div class="modal-stars">
+                                ${renderStars(product.rating)}
+                            </div>
+                            <span class="modal-rating-value">${product.rating}</span>
+                            <span class="modal-reviews">(${product.reviews} отзывов)</span>
+                        </div>
+                    </div>
+                    
+                    <div class="product-description">
+                        <h3><i class="fas fa-info-circle"></i> Описание</h3>
+                        <p>${product.description}</p>
+                    </div>
+                    
+                    <div class="product-notes">
+                        <h3><i class="fas fa-wind"></i> Ноты аромата</h3>
+                        <div class="notes-container">
+                            ${notesHtml}
+                        </div>
+                    </div>
+                    
+                    <div class="product-pricing">
+                        <div class="price-section">
+                            <div class="current-price">${product.price.toLocaleString()} ₽</div>
+                            ${product.oldPrice > 0 ? `
+                                <div class="old-price-section">
+                                    <span class="old-price">${product.oldPrice.toLocaleString()} ₽</span>
+                                    <span class="discount-badge">-${discountPercent}%</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                    
+                    <div class="product-actions-modal">
+                        <button class="btn-add-to-cart ${isInCart ? 'in-cart' : ''}" onclick="toggleCart(${product.id}, event)">
+                            <i class="fas ${isInCart ? 'fa-check' : 'fa-shopping-cart'}"></i>
+                            ${isInCart ? 'В корзине' : 'Добавить в корзину'}
+                        </button>
+                        <button class="btn-add-to-fav ${isInFavorites ? 'active' : ''}" onclick="toggleFavorite(${product.id}, event)">
+                            <i class="${isInFavorites ? 'fas' : 'far'} fa-heart"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="product-features">
+                        <div class="feature">
+                            <i class="fas fa-shipping-fast"></i>
+                            <span>Бесплатная доставка по Симферополю</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>100% оригинальная продукция</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-award"></i>
+                            <span>Гарантия качества</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Добавляем оверлей
+    const overlay = document.createElement('div');
+    overlay.className = 'product-modal-overlay';
+    overlay.onclick = closeProductDetailsModal;
+    document.body.appendChild(overlay);
+    
+    // Показываем модальное окно с анимацией
+    setTimeout(() => {
+        modal.classList.add('show');
+        overlay.classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }, 10);
+    
+    // Добавляем обработчик клавиши ESC
+    const escHandler = function(e) {
+        if (e.key === 'Escape') {
+            closeProductDetailsModal();
+        }
+    };
+    document.addEventListener('keydown', escHandler);
+    
+    // Сохраняем обработчик для удаления
+    modal._escHandler = escHandler;
+}
+
+// ===== ЗАКРЫТИЕ МОДАЛЬНОГО ОКНА =====
+function closeProductDetailsModal() {
+    const modal = document.getElementById('productDetailsModal');
+    const overlay = document.querySelector('.product-modal-overlay');
+    
+    if (modal) {
+        modal.classList.remove('show');
+        // Удаляем обработчик ESC
+        document.removeEventListener('keydown', modal._escHandler);
+        
+        setTimeout(() => {
+            if (modal.parentNode) {
+                modal.parentNode.removeChild(modal);
+            }
+        }, 300);
+    }
+    
+    if (overlay) {
+        overlay.classList.remove('show');
+        setTimeout(() => {
+            if (overlay.parentNode) {
+                overlay.parentNode.removeChild(overlay);
+            }
+        }, 300);
+    }
+    
+    document.body.style.overflow = 'auto';
+}
+
+// ===== ИНИЦИАЛИЗАЦИЯ КЛИКА ПО КАРТОЧКАМ =====
+// Добавьте этот вызов в конец функции initEventListeners()
+function initEventListeners() {
+    // ... существующий код ...
+    
+    // Инициализация клика по карточкам товаров
+    setupProductCardClick();
+}
+
 console.log('Aura Atelier приложение инициализировано');
