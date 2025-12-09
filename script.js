@@ -16,7 +16,7 @@ const STORAGE_KEYS = {
     USER: 'aura_atelier_user'
 };
 
-// РЕДАКТОР КАРТОЧЕК
+// Примеры товаров (в реальном приложении загружаются с сервера)
 const PRODUCTS_DATA = [
     {
         id: 1,
@@ -209,9 +209,9 @@ const PRODUCTS_DATA = [
         inStock: true,
         popular: true,
         notes: ["ром", "кожа", "ваниль"]
-    },
+    }
 ];
- 
+
 // ===== ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ =====
 document.addEventListener('DOMContentLoaded', function() {
     initApp();
