@@ -64,23 +64,24 @@ const PRODUCTS_DATA = [
         badge: "null",
         inStock: true,
         popular: false,
-        notes: ["табак", "ваниль", "древесина"]
+        notes: ["кофе", "жасмин", "ваниль", "кедр", "миндаль"]
     },
     {
         id: 4,
-        name: "Oud Ispahan Dior",
-        description: "Роскошный арабский уд с нотами розы, сандала и пачули. Для особых вечеров.",
-        price: 42000,
+        name: "Creed Aventus For Her",
+        description: "Limited Edition Creed Aventus For Her- женский аромат.
+Это фруктово-шипровая парфюмерная вода с нотами зеленого яблока, лимона, бергамота, розы, сандала и мускуса.",
+        price: 350,
         oldPrice: 0,
-        category: "arabian",
+        category: "premium",
         volume: 75,
         rating: 4.9,
         reviews: 67,
-        image: "https://images.unsplash.com/photo-1590736969956-6d9c2a8d6971?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-        badge: "new",
+        image: "https://sun9-79.userapi.com/s/v1/ig2/XOkgSK57rv_tI2P2NE_TQ_5nKYuTRM_AUJfT2YQ53g0-5lW9ETR7FbZ4yRYeNTHIuBcNPhP4lKiON3Nwe1sMTy0S.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=L5LPBfopJzZuCDe9YN9SywE0Br_mxxQTJfwhp4lDlAI&cs=360x0",
+        badge: "hit",
         inStock: true,
         popular: true,
-        notes: ["уд", "роза", "сандал"]
+        notes: ["бергамот", "мускус", "роза", "лимон", "сандал", "зелёное яблоко"]
     },
     {
         id: 5,
