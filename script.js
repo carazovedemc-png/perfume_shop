@@ -74,7 +74,7 @@ const PRODUCTS_DATA = [
         price: 350,
         oldPrice: 0,
         category: "premium",
-        volume: 75,
+        volume: 6,
         rating: 4.9,
         reviews: 67,
         image: "https://sun9-79.userapi.com/s/v1/ig2/XOkgSK57rv_tI2P2NE_TQ_5nKYuTRM_AUJfT2YQ53g0-5lW9ETR7FbZ4yRYeNTHIuBcNPhP4lKiON3Nwe1sMTy0S.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=L5LPBfopJzZuCDe9YN9SywE0Br_mxxQTJfwhp4lDlAI&cs=360x0",
@@ -85,19 +85,22 @@ const PRODUCTS_DATA = [
     },
     {
         id: 5,
-        name: "Jo Malone Wood Sage",
-        description: "Уникальный аромат с нотами шалфея, морской соли и древесины.",
-        price: 12500,
-        oldPrice: 14500,
+        name: "Kirki Aksa",
+        description: "Концентрированное эфирное масло Kirki Aksa — это унисекс-парфюм с фруктово-шипровым ароматом
+Верхние ноты: Маракуйя, персик, малина, лист черной смородины, груша, песок.
+Средние ноты: Ландыш.
+Базовые ноты: Гелиотроп, сандал, ваниль, пачули, мускус.",
+        price: 350,
+        oldPrice: 0,
         category: "premium",
-        volume: 100,
+        volume: 6,
         rating: 4.7,
         reviews: 187,
-        image: "https://images.unsplash.com/photo-1541643600914-78b084683601?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-        badge: "hit",
+        image: "https://sun9-84.userapi.com/s/v1/ig2/LDMpV1ihJnWYPte5wGmG-BxwBsBptbz7QSARpRMRdZt-fpO0wy_4ZPiEPS0oWkLxjFPzRm1wdDYeA2n88xh7Fegn.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=QhV-dEoaJC83x6egk46Ej6FZETeNOMWtoQnFpIMrEII&cs=360x0",
+        badge: "null",
         inStock: true,
         popular: true,
-        notes: ["шалфей", "морская соль", "древесина"]
+        notes: ["маракуйя", "персик", "ваниль"]
     },
     {
         id: 6,
