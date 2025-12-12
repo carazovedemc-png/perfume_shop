@@ -53,7 +53,7 @@ const PRODUCTS_DATA = [
     {
         id: 3,
         name: "Black Opium",
-        description: "доставка по Симферополю бесплатно",
+        description: "Женские духи",
         price: 350,
         oldPrice: 0,
         category: "affordable",
