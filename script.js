@@ -48,7 +48,7 @@ const PRODUCTS_DATA = [
         badge: "hit",
         inStock: true,
         popular: true,
-        notes: ["апельсин", "карамель", "ваниль","сандаловое дерево"]
+        notes: ["апельсин", "карамель", "ваниль", "сандаловое дерево"]
     },
     {
         id: 3,
@@ -69,14 +69,14 @@ const PRODUCTS_DATA = [
     {
         id: 4,
         name: "Creed Aventus For Her",
-        description: "Limited Edition Creed Aventus For Her- женский аромат.
+        description: "Limited Edition Creed Aventus For Her- женский аромат
 Это фруктово-шипровая парфюмерная вода с нотами зеленого яблока, лимона, бергамота, розы, сандала и мускуса.",
         price: 350,
         oldPrice: 0,
         category: "premium",
         volume: 6,
         rating: 4.9,
-        reviews: 67,
+        reviews: 167,
         image: "https://sun9-79.userapi.com/s/v1/ig2/XOkgSK57rv_tI2P2NE_TQ_5nKYuTRM_AUJfT2YQ53g0-5lW9ETR7FbZ4yRYeNTHIuBcNPhP4lKiON3Nwe1sMTy0S.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=L5LPBfopJzZuCDe9YN9SywE0Br_mxxQTJfwhp4lDlAI&cs=360x0",
         badge: "hit",
         inStock: true,
