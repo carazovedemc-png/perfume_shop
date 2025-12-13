@@ -132,19 +132,19 @@ const PRODUCTS_DATA = [
     },
     {
         id: 8,
-        name: "Lattafa Oud Mood",
-        description: "Аутентичный арабский аромат с глубокими нотами уда и розы.",
-        price: 3500,
+        name: "Al Rayan G&D Limperatrice",
+        description: "Al Rayan G&D Limperatrice — это концентрированное масляное парфюмерное масло (аттар). Композиция аромата включает следующие ноты: Верхние ноты: Розовый перец, ревень, киви. Средние ноты (сердце): Арбуз, цикламен, жасмин. Базовые ноты: Мускус, сандал, лимонное (китайское) дерево. Описание Аромат описывается как яркий, игривый и энергичный, с доминирующими аккордами сочных тропических фруктов и свежестью. Он подходит для дневного ношения, особенно в весенне-летний период.",
+        price: 350,
         oldPrice: 0,
         category: "arabian",
-        volume: 100,
+        volume: 6,
         rating: 4.6,
         reviews: 56,
-        image: "https://images.unsplash.com/photo-1590736969956-6d9c2a8d6971?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+        image: "https://sun9-32.userapi.com/s/v1/ig2/u7kV68pjiyC_Ep97GMc8IEBXIH5cX50pFb6q5MNe7wnyULSvSD4-xUH6qRePG96lG1aWbOChxMLH_QshKz3HP9Uj.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=lf3dVx7r5RsUdRttLycIgRe0gYshLVfBPnVAmBYt9_0&cs=360x0",
         badge: "new",
         inStock: true,
         popular: true,
-        notes: ["уд", "роза", "амбра"]
+        notes: ["ревень", "киви", "арбуз", "мускус"]
     },
     {
         id: 9,
