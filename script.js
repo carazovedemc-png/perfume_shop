@@ -112,23 +112,23 @@ const PRODUCTS_DATA = [
         badge: null,
         inStock: true,
         popular: false,
-        notes: ["", "", ""]
+        notes: ["жасмин", "груша", "кофе"]
     },
     {
         id: 7,
-        name: "Tom Ford Black Orchid",
-        description: "Чувственный аромат с нотами черной трюфели, орхидеи и пачули.",
-        price: 18500,
-        oldPrice: 21000,
+        name: "YARAN Voux",
+        description: "YARAN Voux от Aris Perfumes — это концентрированное парфюмерное масло (CPO). Это унисекс-аромат, который относится к восточным или гурманским коллекциям, схожим с другими ароматами от брендов, таких как Paris Corner.",
+        price: 350,
+        oldPrice: 0,
         category: "premium",
-        volume: 100,
+        volume: 6,
         rating: 4.8,
         reviews: 143,
-        image: "https://images.unsplash.com/photo-1541643600914-78b084683601?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-        badge: "sale",
+        image: "https://sun9-18.userapi.com/s/v1/ig2/JPe8xzc_vL633B2Y0VenFoeipK_joP7GR9FZZ565Z7XEuh8CeoYJxM7GmBFilsfBbropmaZze7L5RJ5ISim-VNa8.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=DwhSt-8w64gm4QVZgK4wKRnie5o2V4HtkWzexyWhaos&cs=360x0",
+        badge: "null",
         inStock: true,
         popular: true,
-        notes: ["трюфель", "орхидея", "пачули"]
+        notes: ["ваниль", "сандал", "мускус"]
     },
     {
         id: 8,
