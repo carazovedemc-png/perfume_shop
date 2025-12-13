@@ -148,19 +148,19 @@ const PRODUCTS_DATA = [
     },
     {
         id: 9,
-        name: "Davidoff Cool Water",
-        description: "Классический свежий аромат с нотами моря и свежести.",
-        price: 3800,
-        oldPrice: 4500,
+        name: "Al-Rayan Kilian By In The City",
+        description: "Представленный на изображении товар - это масляные духи Al-Rayan Kilian By In The City Верхние ноты - Бергамот, гватемальский кардамон и розовый перец. Ноты сердца - Абрикос, карамелизованная слива, турецкая роза и ладан. Базовые ноты: Кедр, индонезийский пачули.",
+        price: 350,
+        oldPrice: 0,
         category: "affordable",
-        volume: 125,
+        volume: 6,
         rating: 4.4,
         reviews: 234,
-        image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-        badge: "sale",
+        image: "https://sun9-6.userapi.com/s/v1/ig2/j3IQyd0QOc9sOzrhRtrqAih-tEG7x5xPiZMfCVxsQyVlb3HjvwSl6OAQK_7QVoRurh9X7w1zX0dEDG12-77JCtQs.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=ytxGprY0FWbTGBoY3EXaC9oX0EfZcJY43B7M6hNMe5g&cs=360x0",
+        badge: "null",
         inStock: true,
         popular: true,
-        notes: ["морские ноты", "свежесть", "мускус"]
+        notes: ["кедр", "абрикос", "розовый перец"]
     },
     {
         id: 10,
