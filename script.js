@@ -1,4 +1,3 @@
-// ===== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ И КОНСТАНТЫ =====
 const tg = window.Telegram?.WebApp || {};
 let user = null;
 let allProducts = [];
@@ -7,240 +6,24 @@ let favorites = [];
 let filteredProducts = [];
 let currentPage = 1;
 const productsPerPage = 8;
-let isFilterOpen = false;
 
-// Ключи для localStorage
 const STORAGE_KEYS = {
     CART: 'aura_atelier_cart',
     FAVORITES: 'aura_atelier_favorites',
     USER: 'aura_atelier_user'
 };
 
-// КАРТОЧКИ ТОВАРОВ
-const PRODUCTS_DATA = [
-    {
-        id: 1,
-        name: "Aris 222 VIP Bleck",
-        description: "доставка по Симферополю бесплатно",
-        price: 350,
-        oldPrice: 0,
-        category: "arabian",
-        volume: 6,
-        rating: 4.8,
-        reviews: 100,
-        image: "https://images.satu.kz/227064425_w700_h500_maslyanye-duhi-al.jpg",
-        badge: "null",
-        inStock: true,
-        popular: true,
-        notes: ["лаванда", "чёрная ваниль", "мускус"]
-    },
-    {
-        id: 2,
-        name: "Dalal",
-        description: "Доставка по Симферополю бесплатно.",
-        price: 350,
-        oldPrice: 0,
-        category: "premium",
-        volume: 6,
-        rating: 4.9,
-        reviews: 100,
-        image: "https://sun9-41.userapi.com/s/v1/ig2/vkEyo2KDCGJhawzJ2PSYbdY9h4EOrh30HrjwefVSCbYOSqJPoXruX0WobRyxKbRBw8BvdlL8sejPGZ4p-RrVjUOO.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=m0AEgal8BacMT-TAXZva7xEf1ZAAdIa_7ZvmQJYgIsY&cs=360x0",
-        badge: "hit",
-        inStock: true,
-        popular: true,
-        notes: ["апельсин", "карамель", "ваниль", "сандаловое дерево"]
-    },
-    {
-        id: 3,
-        name: "Black Opium",
-        description: "Женские духи",
-        price: 350,
-        oldPrice: 0,
-        category: "affordable",
-        volume: 6,
-        rating: 4.6,
-        reviews: 100,
-        image: "https://sun9-43.userapi.com/s/v1/ig2/7OuPKSCxdwp7oHCuEccqLkHkK_-ovx6ks842VjcS4nIExZ1VGhdLfUhSz-ueglS4PgI_fh29HEvPqFLzNlKj3tej.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=DTS3NJnjcShlWzwIHzZ9tgVLIOKUx8JWVEEhGsoYZH0&cs=640x0",
-        badge: "null",
-        inStock: true,
-        popular: false,
-        notes: ["кофе", "жасмин", "ваниль", "кедр", "миндаль"]
-    },
-    {
-        id: 4,
-        name: "Creed Aventus For Her",
-        description: "Limited Edition Creed Aventus For Her - женский аромат. Это фруктово шипровая парфюмерная вода с нотами зеленого яблока, лимона, бергамота, розы, сандала и мускуса",
-        price: 350,
-        oldPrice: 0,
-        category: "premium",
-        volume: 6,
-        rating: 4.9,
-        reviews: 167,
-        image: "https://sun9-79.userapi.com/s/v1/ig2/XOkgSK57rv_tI2P2NE_TQ_5nKYuTRM_AUJfT2YQ53g0-5lW9ETR7FbZ4yRYeNTHIuBcNPhP4lKiON3Nwe1sMTy0S.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=L5LPBfopJzZuCDe9YN9SywE0Br_mxxQTJfwhp4lDlAI&cs=360x0",
-        badge: "hit",
-        inStock: true,
-        popular: true,
-        notes: ["бергамот", "мускус", "роза", "лимон", "сандал", "зелёное яблоко"]
-    },
-    {
-        id: 5,
-        name: "Kirki Aksa",
-        description: "Концентрированное эфирное масло Kirki Aksa - это унисекс парфюм с фруктово шипровым ароматом. Верхние ноты - Маракуйя персик, малина, лист черной смородины, груша, песок. Средние ноты - Ландыш. Базовые ноты - Гелиотроп, сандал, ваниль, пачули, мускус.",
-        price: 350,
-        oldPrice: 0,
-        category: "premium",
-        volume: 6,
-        rating: 4.7,
-        reviews: 187,
-        image: "https://sun9-84.userapi.com/s/v1/ig2/LDMpV1ihJnWYPte5wGmG-BxwBsBptbz7QSARpRMRdZt-fpO0wy_4ZPiEPS0oWkLxjFPzRm1wdDYeA2n88xh7Fegn.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=QhV-dEoaJC83x6egk46Ej6FZETeNOMWtoQnFpIMrEII&cs=360x0",
-        badge: "null",
-        inStock: true,
-        popular: true,
-        notes: ["маракуйя", "персик", "ваниль"]
-    },
-    {
-        id: 6,
-        name: "Black Opium",
-        description: "Это масляные духи с феромонами Black Opium — это женская парфюмерная вода",
-        price: 350,
-        oldPrice: 0,
-        category: "affordable",
-        volume: 6,
-        rating: 4.5,
-        reviews: 92,
-        image: "https://sun9-37.userapi.com/s/v1/ig2/sE51AVESqed4uV7s0G1BwL6YiNvoyG81xw3TEiygep-FuH_44Vl82QuVDfVZteIIdCAa1NAXQ2A-fQDnoOtisjq4.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=RXKCzPLanm6VtxbnzBnP-I3Ki7th8SeNxFq2aFmrLDE&cs=360x0",
-        badge: null,
-        inStock: true,
-        popular: false,
-        notes: ["жасмин", "груша", "кофе"]
-    },
-    {
-        id: 7,
-        name: "YARAN Voux",
-        description: "YARAN Voux от Aris Perfumes — это концентрированное парфюмерное масло (CPO). Это унисекс-аромат, который относится к восточным или гурманским коллекциям, схожим с другими ароматами от брендов, таких как Paris Corner.",
-        price: 350,
-        oldPrice: 0,
-        category: "premium",
-        volume: 6,
-        rating: 4.8,
-        reviews: 143,
-        image: "https://sun9-18.userapi.com/s/v1/ig2/JPe8xzc_vL633B2Y0VenFoeipK_joP7GR9FZZ565Z7XEuh8CeoYJxM7GmBFilsfBbropmaZze7L5RJ5ISim-VNa8.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=DwhSt-8w64gm4QVZgK4wKRnie5o2V4HtkWzexyWhaos&cs=360x0",
-        badge: "null",
-        inStock: true,
-        popular: true,
-        notes: ["ваниль", "сандал", "мускус"]
-    },
-    {
-        id: 8,
-        name: "Al Rayan G&D Limperatrice",
-        description: "Al Rayan G&D Limperatrice — это концентрированное масляное парфюмерное масло (аттар). Композиция аромата включает следующие ноты: Верхние ноты: Розовый перец, ревень, киви. Средние ноты (сердце): Арбуз, цикламен, жасмин. Базовые ноты: Мускус, сандал, лимонное (китайское) дерево. Описание Аромат описывается как яркий, игривый и энергичный, с доминирующими аккордами сочных тропических фруктов и свежестью. Он подходит для дневного ношения, особенно в весенне-летний период.",
-        price: 350,
-        oldPrice: 0,
-        category: "arabian",
-        volume: 6,
-        rating: 4.6,
-        reviews: 56,
-        image: "https://sun9-32.userapi.com/s/v1/ig2/u7kV68pjiyC_Ep97GMc8IEBXIH5cX50pFb6q5MNe7wnyULSvSD4-xUH6qRePG96lG1aWbOChxMLH_QshKz3HP9Uj.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=lf3dVx7r5RsUdRttLycIgRe0gYshLVfBPnVAmBYt9_0&cs=360x0",
-        badge: "new",
-        inStock: true,
-        popular: true,
-        notes: ["ревень", "киви", "арбуз", "мускус"]
-    },
-    {
-        id: 9,
-        name: "Al-Rayan Kilian By In The City",
-        description: "Представленный на изображении товар - это масляные духи Al-Rayan Kilian By In The City Верхние ноты - Бергамот, гватемальский кардамон и розовый перец. Ноты сердца - Абрикос, карамелизованная слива, турецкая роза и ладан. Базовые ноты: Кедр, индонезийский пачули.",
-        price: 350,
-        oldPrice: 0,
-        category: "affordable",
-        volume: 6,
-        rating: 4.4,
-        reviews: 234,
-        image: "https://sun9-6.userapi.com/s/v1/ig2/j3IQyd0QOc9sOzrhRtrqAih-tEG7x5xPiZMfCVxsQyVlb3HjvwSl6OAQK_7QVoRurh9X7w1zX0dEDG12-77JCtQs.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=ytxGprY0FWbTGBoY3EXaC9oX0EfZcJY43B7M6hNMe5g&cs=360x0",
-        badge: "null",
-        inStock: true,
-        popular: true,
-        notes: ["кедр", "абрикос", "розовый перец"]
-    },
-    {
-        id: 10,
-        name: "Creed Aventus",
-        description: "Культовый аромат с нотами ананаса, черной смородины и мускуса.",
-        price: 35000,
-        oldPrice: 0,
-        category: "premium",
-        volume: 100,
-        rating: 4.9,
-        reviews: 189,
-        image: "https://images.unsplash.com/photo-1541643600914-78b084683601?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-        badge: "hit",
-        inStock: true,
-        popular: true,
-        notes: ["ананас", "смородина", "мускус"]
-    },
-    {
-        id: 11,
-        name: "Rasasi Hawas",
-        description: "Современный арабский аромат с акватическими и фруктовыми нотами.",
-        price: 4200,
-        oldPrice: 0,
-        category: "arabian",
-        volume: 100,
-        rating: 4.5,
-        reviews: 78,
-        image: "https://images.unsplash.com/photo-1590736969956-6d9c2a8d6971?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-        badge: null,
-        inStock: true,
-        popular: false,
-        notes: ["акватик", "фрукты", "мускус"]
-    },
-    {
-        id: 12,
-        name: "Bvlgari Man In Black",
-        description: "Темный и загадочный аромат с нотами рома, кожи и ванили.",
-        price: 9200,
-        oldPrice: 11000,
-        category: "premium",
-        volume: 100,
-        rating: 4.6,
-        reviews: 112,
-        image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-        badge: "sale",
-        inStock: true,
-        popular: true,
-        notes: ["ром", "кожа", "ваниль"]
-    },
-    {
-        id: 13,
-        name: "ТВОЙ НОВЫЙ ТОВАР",
-        description: "Описание",
-        price: 5000,
-        oldPrice: 0,
-        category: "arabian",
-        volume: 100,
-        rating: 4.5,
-        reviews: 0,
-        image: "ССЫЛКА_НА_КАРТИНКУ.jpg",
-        badge: null,
-        inStock: true,
-        popular: false,
-        notes: ["нота1", "нота", "нота3"]
-    },
-];
-
-// ===== ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ =====
 document.addEventListener('DOMContentLoaded', function() {
     initApp();
     loadData();
+    initEventListeners();
     renderProducts();
     updateCartCount();
     updateFavoritesCount();
     setupFilterPopup();
-    initEventListeners();
 });
 
 function initApp() {
-    // Инициализация Telegram WebApp
     if (tg.initDataUnsafe?.user) {
         user = {
             id: tg.initDataUnsafe.user.id,
@@ -252,28 +35,21 @@ function initApp() {
         tg.expand();
         tg.setHeaderColor('#0F0F1E');
         tg.setBackgroundColor('#0F0F1E');
-        
-        console.log('Пользователь Telegram:', user);
     } else {
-        // Режим демо (вне Telegram)
         user = {
             id: 1,
             username: 'demo_user',
             firstName: 'Демо',
             lastName: 'Пользователь'
         };
-        console.log('Режим демо (вне Telegram)');
     }
     
-    // Сохраняем пользователя в localStorage
     saveToStorage(STORAGE_KEYS.USER, user);
 }
 
-// ===== LOCALSTORAGE ФУНКЦИИ =====
 function saveToStorage(key, data) {
     try {
         localStorage.setItem(key, JSON.stringify(data));
-        console.log(`Данные сохранены в localStorage: ${key}`);
     } catch (e) {
         console.error('Ошибка сохранения в localStorage:', e);
     }
@@ -289,15 +65,36 @@ function loadFromStorage(key, defaultValue = null) {
     }
 }
 
+function secureSaveToStorage(key, data) {
+    if (window.Security && window.Security.saveToStorage) {
+        window.Security.saveToStorage(key, data);
+    } else {
+        saveToStorage(key, data);
+    }
+}
+
 function loadData() {
-    // Загружаем товары
-    allProducts = PRODUCTS_DATA;
+    if (window.Security && window.Security.checkProduct) {
+        allProducts = window.PRODUCTS_DATA.filter(product => 
+            window.Security.checkProduct(product)
+        );
+        
+        if (allProducts.length === 0) {
+            console.warn('Security check filtered all products! Using all data.');
+            allProducts = window.PRODUCTS_DATA || [];
+        }
+    } else {
+        allProducts = window.PRODUCTS_DATA || [];
+    }
+    
     filteredProducts = [...allProducts];
     
-    // Загружаем корзину из localStorage
-    cart = loadFromStorage(STORAGE_KEYS.CART, []);
+    if (window.Security && window.Security.getFromStorage) {
+        cart = window.Security.getFromStorage('cart') || [];
+    } else {
+        cart = loadFromStorage(STORAGE_KEYS.CART, []);
+    }
     
-    // Загружаем избранное из localStorage
     favorites = loadFromStorage(STORAGE_KEYS.FAVORITES, []);
     
     console.log('Данные загружены:', {
@@ -307,14 +104,12 @@ function loadData() {
     });
 }
 
-// ===== РЕНДЕРИНГ ТОВАРОВ =====
 function renderProducts() {
     const grid = document.getElementById('productsGrid');
     if (!grid) return;
     
     grid.innerHTML = '';
     
-    // Рассчитываем индексы для пагинации
     const startIndex = (currentPage - 1) * productsPerPage;
     const endIndex = startIndex + productsPerPage;
     const productsToShow = filteredProducts.slice(startIndex, endIndex);
@@ -335,11 +130,6 @@ function renderProducts() {
         const isInCart = cart.some(item => item.id === product.id);
         const isInFavorites = favorites.some(item => item.id === product.id);
         
-        const card = document.createElement('div');
-        card.className = 'product-card';
-        card.dataset.id = product.id;
-        
-        // Определяем бейдж
         let badgeHtml = '';
         if (product.badge === 'new') {
             badgeHtml = '<span class="badge-new">Новинка</span>';
@@ -349,109 +139,95 @@ function renderProducts() {
             badgeHtml = '<span class="badge-hit">Хит</span>';
         }
         
-        // Расчет скидки
         const discountPercent = product.oldPrice > 0 
             ? Math.round((1 - product.price / product.oldPrice) * 100)
             : 0;
         
-        // ЭТОТ КОД ВСТАВЬТЕ ВМЕСТО УДАЛЕННОГО:
-
-// СОЗДАЕМ ОСНОВНОЙ КОНТЕЙНЕР КАРТОЧКИ
-card.className = 'product-card';
-card.dataset.id = product.id;
-
-// 1. БЕЙДЖИ (оставляем innerHTML, так как badgeHtml уже безопасен)
-const badgesDiv = document.createElement('div');
-badgesDiv.className = 'product-badges';
-badgesDiv.innerHTML = badgeHtml;
-
-// 2. КАРТИНКА ТОВАРА
-const img = document.createElement('img');
-img.className = 'product-image';
-img.src = window.Security.isSafeImage(product.image) ? product.image : '';
-img.alt = window.Security.cleanText(product.name);
-img.loading = 'lazy';
-
-// 3. НАЗВАНИЕ ТОВАРА (БЕЗОПАСНО через textContent)
-const title = document.createElement('h3');
-title.className = 'product-title';
-title.textContent = product.name;
-
-// 4. КАТЕГОРИЯ И ОБЪЕМ
-const categoryDiv = document.createElement('div');
-categoryDiv.className = 'product-category';
-categoryDiv.textContent = `${getCategoryName(product.category)} • ${product.volume} мл`;
-
-// 5. РЕЙТИНГ (innerHTML безопасен, так как renderStars возвращает только иконки)
-const ratingDiv = document.createElement('div');
-ratingDiv.className = 'product-rating';
-ratingDiv.innerHTML = `
-    <div class="stars-filled">
-        ${renderStars(product.rating)}
-    </div>
-    <span class="rating-value">${product.rating}</span>
-    <span class="reviews-count">(${product.reviews})</span>
-`;
-
-// 6. ЦЕНЫ (собираем безопасно)
-const pricesDiv = document.createElement('div');
-pricesDiv.className = 'product-prices';
-
-const currentPrice = document.createElement('span');
-currentPrice.className = 'price-current';
-currentPrice.textContent = `${product.price.toLocaleString()} ₽`;
-
-pricesDiv.appendChild(currentPrice);
-
-// Добавляем старую цену и скидку, если есть
-if (product.oldPrice > 0) {
-    const oldPrice = document.createElement('span');
-    oldPrice.className = 'price-old';
-    oldPrice.textContent = `${product.oldPrice.toLocaleString()} ₽`;
-    
-    const discount = document.createElement('span');
-    discount.className = 'discount-percent';
-    discount.textContent = `-${discountPercent}%`;
-    
-    pricesDiv.appendChild(oldPrice);
-    pricesDiv.appendChild(discount);
-}
-
-// 7. КНОПКИ ДЕЙСТВИЙ
-const actionsDiv = document.createElement('div');
-actionsDiv.className = 'product-actions';
-
-// Кнопка корзины
-const cartBtn = document.createElement('button');
-cartBtn.className = `btn-cart ${isInCart ? 'in-cart' : ''}`;
-cartBtn.onclick = (e) => toggleCart(product.id, e);
-
-const cartIcon = document.createElement('i');
-cartIcon.className = isInCart ? 'fas fa-check' : 'fas fa-shopping-cart';
-cartBtn.appendChild(cartIcon);
-cartBtn.appendChild(document.createTextNode(isInCart ? ' В корзине' : ' В корзину'));
-
-// Кнопка избранного
-const favBtn = document.createElement('button');
-favBtn.className = `btn-fav ${isInFavorites ? 'active' : ''}`;
-favBtn.onclick = (e) => toggleFavorite(product.id, e);
-
-const favIcon = document.createElement('i');
-favIcon.className = isInFavorites ? 'fas fa-heart' : 'far fa-heart';
-favBtn.appendChild(favIcon);
-
-// Собираем кнопки
-actionsDiv.appendChild(cartBtn);
-actionsDiv.appendChild(favBtn);
-
-// СБОРКА ВСЕХ ЭЛЕМЕНТОВ В КАРТОЧКУ
-card.appendChild(badgesDiv);
-card.appendChild(img);
-card.appendChild(title);
-card.appendChild(categoryDiv);
-card.appendChild(ratingDiv);
-card.appendChild(pricesDiv);
-card.appendChild(actionsDiv);
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.dataset.id = product.id;
+        
+        const badgesDiv = document.createElement('div');
+        badgesDiv.className = 'product-badges';
+        badgesDiv.innerHTML = badgeHtml;
+        
+        const img = document.createElement('img');
+        img.className = 'product-image';
+        img.src = (window.Security && window.Security.isSafeImage) ? 
+            (window.Security.isSafeImage(product.image) ? product.image : '') : product.image;
+        img.alt = (window.Security && window.Security.cleanText) ? 
+            window.Security.cleanText(product.name) : product.name;
+        img.loading = 'lazy';
+        
+        const title = document.createElement('h3');
+        title.className = 'product-title';
+        title.textContent = product.name;
+        
+        const categoryDiv = document.createElement('div');
+        categoryDiv.className = 'product-category';
+        categoryDiv.textContent = `${getCategoryName(product.category)} • ${product.volume} мл`;
+        
+        const ratingDiv = document.createElement('div');
+        ratingDiv.className = 'product-rating';
+        ratingDiv.innerHTML = `
+            <div class="stars-filled">
+                ${renderStars(product.rating)}
+            </div>
+            <span class="rating-value">${product.rating}</span>
+            <span class="reviews-count">(${product.reviews})</span>
+        `;
+        
+        const pricesDiv = document.createElement('div');
+        pricesDiv.className = 'product-prices';
+        
+        const currentPrice = document.createElement('span');
+        currentPrice.className = 'price-current';
+        currentPrice.textContent = `${product.price.toLocaleString()} ₽`;
+        pricesDiv.appendChild(currentPrice);
+        
+        if (product.oldPrice > 0) {
+            const oldPrice = document.createElement('span');
+            oldPrice.className = 'price-old';
+            oldPrice.textContent = `${product.oldPrice.toLocaleString()} ₽`;
+            
+            const discount = document.createElement('span');
+            discount.className = 'discount-percent';
+            discount.textContent = `-${discountPercent}%`;
+            
+            pricesDiv.appendChild(oldPrice);
+            pricesDiv.appendChild(discount);
+        }
+        
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'product-actions';
+        
+        const cartBtn = document.createElement('button');
+        cartBtn.className = `btn-cart ${isInCart ? 'in-cart' : ''}`;
+        cartBtn.onclick = (e) => toggleCart(product.id, e);
+        
+        const cartIcon = document.createElement('i');
+        cartIcon.className = isInCart ? 'fas fa-check' : 'fas fa-shopping-cart';
+        cartBtn.appendChild(cartIcon);
+        cartBtn.appendChild(document.createTextNode(isInCart ? ' В корзине' : ' В корзину'));
+        
+        const favBtn = document.createElement('button');
+        favBtn.className = `btn-fav ${isInFavorites ? 'active' : ''}`;
+        favBtn.onclick = (e) => toggleFavorite(product.id, e);
+        
+        const favIcon = document.createElement('i');
+        favIcon.className = isInFavorites ? 'fas fa-heart' : 'far fa-heart';
+        favBtn.appendChild(favIcon);
+        
+        actionsDiv.appendChild(cartBtn);
+        actionsDiv.appendChild(favBtn);
+        
+        card.appendChild(badgesDiv);
+        card.appendChild(img);
+        card.appendChild(title);
+        card.appendChild(categoryDiv);
+        card.appendChild(ratingDiv);
+        card.appendChild(pricesDiv);
+        card.appendChild(actionsDiv);
         
         grid.appendChild(card);
     });
@@ -477,7 +253,6 @@ function renderStars(rating) {
     return stars;
 }
 
-// ===== ПАГИНАЦИЯ =====
 function updatePagination() {
     const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
     const pageNumbers = document.getElementById('pageNumbers');
@@ -486,14 +261,11 @@ function updatePagination() {
     
     if (!pageNumbers || !prevBtn || !nextBtn) return;
     
-    // Очищаем номера страниц
     pageNumbers.innerHTML = '';
     
-    // Показываем максимум 3 страницы
     let startPage = Math.max(1, currentPage - 1);
     let endPage = Math.min(totalPages, startPage + 2);
     
-    // Если мы в конце, корректируем startPage
     if (endPage - startPage < 2) {
         startPage = Math.max(1, endPage - 2);
     }
@@ -507,11 +279,9 @@ function updatePagination() {
         pageNumbers.appendChild(pageBtn);
     }
     
-    // Обновляем состояние кнопок
     prevBtn.disabled = currentPage === 1;
     nextBtn.disabled = currentPage === totalPages || totalPages === 0;
     
-    // Добавляем обработчики
     prevBtn.onclick = () => goToPage(currentPage - 1);
     nextBtn.onclick = () => goToPage(currentPage + 1);
 }
@@ -524,34 +294,24 @@ function goToPage(page) {
     currentPage = page;
     renderProducts();
     
-    // Прокручиваем к началу товаров
-    const mainContent = document.querySelector('.main-content');
-    if (mainContent) {
-        mainContent.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-        });
-    }
+    document.querySelector('.main-content').scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+    });
 }
 
-// ===== КОРЗИНА =====
 function toggleCart(productId, event) {
-    if (event) {
-        event.stopPropagation();
-        event.preventDefault();
-    }
+    if (event) event.stopPropagation();
     
     const product = allProducts.find(p => p.id === productId);
     if (!product) return;
     
-    const existingItemIndex = cart.findIndex(item => item.id === productId);
+    const existingItem = cart.find(item => item.id === productId);
     
-    if (existingItemIndex !== -1) {
-        // Удаляем из корзины
-        cart.splice(existingItemIndex, 1);
+    if (existingItem) {
+        cart = cart.filter(item => item.id !== productId);
         showNotification(`${product.name} удален из корзины`, 'info');
     } else {
-        // Добавляем в корзину
         cart.push({
             ...product,
             quantity: 1,
@@ -560,24 +320,16 @@ function toggleCart(productId, event) {
         showNotification(`${product.name} добавлен в корзину`, 'success');
     }
     
-    // Сохраняем в localStorage
-    saveToStorage(STORAGE_KEYS.CART, cart);
+    secureSaveToStorage('cart', cart);
     
-    // Обновляем UI
     updateCartCount();
     updateCartPopup();
     renderProducts();
 }
 
 function updateCartCount() {
-    const cartCount = document.getElementById('cartCount');
     const bottomCartCount = document.getElementById('bottomCartCount');
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-    
-    if (cartCount) {
-        cartCount.textContent = totalItems;
-        cartCount.style.display = totalItems > 0 ? 'flex' : 'none';
-    }
     
     if (bottomCartCount) {
         bottomCartCount.textContent = totalItems;
@@ -605,7 +357,6 @@ function updateCartPopup() {
         return;
     }
     
-    // Рассчитываем итоги
     const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const discount = cart.reduce((sum, item) => {
         if (item.oldPrice > 0) {
@@ -615,7 +366,6 @@ function updateCartPopup() {
     }, 0);
     const total = subtotal - discount;
     
-    // Рендерим товары
     cartItems.innerHTML = '';
     cart.forEach(item => {
         const itemElement = document.createElement('div');
@@ -638,7 +388,6 @@ function updateCartPopup() {
         cartItems.appendChild(itemElement);
     });
     
-    // Обновляем суммы
     cartTotal.textContent = `${subtotal.toLocaleString()} ₽`;
     cartFinal.textContent = `${total.toLocaleString()} ₽`;
 }
@@ -653,14 +402,11 @@ function updateQuantity(productId, delta, newValue = null) {
         item.quantity += delta;
     }
     
-    // Ограничения
     if (item.quantity < 1) item.quantity = 1;
     if (item.quantity > 10) item.quantity = 10;
     
-    // Сохраняем
-    saveToStorage(STORAGE_KEYS.CART, cart);
+    secureSaveToStorage('cart', cart);
     
-    // Обновляем UI
     updateCartCount();
     updateCartPopup();
     renderProducts();
@@ -669,10 +415,8 @@ function updateQuantity(productId, delta, newValue = null) {
 function removeFromCart(productId) {
     cart = cart.filter(item => item.id !== productId);
     
-    // Сохраняем
-    saveToStorage(STORAGE_KEYS.CART, cart);
+    secureSaveToStorage('cart', cart);
     
-    // Обновляем UI
     updateCartCount();
     updateCartPopup();
     renderProducts();
@@ -680,12 +424,8 @@ function removeFromCart(productId) {
     showNotification('Товар удален из корзины', 'info');
 }
 
-// ===== ИЗБРАННОЕ =====
 function toggleFavorite(productId, event) {
-    if (event) {
-        event.stopPropagation();
-        event.preventDefault();
-    }
+    if (event) event.stopPropagation();
     
     const product = allProducts.find(p => p.id === productId);
     if (!product) return;
@@ -693,11 +433,9 @@ function toggleFavorite(productId, event) {
     const existingIndex = favorites.findIndex(item => item.id === productId);
     
     if (existingIndex !== -1) {
-        // Удаляем из избранного
         favorites.splice(existingIndex, 1);
         showNotification(`${product.name} удален из избранного`, 'info');
     } else {
-        // Добавляем в избранное
         favorites.push({
             ...product,
             addedAt: new Date().toISOString()
@@ -705,18 +443,14 @@ function toggleFavorite(productId, event) {
         showNotification(`${product.name} добавлен в избранное`, 'success');
     }
     
-    // Сохраняем в localStorage
     saveToStorage(STORAGE_KEYS.FAVORITES, favorites);
     
-    // Обновляем UI
     updateFavoritesCount();
     updateFavoritesPopup();
     renderProducts();
 }
 
 function updateFavoritesCount() {
-    // В данном интерфейсе счетчик избранного находится только в нижнем меню
-    // Можно добавить при необходимости
 }
 
 function updateFavoritesPopup() {
@@ -758,10 +492,8 @@ function updateFavoritesPopup() {
 function removeFromFavorites(productId) {
     favorites = favorites.filter(item => item.id !== productId);
     
-    // Сохраняем
     saveToStorage(STORAGE_KEYS.FAVORITES, favorites);
     
-    // Обновляем UI
     updateFavoritesCount();
     updateFavoritesPopup();
     renderProducts();
@@ -769,49 +501,39 @@ function removeFromFavorites(productId) {
     showNotification('Товар удален из избранного', 'info');
 }
 
-// ===== ФИЛЬТРЫ И ПОИСК =====
 function filterProducts() {
     const searchTerm = document.getElementById('searchInput').value.toLowerCase();
     const priceMin = parseInt(document.getElementById('filterPriceMin').value) || 0;
     const priceMax = parseInt(document.getElementById('filterPriceMax').value) || 50000;
     const sortBy = document.getElementById('sortBy').value;
     
-    // Получаем выбранные категории
     const selectedCategories = Array.from(document.querySelectorAll('.filter-category:checked'))
         .map(cb => cb.value);
     
-    // Получаем выбранные объемы
     const selectedVolumes = Array.from(document.querySelectorAll('.filter-volume:checked'))
         .map(cb => parseInt(cb.value));
     
-    // Получаем выбранный рейтинг
     const selectedRating = document.querySelector('input[name="filterRating"]:checked');
     const minRating = selectedRating ? parseFloat(selectedRating.value) : 0;
 
-    // Фильтрация
     filteredProducts = allProducts.filter(product => {
-        // Поиск
         if (searchTerm && !product.name.toLowerCase().includes(searchTerm) && 
             !product.description.toLowerCase().includes(searchTerm)) {
             return false;
         }
         
-        // Категории
         if (selectedCategories.length > 0 && !selectedCategories.includes(product.category)) {
             return false;
         }
         
-        // Цена
         if (product.price < priceMin || product.price > priceMax) {
             return false;
         }
         
-        // Объем
         if (selectedVolumes.length > 0 && !selectedVolumes.includes(product.volume)) {
             return false;
         }
         
-        // Рейтинг
         if (product.rating < minRating) {
             return false;
         }
@@ -819,7 +541,6 @@ function filterProducts() {
         return true;
     });
     
-    // Сортировка
     switch(sortBy) {
         case 'new':
             filteredProducts.sort((a, b) => b.id - a.id);
@@ -843,37 +564,28 @@ function filterProducts() {
             break;
     }
     
-    // Сбрасываем на первую страницу
     currentPage = 1;
     renderProducts();
 }
 
 function resetFilters() {
-    // Сбрасываем значения фильтров
     document.getElementById('searchInput').value = '';
     document.getElementById('filterPriceMin').value = '';
     document.getElementById('filterPriceMax').value = '';
     document.getElementById('sortBy').value = 'popular';
     
-    // Сбрасываем чекбоксы категорий
     document.querySelectorAll('.filter-category').forEach(cb => {
         cb.checked = true;
     });
     
-    // Сбрасываем чекбоксы объемов
     document.querySelectorAll('.filter-volume').forEach(cb => {
         cb.checked = false;
     });
     
-    // Сбрасываем рейтинг
     document.querySelector('input[name="filterRating"][value="0"]').checked = true;
     
-    // Закрываем попап фильтров
     closeFilterPopup();
-    
-    // Применяем фильтры
     filterProducts();
-    
     showNotification('Фильтры сброшены', 'info');
 }
 
@@ -881,7 +593,6 @@ function setupFilterPopup() {
     const filterContent = document.querySelector('.filter-content');
     if (!filterContent) return;
     
-    // Создаем HTML для фильтров
     filterContent.innerHTML = `
         <div class="filter-group">
             <h4>Категории</h4>
@@ -1004,7 +715,6 @@ function setupFilterPopup() {
         </div>
     `;
     
-    // Настройка слайдера цены
     const priceRange = document.getElementById('filterPriceRange');
     const priceMinInput = document.getElementById('filterPriceMin');
     const priceMaxInput = document.getElementById('filterPriceMax');
@@ -1029,7 +739,6 @@ function setupFilterPopup() {
         });
     }
     
-    // Обработчики для кнопок фильтра
     document.getElementById('applyFilterBtn')?.addEventListener('click', function() {
         filterProducts();
         closeFilterPopup();
@@ -1039,281 +748,6 @@ function setupFilterPopup() {
     document.getElementById('resetFilterBtn')?.addEventListener('click', resetFilters);
 }
 
-// ===== МОДАЛЬНОЕ ОКНО ДЕТАЛЕЙ ТОВАРА =====
-function setupProductCardClick() {
-    // Используем делегирование событий
-    document.addEventListener('click', function(event) {
-        const target = event.target;
-        const productCard = target.closest('.product-card');
-        
-        if (productCard) {
-            // Проверяем, не кликнули ли по кнопкам внутри карточки
-            if (!target.closest('.btn-cart') && !target.closest('.btn-fav')) {
-                const productId = parseInt(productCard.dataset.id);
-                const product = allProducts.find(p => p.id === productId);
-                if (product) {
-                    showProductDetailsModal(product);
-                }
-            }
-        }
-    });
-}
-
-function showProductDetailsModal(product) {
-    // Закрываем другие модальные окна
-    closeCartPopup();
-    closeFavoritesPopup();
-    closeFilterPopup();
-    closeProductModal();
-    
-    // Удаляем существующее модальное окно если есть
-    const existingModal = document.getElementById('productDetailsModal');
-    const existingOverlay = document.querySelector('.product-modal-overlay');
-    if (existingModal) existingModal.remove();
-    if (existingOverlay) existingOverlay.remove();
-    
-    const modal = document.createElement('div');
-    modal.className = 'product-details-modal';
-    modal.id = 'productDetailsModal';
-    
-    const isInCart = cart.some(item => item.id === product.id);
-    const isInFavorites = favorites.some(item => item.id === product.id);
-    
-    // Расчет скидки
-    const discountPercent = product.oldPrice > 0 
-        ? Math.round((1 - product.price / product.oldPrice) * 100)
-        : 0;
-    
-    // Определяем бейдж
-    let badgeHtml = '';
-    if (product.badge === 'new') {
-        badgeHtml = '<span class="modal-badge modal-badge-new">Новинка</span>';
-    } else if (product.badge === 'sale') {
-        badgeHtml = '<span class="modal-badge modal-badge-sale">Скидка</span>';
-    } else if (product.badge === 'hit') {
-        badgeHtml = '<span class="modal-badge modal-badge-hit">Хит</span>';
-    }
-    
-    // Создаем HTML для нот аромата
-    const notesHtml = product.notes ? 
-        product.notes.map(note => `<span class="note-tag">${note}</span>`).join('') : 
-        '';
-    
-    modal.innerHTML = `
-        <div class="modal-content">
-            <div class="modal-header">
-                <button class="modal-close-btn" id="closeDetailsModalBtn">
-                    <i class="fas fa-times"></i>
-                </button>
-                ${badgeHtml}
-            </div>
-            
-            <div class="modal-body">
-                <div class="product-image-section">
-                    <img src="${product.image}" alt="${product.name}" class="modal-product-image">
-                </div>
-                
-                <div class="product-info-section">
-                    <h2 class="modal-product-title">${product.name}</h2>
-                    
-                    <div class="product-meta">
-                        <span class="meta-category">
-                            <i class="fas fa-tag"></i> ${getCategoryName(product.category)}
-                        </span>
-                        <span class="meta-volume">
-                            <i class="fas fa-weight"></i> ${product.volume} мл
-                        </span>
-                        <span class="meta-stock ${product.inStock ? 'in-stock' : 'out-of-stock'}">
-                            <i class="fas ${product.inStock ? 'fa-check-circle' : 'fa-times-circle'}"></i> 
-                            ${product.inStock ? 'В наличии' : 'Нет в наличии'}
-                        </span>
-                    </div>
-                    
-                    <div class="product-rating-section">
-                        <div class="modal-rating">
-                            <div class="modal-stars">
-                                ${renderStars(product.rating)}
-                            </div>
-                            <span class="modal-rating-value">${product.rating}</span>
-                            <span class="modal-reviews">(${product.reviews} отзывов)</span>
-                        </div>
-                    </div>
-                    
-                    <div class="product-description">
-                        <h3><i class="fas fa-info-circle"></i> Описание</h3>
-                        <p>${product.description}</p>
-                    </div>
-                    
-                    <div class="product-notes">
-                        <h3><i class="fas fa-wind"></i> Ноты аромата</h3>
-                        <div class="notes-container">
-                            ${notesHtml}
-                        </div>
-                    </div>
-                    
-                    <div class="product-pricing">
-                        <div class="price-section">
-                            <div class="current-price">${product.price.toLocaleString()} ₽</div>
-                            ${product.oldPrice > 0 ? `
-                                <div class="old-price-section">
-                                    <span class="old-price">${product.oldPrice.toLocaleString()} ₽</span>
-                                    <span class="discount-badge">-${discountPercent}%</span>
-                                </div>
-                            ` : ''}
-                        </div>
-                    </div>
-                    
-                    <div class="product-actions-modal">
-                        <button class="btn-add-to-cart ${isInCart ? 'in-cart' : ''}" data-id="${product.id}">
-                            <i class="fas ${isInCart ? 'fa-check' : 'fa-shopping-cart'}"></i>
-                            ${isInCart ? 'В корзине' : 'Добавить в корзину'}
-                        </button>
-                        <button class="btn-add-to-fav ${isInFavorites ? 'active' : ''}" data-id="${product.id}">
-                            <i class="${isInFavorites ? 'fas' : 'far'} fa-heart"></i>
-                        </button>
-                    </div>
-                    
-                    <div class="product-features">
-                        <div class="feature">
-                            <i class="fas fa-shipping-fast"></i>
-                            <span>Бесплатная доставка по Симферополю</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-shield-alt"></i>
-                            <span>100% оригинальная продукция</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-award"></i>
-                            <span>Гарантия качества</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    document.body.appendChild(modal);
-    
-    // Добавляем оверлей
-    const overlay = document.createElement('div');
-    overlay.className = 'product-modal-overlay';
-    overlay.id = 'productModalOverlay';
-    document.body.appendChild(overlay);
-    
-    // Показываем с анимацией
-    setTimeout(() => {
-        modal.classList.add('show');
-        overlay.classList.add('show');
-        document.body.style.overflow = 'hidden';
-    }, 10);
-    
-    // Добавляем обработчики
-    setTimeout(() => {
-        const closeBtn = document.getElementById('closeDetailsModalBtn');
-        const overlayEl = document.getElementById('productModalOverlay');
-        const cartBtn = modal.querySelector('.btn-add-to-cart');
-        const favBtn = modal.querySelector('.btn-add-to-fav');
-        
-        if (closeBtn) {
-            closeBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                closeProductDetailsModal();
-            });
-        }
-        
-        if (overlayEl) {
-            overlayEl.addEventListener('click', function(e) {
-                e.stopPropagation();
-                closeProductDetailsModal();
-            });
-        }
-        
-        if (cartBtn) {
-            cartBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                e.preventDefault();
-                const productId = parseInt(this.dataset.id);
-                toggleCart(productId, e);
-                
-                // Обновляем состояние кнопки в модалке
-                setTimeout(() => {
-                    const isNowInCart = cart.some(item => item.id === productId);
-                    if (isNowInCart) {
-                        this.innerHTML = '<i class="fas fa-check"></i> В корзине';
-                        this.classList.add('in-cart');
-                    } else {
-                        this.innerHTML = '<i class="fas fa-shopping-cart"></i> Добавить в корзину';
-                        this.classList.remove('in-cart');
-                    }
-                }, 100);
-            });
-        }
-        
-        if (favBtn) {
-            favBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                e.preventDefault();
-                const productId = parseInt(this.dataset.id);
-                toggleFavorite(productId, e);
-                
-                // Обновляем состояние кнопки в модалке
-                setTimeout(() => {
-                    const isNowInFav = favorites.some(item => item.id === productId);
-                    if (isNowInFav) {
-                        this.innerHTML = '<i class="fas fa-heart"></i>';
-                        this.classList.add('active');
-                    } else {
-                        this.innerHTML = '<i class="far fa-heart"></i>';
-                        this.classList.remove('active');
-                    }
-                }, 100);
-            });
-        }
-        
-        // Обработчик клавиши ESC
-        const escHandler = function(e) {
-            if (e.key === 'Escape') {
-                closeProductDetailsModal();
-            }
-        };
-        document.addEventListener('keydown', escHandler);
-        
-        // Сохраняем обработчик для удаления
-        modal._escHandler = escHandler;
-    }, 20);
-}
-
-function closeProductDetailsModal() {
-    const modal = document.getElementById('productDetailsModal');
-    const overlay = document.getElementById('productModalOverlay');
-    
-    if (modal) {
-        modal.classList.remove('show');
-        // Удаляем обработчик ESC
-        if (modal._escHandler) {
-            document.removeEventListener('keydown', modal._escHandler);
-        }
-        
-        setTimeout(() => {
-            if (modal.parentNode) {
-                modal.parentNode.removeChild(modal);
-            }
-        }, 300);
-    }
-    
-    if (overlay) {
-        overlay.classList.remove('show');
-        setTimeout(() => {
-            if (overlay.parentNode) {
-                overlay.parentNode.removeChild(overlay);
-            }
-        }, 300);
-    }
-    
-    document.body.style.overflow = 'auto';
-}
-
-// ===== МОДАЛЬНОЕ ОКНО ТОВАРА (старое) =====
 function showProductModal(product) {
     const modal = document.getElementById('productModal');
     const modalBody = document.getElementById('modalBody');
@@ -1414,7 +848,6 @@ function closeProductModal() {
     }
 }
 
-// ===== УПРАВЛЕНИЕ ПОПАПАМИ =====
 function openCartPopup() {
     document.getElementById('cartPopup').classList.add('show');
     document.getElementById('overlay').classList.add('show');
@@ -1453,23 +886,19 @@ function closeFilterPopup() {
     document.body.style.overflow = 'auto';
 }
 
-// ===== УТИЛИТЫ =====
 function getCategoryName(category) {
     const categories = {
         arabian: 'Арабские духи',
         premium: 'Премиум коллекция',
         affordable: 'Доступные духи',
         new: 'Новинки',
-        sale: 'Акции'
+        sale: 'Акции',
+        error: 'Ошибка'
     };
     return categories[category] || category;
 }
 
 function showNotification(message, type = 'info') {
-    // Удаляем предыдущие уведомления
-    document.querySelectorAll('.notification').forEach(n => n.remove());
-    
-    // Создаем уведомление
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
     
@@ -1485,7 +914,6 @@ function showNotification(message, type = 'info') {
         </div>
     `;
     
-    // Добавляем стили
     notification.style.cssText = `
         position: fixed;
         top: 20px;
@@ -1509,7 +937,6 @@ function showNotification(message, type = 'info') {
     
     document.body.appendChild(notification);
     
-    // Удаляем через 3 секунды
     setTimeout(() => {
         if (notification.parentNode) {
             notification.parentNode.removeChild(notification);
@@ -1517,9 +944,7 @@ function showNotification(message, type = 'info') {
     }, 3000);
 }
 
-// ===== ОБРАБОТЧИКИ СОБЫТИЙ =====
 function initEventListeners() {
-    // Поиск
     const searchInput = document.getElementById('searchInput');
     const searchBtn = document.getElementById('searchBtn');
     
@@ -1530,17 +955,12 @@ function initEventListeners() {
             }
         });
         
-        // Убираем input listener чтобы не лагало
         searchInput.addEventListener('input', function() {
-            // Используем debounce для предотвращения лагов
-            clearTimeout(this._timer);
-            this._timer = setTimeout(() => {
-                if (this.value.trim() === '') {
-                    filteredProducts = [...allProducts];
-                    currentPage = 1;
-                    renderProducts();
-                }
-            }, 300);
+            if (this.value.trim() === '') {
+                filteredProducts = [...allProducts];
+                currentPage = 1;
+                renderProducts();
+            }
         });
     }
     
@@ -1552,41 +972,33 @@ function initEventListeners() {
         });
     }
     
-    // Сортировка
     document.getElementById('sortBy').addEventListener('change', filterProducts);
     
-    // Профиль
     document.getElementById('userBtn')?.addEventListener('click', function() {
         showNotification(`Привет, ${user.firstName}! Профиль в разработке.`, 'info');
     });
     
-    // Нижнее меню
     document.getElementById('navFavorites')?.addEventListener('click', openFavoritesPopup);
     document.getElementById('navCart')?.addEventListener('click', openCartPopup);
     document.getElementById('navFilter')?.addEventListener('click', openFilterPopup);
     
-    // Кнопка "Перейти в каталог" в пустом избранном
     document.getElementById('browseBtn')?.addEventListener('click', function() {
         closeFavoritesPopup();
         resetFilters();
     });
     
-    // Закрытие попапов
     document.getElementById('closeCart')?.addEventListener('click', closeCartPopup);
     document.getElementById('closeFav')?.addEventListener('click', closeFavoritesPopup);
     document.getElementById('closeFilter')?.addEventListener('click', closeFilterPopup);
     document.getElementById('closeModal')?.addEventListener('click', closeProductModal);
     
-    // Оверлей для закрытия попапов
     document.getElementById('overlay')?.addEventListener('click', function() {
         closeCartPopup();
         closeFavoritesPopup();
         closeFilterPopup();
         closeProductModal();
-        closeProductDetailsModal();
     });
     
-    // Оформление заказа
     document.getElementById('checkoutBtn')?.addEventListener('click', function() {
         if (cart.length === 0) {
             showNotification('Добавьте товары в корзину', 'info');
@@ -1608,7 +1020,6 @@ ${orderItems}
 📅 **Дата:** ${new Date().toLocaleString('ru-RU')}
         `.trim();
         
-        // Если в Telegram, отправляем через WebApp
         if (tg.sendData) {
             const orderData = {
                 userId: user.id,
@@ -1621,15 +1032,13 @@ ${orderItems}
             tg.sendData(JSON.stringify(orderData));
             tg.showAlert(`Заказ оформлен!\n\nСумма: ${total.toLocaleString()}₽\nТоваров: ${cart.length}\n\nС вами свяжется менеджер для подтверждения.`);
         } else {
-            // Вне Telegram - открываем ссылку с предзаполненным сообщением
             const telegramUrl = `https://t.me/Ayder505?text=${encodeURIComponent(orderText)}`;
             window.open(telegramUrl, '_blank');
             showNotification(`Заказ на ${total.toLocaleString()}₽ отправлен менеджеру`, 'success');
         }
         
-        // Очищаем корзину
         cart = [];
-        saveToStorage(STORAGE_KEYS.CART, cart);
+        secureSaveToStorage('cart', cart);
         updateCartCount();
         updateCartPopup();
         renderProducts();
@@ -1637,52 +1046,24 @@ ${orderItems}
         closeCartPopup();
     });
     
-    // Обработка кликов по кнопкам в карточках товаров (делегирование)
-    document.addEventListener('click', function(event) {
-        const target = event.target;
-        
-        // Клик по кнопке "В корзину" на карточке товара
-        const cartBtn = target.closest('.btn-cart');
-        if (cartBtn) {
-            event.stopPropagation();
-            event.preventDefault();
-            const productId = parseInt(cartBtn.dataset.id);
-            if (productId) {
-                toggleCart(productId, event);
-            }
-            return;
-        }
-        
-        // Клик по кнопке "Избранное" на карточке товара
-        const favBtn = target.closest('.btn-fav');
-        if (favBtn) {
-            event.stopPropagation();
-            event.preventDefault();
-            const productId = parseInt(favBtn.dataset.id);
-            if (productId) {
-                toggleFavorite(productId, event);
-            }
-            return;
+    document.querySelectorAll('.page-btn').forEach(btn => {
+        if (btn.dataset.page) {
+            btn.addEventListener('click', function() {
+                goToPage(parseInt(this.dataset.page));
+            });
         }
     });
     
-    // Закрытие по клавише ESC
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closeCartPopup();
             closeFavoritesPopup();
             closeFilterPopup();
             closeProductModal();
-            closeProductDetailsModal();
         }
     });
-    
-    // Инициализация клика по карточкам товаров
-    setupProductCardClick();
 }
 
-// ===== ИНИЦИАЛИЗАЦИЯ =====
-// Добавляем стили для анимаций
 const animationStyles = document.createElement('style');
 animationStyles.textContent = `
     @keyframes slideInRight {
@@ -1704,10 +1085,206 @@ animationStyles.textContent = `
             opacity: 0;
         }
     }
+    
+    .modal-product {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    @media (min-width: 768px) {
+        .modal-product {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+    
+    .modal-product-images {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .modal-main-image {
+        width: 100%;
+        height: 300px;
+        object-fit: contain;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        padding: 20px;
+    }
+    
+    .modal-thumbnails {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .modal-thumbnail {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 12px;
+        cursor: pointer;
+        border: 2px solid transparent;
+    }
+    
+    .modal-thumbnail.active {
+        border-color: var(--color-primary);
+    }
+    
+    .modal-product-info {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .modal-product-title {
+        font-size: 1.8rem;
+        color: var(--color-text);
+        margin-bottom: 10px;
+        line-height: 1.3;
+    }
+    
+    .modal-product-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        color: var(--color-text-secondary);
+        margin-bottom: 20px;
+        align-items: center;
+    }
+    
+    .modal-description h3,
+    .modal-notes h3 {
+        margin-bottom: 10px;
+        color: var(--color-text);
+        font-size: 1.1rem;
+    }
+    
+    .notes-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 10px;
+    }
+    
+    .note-tag {
+        background: rgba(138, 43, 226, 0.2);
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        color: var(--color-primary-light);
+        border: 1px solid rgba(138, 43, 226, 0.3);
+    }
+    
+    .modal-prices {
+        margin: 20px 0;
+    }
+    
+    .modal-price-current {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: var(--color-text);
+        margin-bottom: 10px;
+    }
+    
+    .modal-price-old {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--color-text-muted);
+        text-decoration: line-through;
+        font-size: 1.1rem;
+    }
+    
+    .modal-discount {
+        background: linear-gradient(135deg, var(--color-accent), #FF3860);
+        color: white;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 0.9rem;
+    }
+    
+    .modal-actions {
+        display: flex;
+        gap: 10px;
+        margin: 20px 0;
+    }
+    
+    .modal-btn-cart,
+    .modal-btn-fav {
+        flex: 1;
+        padding: 16px;
+        border-radius: 16px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+    }
+    
+    .modal-btn-cart {
+        background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+        color: white;
+    }
+    
+    .modal-btn-cart:hover {
+        background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary));
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(138, 43, 226, 0.4);
+    }
+    
+    .modal-btn-cart.in-cart {
+        background: linear-gradient(135deg, var(--color-success), #00A86B);
+    }
+    
+    .modal-btn-cart.in-cart:hover {
+        background: linear-gradient(135deg, #00D68F, var(--color-success));
+    }
+    
+    .modal-btn-fav {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: var(--color-text);
+    }
+    
+    .modal-btn-fav:hover,
+    .modal-btn-fav.active {
+        background: linear-gradient(135deg, var(--color-accent), #FF3860);
+        color: white;
+        border-color: var(--color-accent);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(255, 107, 139, 0.4);
+    }
+    
+    .modal-features {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: var(--color-text-secondary);
+        font-size: 0.95rem;
+    }
+    
+    .feature-item i {
+        color: var(--color-primary-light);
+        font-size: 1.1rem;
+    }
 `;
 document.head.appendChild(animationStyles);
 
-// ===== ГЛОБАЛЬНЫЙ ЭКСПОРТ ДЛЯ ОТЛАДКИ =====
 window.app = {
     user,
     allProducts,
@@ -1719,8 +1296,6 @@ window.app = {
     toggleFavorite,
     showProductModal,
     closeProductModal,
-    showProductDetailsModal,
-    closeProductDetailsModal,
     resetFilters,
     openCartPopup,
     openFavoritesPopup,
