@@ -354,36 +354,104 @@ function renderProducts() {
             ? Math.round((1 - product.price / product.oldPrice) * 100)
             : 0;
         
-        card.innerHTML = `
-            <div class="product-badges">
-                ${badgeHtml}
-            </div>
-            <img src="${product.image}" alt="${product.name}" class="product-image">
-            <h3 class="product-title">${product.name}</h3>
-            <div class="product-category">${getCategoryName(product.category)} • ${product.volume} мл</div>
-            <div class="product-rating">
-                <div class="stars-filled">
-                    ${renderStars(product.rating)}
-                </div>
-                <span class="rating-value">${product.rating}</span>
-                <span class="reviews-count">(${product.reviews})</span>
-            </div>
-            <div class="product-prices">
-                <span class="price-current">${product.price.toLocaleString()} ₽</span>
-                ${product.oldPrice > 0 ? `
-                    <span class="price-old">${product.oldPrice.toLocaleString()} ₽</span>
-                    <span class="discount-percent">-${discountPercent}%</span>
-                ` : ''}
-            </div>
-            <div class="product-actions">
-                <button class="btn-cart ${isInCart ? 'in-cart' : ''}" data-id="${product.id}">
-                    ${isInCart ? '<i class="fas fa-check"></i> В корзине' : '<i class="fas fa-shopping-cart"></i> В корзину'}
-                </button>
-                <button class="btn-fav ${isInFavorites ? 'active' : ''}" data-id="${product.id}">
-                    <i class="${isInFavorites ? 'fas' : 'far'} fa-heart"></i>
-                </button>
-            </div>
-        `;
+        // ЭТОТ КОД ВСТАВЬТЕ ВМЕСТО УДАЛЕННОГО:
+
+// СОЗДАЕМ ОСНОВНОЙ КОНТЕЙНЕР КАРТОЧКИ
+card.className = 'product-card';
+card.dataset.id = product.id;
+
+// 1. БЕЙДЖИ (оставляем innerHTML, так как badgeHtml уже безопасен)
+const badgesDiv = document.createElement('div');
+badgesDiv.className = 'product-badges';
+badgesDiv.innerHTML = badgeHtml;
+
+// 2. КАРТИНКА ТОВАРА
+const img = document.createElement('img');
+img.className = 'product-image';
+img.src = window.Security.isSafeImage(product.image) ? product.image : '';
+img.alt = window.Security.cleanText(product.name);
+img.loading = 'lazy';
+
+// 3. НАЗВАНИЕ ТОВАРА (БЕЗОПАСНО через textContent)
+const title = document.createElement('h3');
+title.className = 'product-title';
+title.textContent = product.name;
+
+// 4. КАТЕГОРИЯ И ОБЪЕМ
+const categoryDiv = document.createElement('div');
+categoryDiv.className = 'product-category';
+categoryDiv.textContent = `${getCategoryName(product.category)} • ${product.volume} мл`;
+
+// 5. РЕЙТИНГ (innerHTML безопасен, так как renderStars возвращает только иконки)
+const ratingDiv = document.createElement('div');
+ratingDiv.className = 'product-rating';
+ratingDiv.innerHTML = `
+    <div class="stars-filled">
+        ${renderStars(product.rating)}
+    </div>
+    <span class="rating-value">${product.rating}</span>
+    <span class="reviews-count">(${product.reviews})</span>
+`;
+
+// 6. ЦЕНЫ (собираем безопасно)
+const pricesDiv = document.createElement('div');
+pricesDiv.className = 'product-prices';
+
+const currentPrice = document.createElement('span');
+currentPrice.className = 'price-current';
+currentPrice.textContent = `${product.price.toLocaleString()} ₽`;
+
+pricesDiv.appendChild(currentPrice);
+
+// Добавляем старую цену и скидку, если есть
+if (product.oldPrice > 0) {
+    const oldPrice = document.createElement('span');
+    oldPrice.className = 'price-old';
+    oldPrice.textContent = `${product.oldPrice.toLocaleString()} ₽`;
+    
+    const discount = document.createElement('span');
+    discount.className = 'discount-percent';
+    discount.textContent = `-${discountPercent}%`;
+    
+    pricesDiv.appendChild(oldPrice);
+    pricesDiv.appendChild(discount);
+}
+
+// 7. КНОПКИ ДЕЙСТВИЙ
+const actionsDiv = document.createElement('div');
+actionsDiv.className = 'product-actions';
+
+// Кнопка корзины
+const cartBtn = document.createElement('button');
+cartBtn.className = `btn-cart ${isInCart ? 'in-cart' : ''}`;
+cartBtn.onclick = (e) => toggleCart(product.id, e);
+
+const cartIcon = document.createElement('i');
+cartIcon.className = isInCart ? 'fas fa-check' : 'fas fa-shopping-cart';
+cartBtn.appendChild(cartIcon);
+cartBtn.appendChild(document.createTextNode(isInCart ? ' В корзине' : ' В корзину'));
+
+// Кнопка избранного
+const favBtn = document.createElement('button');
+favBtn.className = `btn-fav ${isInFavorites ? 'active' : ''}`;
+favBtn.onclick = (e) => toggleFavorite(product.id, e);
+
+const favIcon = document.createElement('i');
+favIcon.className = isInFavorites ? 'fas fa-heart' : 'far fa-heart';
+favBtn.appendChild(favIcon);
+
+// Собираем кнопки
+actionsDiv.appendChild(cartBtn);
+actionsDiv.appendChild(favBtn);
+
+// СБОРКА ВСЕХ ЭЛЕМЕНТОВ В КАРТОЧКУ
+card.appendChild(badgesDiv);
+card.appendChild(img);
+card.appendChild(title);
+card.appendChild(categoryDiv);
+card.appendChild(ratingDiv);
+card.appendChild(pricesDiv);
+card.appendChild(actionsDiv);
         
         grid.appendChild(card);
     });
