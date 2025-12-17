@@ -208,7 +208,7 @@ const PRODUCTS_DATA = [
         badge: "hit",
         inStock: true,
         popular: true,
-        notes: ["", "", ""]
+        notes: [".", ".", "."]
     },
     {
         id: 13,
