@@ -1486,9 +1486,6 @@ function initEventListeners() {
         const orderText = `
 📨 **Новый заказ в Aura Atelier**
 
-👤 **Покупатель:** ${user.firstName} ${user.lastName}
-📱 **Username:** @${user.username}
-
 📦 **Товары:**
 ${orderItems}
 
