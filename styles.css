@@ -389,6 +389,7 @@ body {
     position: relative;
     cursor: pointer;
     height: 340px;
+    overflow: hidden; /* Исправление 1: предотвращаем выход элементов */
 }
 
 .product-badges {
@@ -511,6 +512,8 @@ body {
     display: flex;
     gap: 6px;
     margin-top: auto;
+    position: relative;
+    z-index: 2; /* Исправление 1: поднимаем кнопки над другими элементами */
 }
 
 .btn-cart-wb {
@@ -1010,11 +1013,13 @@ body {
     display: flex;
     gap: var(--space-sm);
     flex: 1;
+    align-items: flex-start;
 }
 
+/* Исправление 2: увеличение размера фотографии в корзине */
 .cart-item-img {
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 100px;
     object-fit: contain;
     background: rgba(255, 255, 255, 0.05);
     border-radius: var(--radius-sm);
@@ -1055,6 +1060,7 @@ body {
     align-items: center;
     gap: 6px;
     margin-top: 8px;
+    flex-wrap: wrap;
 }
 
 .quantity-btn {
@@ -1087,9 +1093,9 @@ body {
     font-size: 0.9rem;
 }
 
+/* Исправление 2: кнопка удаления - квадратная иконка */
 .remove-item-btn {
-    margin-left: auto;
-    padding: 6px 12px;
+    padding: 6px;
     background: rgba(255, 61, 113, 0.1);
     border: 1px solid rgba(255, 61, 113, 0.3);
     border-radius: 4px;
@@ -1099,17 +1105,20 @@ body {
     transition: all 0.2s;
     display: flex;
     align-items: center;
-    gap: 4px;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    margin-left: auto;
 }
 
 .remove-item-btn:hover {
     background: rgba(255, 61, 113, 0.2);
 }
 
+/* Исправление 2: уменьшение фона кнопки "Выбрать все товары" */
 .cart-select-all {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: var(--space-sm);
     margin-bottom: var(--space-md);
     padding: 8px 12px;
@@ -1117,6 +1126,7 @@ body {
     border: 1px solid rgba(138, 43, 226, 0.2);
     border-radius: var(--radius-md);
     margin-top: 10px;
+    width: fit-content; /* Исправление 2: ширина по содержимому */
 }
 
 .cart-select-all label {
@@ -1902,8 +1912,8 @@ body {
     }
     
     .cart-item-img {
-        width: 60px;
-        height: 60px;
+        width: 80px;
+        height: 80px;
     }
     
     .quantity-btn {

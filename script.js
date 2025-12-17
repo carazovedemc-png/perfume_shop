@@ -594,7 +594,7 @@ function updateCartPopup() {
                         <input type="number" class="quantity-input" value="${item.quantity}" min="1" max="10" onchange="updateQuantity(${item.id}, 0, this.value)">
                         <button class="quantity-btn plus" onclick="updateQuantity(${item.id}, 1)">+</button>
                         <button class="remove-item-btn" onclick="removeFromCart(${item.id})">
-                            <i class="fas fa-trash"></i> Удалить
+                            <i class="fas fa-trash"></i>
                         </button>
                     </div>
                 </div>
