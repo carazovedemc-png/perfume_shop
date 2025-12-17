@@ -388,8 +388,8 @@ body {
     flex-direction: column;
     position: relative;
     cursor: pointer;
-    height: 340px;
-    overflow: hidden; /* Исправление 1: предотвращаем выход элементов */
+    height: 360px; /* Увеличена высота */
+    overflow: hidden;
 }
 
 .product-badges {
@@ -461,7 +461,7 @@ body {
 .product-title {
     font-size: 0.85rem;
     font-weight: 500;
-    margin-bottom: 4px;
+    margin-bottom: 2px; /* Уменьшен отступ */
     color: var(--color-text);
     line-height: 1.3;
     flex: 1;
@@ -481,7 +481,7 @@ body {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    min-height: 32px;
+    min-height: 30px; /* Уменьшена высота */
 }
 
 .product-rating-wb {
@@ -512,8 +512,9 @@ body {
     display: flex;
     gap: 6px;
     margin-top: auto;
+    padding-top: 10px; /* Добавлен отступ сверху */
     position: relative;
-    z-index: 2; /* Исправление 1: поднимаем кнопки над другими элементами */
+    z-index: 2;
 }
 
 .btn-cart-wb {
@@ -1016,10 +1017,10 @@ body {
     align-items: flex-start;
 }
 
-/* Исправление 2: увеличение размера фотографии в корзине */
+/* ИСПРАВЛЕНИЕ: увеличение фотки товара в корзине */
 .cart-item-img {
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
     object-fit: contain;
     background: rgba(255, 255, 255, 0.05);
     border-radius: var(--radius-sm);
@@ -1060,7 +1061,8 @@ body {
     align-items: center;
     gap: 6px;
     margin-top: 8px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap; /* Чтобы кнопки были в одну строку */
+    width: 100%;
 }
 
 .quantity-btn {
@@ -1076,6 +1078,7 @@ body {
     color: var(--color-text);
     font-size: 0.9rem;
     transition: all 0.2s;
+    flex-shrink: 0;
 }
 
 .quantity-btn:hover {
@@ -1091,9 +1094,10 @@ body {
     border-radius: 4px;
     color: var(--color-text);
     font-size: 0.9rem;
+    flex-shrink: 0;
 }
 
-/* Исправление 2: кнопка удаления - квадратная иконка */
+/* ИСПРАВЛЕНИЕ: кнопка удаления - квадратная иконка без текста */
 .remove-item-btn {
     padding: 6px;
     background: rgba(255, 61, 113, 0.1);
@@ -1108,14 +1112,14 @@ body {
     justify-content: center;
     width: 28px;
     height: 28px;
-    margin-left: auto;
+    flex-shrink: 0;
 }
 
 .remove-item-btn:hover {
     background: rgba(255, 61, 113, 0.2);
 }
 
-/* Исправление 2: уменьшение фона кнопки "Выбрать все товары" */
+/* ИСПРАВЛЕНИЕ: фон кнопки "Выбрать все товары" меньше и влево */
 .cart-select-all {
     display: flex;
     align-items: center;
@@ -1126,7 +1130,8 @@ body {
     border: 1px solid rgba(138, 43, 226, 0.2);
     border-radius: var(--radius-md);
     margin-top: 10px;
-    width: fit-content; /* Исправление 2: ширина по содержимому */
+    width: fit-content;
+    margin-left: 0;
 }
 
 .cart-select-all label {
@@ -1838,7 +1843,7 @@ body {
     }
     
     .product-card {
-        height: 320px;
+        height: 340px;
         padding: var(--space-sm);
     }
     
@@ -1911,9 +1916,15 @@ body {
         font-size: 0.8rem;
     }
     
+    /* ИСПРАВЛЕНИЕ для мобильных: кнопки в корзине */
+    .cart-item-controls {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+    }
+    
     .cart-item-img {
-        width: 80px;
-        height: 80px;
+        width: 100px;
+        height: 100px;
     }
     
     .quantity-btn {
@@ -1926,6 +1937,12 @@ body {
         width: 36px;
         height: 24px;
         font-size: 0.8rem;
+    }
+    
+    .remove-item-btn {
+        width: 24px;
+        height: 24px;
+        font-size: 0.7rem;
     }
     
     .modal-product-image {

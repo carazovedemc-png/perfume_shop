@@ -119,7 +119,7 @@ const PRODUCTS_DATA = [
     {
         id: 7,
         name: "YARAN Voux",
-        description: "YARAN Voux от Aris Perfumes — это концентрированное парфюмерное масло (CPO). Это унисекс-аромат, который относится к восточным или гурманским коллекциям, схожим с другими ароматами от брендов, таких как Paris Corner.",
+        description: "YARAN Voux от Aris Perfumes — это концентрированное парфюмерное масло (CPO). Это унисекс-аромат, который относится к восточным или гурманским коллекциям, схожим с другим ароматам от брендов, таких как Paris Corner.",
         price: 350,
         oldPrice: 0,
         category: "premium",
