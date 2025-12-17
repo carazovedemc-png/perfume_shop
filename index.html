@@ -8,41 +8,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="https://img.icons8.com/color/96/000000/perfume-bottle.png">
-    <style>
-        /* Анимации для градиентов */
-        @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        
-        /* Скрываем старое описание */
-        .company-description {
-            display: none !important;
-        }
-        
-        /* Анимация тряски */
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-            20%, 40%, 60%, 80% { transform: translateX(5px); }
-        }
-        
-        .shake {
-            animation: shake 0.5s ease-in-out;
-        }
-    </style>
 </head>
 <body>
-    <!-- Верхняя панель (исправлена для Android) -->
+    <!-- Верхняя панель -->
     <header class="top-header">
         <div class="container">
             <div class="header-top-row">
-                <!-- Логотип - всегда виден на Android -->
-                <div class="logo android-fix-logo">
+                <!-- Логотип -->
+                <div class="logo">
                     <div class="logo-icon-wrapper">
-                        <!-- ЗДЕСЬ ВСТАВЬТЕ ССЫЛКУ НА ВАШУ АВАТАРКУ -->
-                        <img src="https://sun9-82.userapi.com/s/v1/ig2/5F_JvkmONdoYqXz2czQN9q6pwM2zvdUBjebAw_mIMCPmYvieHPy4z4TAR8RfTRrYwBX8xsXsOrtOLOcsR8PPWWkM.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,448x448&from=bu&u=go-YJKFAACv9HaySzsp64EDmHmtNbKSmWlHpMACSshU&cs=448x0" class="logo-img">
+                        <!-- ЗАМЕНИТЕ ЭТУ ССЫЛКУ НА СВОЮ АВАТАРКУ -->
+                        <img src="https://i.imgur.com/ваша-фото.jpg" alt="Aura Atelier" class="logo-img">
                     </div>
                     <div class="logo-text">
                         <span class="logo-main">Aura Atelier</span>
@@ -50,7 +26,7 @@
                     </div>
                 </div>
                 
-                <!-- Поиск - занимает всё доступное пространство -->
+                <!-- Поиск -->
                 <div class="search-container">
                     <div class="search-box">
                         <input type="text" id="searchInput" placeholder="Поиск духов...">
@@ -60,16 +36,6 @@
                             </div>
                         </button>
                     </div>
-                </div>
-                
-                <!-- Корзина с бейджем -->
-                <div class="profile-container">
-                    <button class="profile-btn-glass" id="navCartTop">
-                        <div class="profile-icon-circle">
-                            <i class="fas fa-shopping-cart"></i>
-                            <span class="cart-badge" id="topCartCount">0</span>
-                        </div>
-                    </button>
                 </div>
             </div>
         </div>
@@ -140,31 +106,27 @@
         </section>
     </main>
 
-    <!-- Нижняя панель (исправлена для Android) -->
-    <nav class="bottom-nav-glass android-fix-button-container">
+    <!-- Нижняя панель -->
+    <nav class="bottom-nav-glass">
         <div class="nav-inner">
             <button class="nav-btn" id="navFavorites">
                 <i class="far fa-heart"></i>
-                <span>Избранное</span>
             </button>
-            <div class="nav-divider android-fix-divider"></div>
+            <div class="nav-divider"></div>
             
             <button class="nav-btn" id="navCart">
                 <i class="fas fa-shopping-cart"></i>
-                <span>Корзина</span>
                 <span class="nav-badge" id="bottomCartCount">0</span>
             </button>
-            <div class="nav-divider android-fix-divider"></div>
+            <div class="nav-divider"></div>
             
             <button class="nav-btn" id="navFilter">
                 <i class="fas fa-filter"></i>
-                <span>Фильтр</span>
             </button>
-            <div class="nav-divider android-fix-divider"></div>
+            <div class="nav-divider"></div>
             
             <a href="https://t.me/Ayder505" target="_blank" class="nav-btn" id="navContact">
                 <i class="fab fa-telegram"></i>
-                <span>Связь</span>
             </a>
         </div>
     </nav>
@@ -178,11 +140,12 @@
             </button>
         </div>
         <div class="popup-body">
+            <!-- Выбрать все товары -->
             <div class="cart-select-all">
                 <label class="checkbox">
                     <input type="checkbox" id="selectAllItems" checked>
                     <span class="checkmark"></span>
-                    <span style="font-weight: 600;">Выбрать все товары</span>
+                    <span>Выбрать все товары</span>
                 </label>
             </div>
             
@@ -195,7 +158,9 @@
                 <h4>Адрес доставки</h4>
                 <div class="address-input-container">
                     <input type="text" id="deliveryAddress" class="address-input" placeholder="Введите адрес доставки">
-                    <button class="save-address-btn" id="saveAddressBtn">Сохранить</button>
+                    <button class="save-address-btn" id="saveAddressBtn">
+                        <i class="fas fa-check"></i>
+                    </button>
                 </div>
                 <div id="addressStatus" style="font-size: 0.8rem; color: var(--color-text-secondary); margin-top: 5px;">
                     Адрес не указан
@@ -242,7 +207,7 @@
         </div>
     </div>
 
-    <!-- Попап фильтров (компактный для Android) -->
+    <!-- Попап фильтров -->
     <div class="filter-popup glass-popup" id="filterPopup">
         <div class="popup-header">
             <h3>Фильтры</h3>
@@ -376,16 +341,12 @@
     </div>
 
     <!-- Модальное окно товара -->
-    <div class="product-modal" id="productModal">
-        <div class="modal-content glass-popup">
-            <button class="modal-close" id="closeModal">
-                <i class="fas fa-times"></i>
-            </button>
-            <div class="modal-body" id="modalBody">
-                <!-- Контент загружается динамически -->
-            </div>
+    <div class="product-details-modal" id="productDetailsModal">
+        <div class="modal-content">
+            <!-- Контент загружается динамически -->
         </div>
     </div>
+    <div class="product-modal-overlay" id="productModalOverlay"></div>
 
     <!-- Оверлей для попапов -->
     <div class="overlay" id="overlay"></div>
@@ -398,7 +359,6 @@
             const banner2 = document.getElementById('banner2');
             let currentBanner = 1;
             
-            // Функция переключения баннеров
             function switchBanner() {
                 if (currentBanner === 1) {
                     banner1.classList.remove('active');
@@ -413,99 +373,6 @@
             
             // Переключаем баннеры каждые 10 секунд
             setInterval(switchBanner, 10000);
-            
-            // Инициализация фильтров (компактный вид для Android)
-            function initFilterPopup() {
-                const priceRange = document.getElementById('filterPriceRange');
-                const priceMinInput = document.getElementById('filterPriceMin');
-                const priceMaxInput = document.getElementById('filterPriceMax');
-                
-                if (priceRange && priceMinInput && priceMaxInput) {
-                    // Устанавливаем начальные значения
-                    priceMinInput.value = '0';
-                    priceMaxInput.value = '50000';
-                    
-                    priceRange.addEventListener('input', function() {
-                        const value = parseInt(this.value);
-                        priceMinInput.value = Math.max(0, value - 10000);
-                        priceMaxInput.value = Math.min(50000, value + 10000);
-                    });
-                }
-                
-                // Кнопки фильтров
-                document.getElementById('applyFilterBtn')?.addEventListener('click', function() {
-                    if (window.app && window.app.filterProducts) {
-                        window.app.filterProducts();
-                    }
-                    closeFilterPopup();
-                });
-                
-                document.getElementById('resetFilterBtn')?.addEventListener('click', function() {
-                    if (window.app && window.app.resetFilters) {
-                        window.app.resetFilters();
-                    }
-                });
-            }
-            
-            // Функции для открытия/закрытия попапов
-            function openFilterPopup() {
-                document.getElementById('filterPopup').classList.add('show');
-                document.getElementById('overlay').classList.add('show');
-                document.body.style.overflow = 'hidden';
-            }
-            
-            function closeFilterPopup() {
-                document.getElementById('filterPopup').classList.remove('show');
-                document.getElementById('overlay').classList.remove('show');
-                document.body.style.overflow = 'auto';
-            }
-            
-            // Назначаем обработчики для нижнего меню
-            document.getElementById('navFilter')?.addEventListener('click', openFilterPopup);
-            document.getElementById('closeFilter')?.addEventListener('click', closeFilterPopup);
-            
-            // Инициализация
-            initFilterPopup();
-            
-            // Проверка на Android устройство
-            function isAndroid() {
-                return /Android/i.test(navigator.userAgent);
-            }
-            
-            // Применяем дополнительные фиксы для Android
-            if (isAndroid()) {
-                console.log('Android устройство обнаружено, применяем фиксы');
-                
-                // Гарантируем что логотип виден
-                const logoText = document.querySelector('.logo-text');
-                if (logoText) {
-                    logoText.style.display = 'flex';
-                    logoText.style.visibility = 'visible';
-                    logoText.style.opacity = '1';
-                }
-                
-                // Гарантируем что перегородки видны
-                const dividers = document.querySelectorAll('.nav-divider');
-                dividers.forEach(divider => {
-                    divider.style.display = 'block';
-                    divider.style.visibility = 'visible';
-                    divider.style.opacity = '1';
-                });
-                
-                // Фикс для поиска - правильное позиционирование
-                const searchContainer = document.querySelector('.search-container');
-                if (searchContainer) {
-                    searchContainer.style.marginLeft = 'auto';
-                    searchContainer.style.marginRight = '16px';
-                }
-            }
-            
-            // Обработчик для кнопки корзины вверху
-            document.getElementById('navCartTop')?.addEventListener('click', function() {
-                if (window.app && window.app.openCartPopup) {
-                    window.app.openCartPopup();
-                }
-            });
         });
     </script>
 </body>
