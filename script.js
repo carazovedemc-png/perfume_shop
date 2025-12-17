@@ -29,7 +29,7 @@ const PRODUCTS_DATA = [
         rating: 4.8,
         reviews: 124,
         image: "https://sun9-80.userapi.com/s/v1/ig2/POV_jt4v0MEj7d-4gdkRYIFYTBL-hvXmDLOjJKlY-RqeOgcO1NxWHXAss7UBTzkvI8rdLMEdpqZwJeARBqh7iyc3.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=tt6otIk9Wzym_IH9u6oWb4gDXhDWpPwiNQ5muEOgTHo&cs=240x0",
-        badge: "null",
+        badge: "hit",
         inStock: true,
         popular: true,
         notes: ["лаванда", "чёрная ваниль", "мускус"]
@@ -37,7 +37,7 @@ const PRODUCTS_DATA = [
     {
         id: 2,
         name: "Dalal",
-        description: "Доставка по Симферополю бесплатно.",
+        description: "Dalal — масляные духи бренда Al Rehab из ОАЭ. Относятся к семейству сладких, древесных и гурманских ароматов. • Благодаря масляной консистенции духи имеют хорошую стойкость и экономичны в расходе. • Запах держится до 12 часов! Аромат:  • Верхние ноты: апельсин. • Ноты сердца: карамель, ваниль. • Базовые ноты: сандаловое дерево.Композиция напоминает о карамельном чизкейке и ванильном мороженом с апельсиновым джемом",
         price: 350,
         oldPrice: 0,
         category: "premium",
