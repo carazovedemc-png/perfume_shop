@@ -376,27 +376,35 @@ function renderProducts() {
                 ${badgeHtml}
             </div>
             <img src="${product.image}" alt="${product.name}" class="product-image">
-            <h3 class="product-title">${product.name}</h3>
-            <div class="product-category">${getCategoryName(product.category)} • ${product.volume} мл</div>
-            <div class="product-rating">
-                <div class="stars-filled">
-                    ${renderStars(product.rating)}
-                </div>
-                <span class="rating-value">${product.rating}</span>
-                <span class="reviews-count">(${product.reviews})</span>
-            </div>
-            <div class="product-prices">
+            
+            <div class="product-prices-top">
                 <span class="price-current">${product.price.toLocaleString()} ₽</span>
                 ${product.oldPrice > 0 ? `
-                    <span class="price-old">${product.oldPrice.toLocaleString()} ₽</span>
-                    <span class="discount-percent">-${discountPercent}%</span>
+                    <div class="price-old-wrapper">
+                        <span class="price-old">${product.oldPrice.toLocaleString()} ₽</span>
+                        <span class="discount-percent">-${discountPercent}%</span>
+                    </div>
                 ` : ''}
             </div>
-            <div class="product-actions">
-                <button class="btn-cart ${isInCart ? 'in-cart' : ''}" data-id="${product.id}">
-                    ${isInCart ? '<i class="fas fa-check"></i> В корзине' : '<i class="fas fa-shopping-cart"></i> В корзину'}
+            
+            <h3 class="product-title">${product.name}</h3>
+            
+            <div class="product-description-short">${product.description.substring(0, 60)}${product.description.length > 60 ? '...' : ''}</div>
+            
+            <div class="product-rating-wb">
+                <div class="rating-stars">
+                    ${renderStars(product.rating)}
+                </div>
+                <span class="rating-value-wb">${product.rating}</span>
+                <span class="reviews-count-wb">${product.reviews} оценок</span>
+            </div>
+            
+            <div class="product-actions-wb">
+                <button class="btn-cart-wb ${isInCart ? 'in-cart' : ''}" data-id="${product.id}">
+                    ${isInCart ? '<i class="fas fa-check"></i>' : '<i class="fas fa-shopping-cart"></i>'}
+                    <span>${isInCart ? 'В корзине' : 'В корзину'}</span>
                 </button>
-                <button class="btn-fav ${isInFavorites ? 'active' : ''}" data-id="${product.id}">
+                <button class="btn-fav-wb ${isInFavorites ? 'active' : ''}" data-id="${product.id}">
                     <i class="${isInFavorites ? 'fas' : 'far'} fa-heart"></i>
                 </button>
             </div>
@@ -410,7 +418,7 @@ function renderProducts() {
     // Добавляем обработчики кликов на карточки
     document.querySelectorAll('.product-card').forEach(card => {
         card.addEventListener('click', function(e) {
-            if (!e.target.closest('.btn-cart') && !e.target.closest('.btn-fav')) {
+            if (!e.target.closest('.btn-cart-wb') && !e.target.closest('.btn-fav-wb')) {
                 const productId = parseInt(this.dataset.id);
                 const product = allProducts.find(p => p.id === productId);
                 if (product) {
@@ -555,33 +563,39 @@ function updateCartPopup() {
         return;
     }
     
-    // Обновляем состояние "Выбрать все"
     const allSelected = cart.every(item => item.selected);
     const someSelected = cart.some(item => item.selected);
     selectAllCheckbox.checked = allSelected;
     selectAllCheckbox.indeterminate = !allSelected && someSelected;
     selectAllCheckbox.disabled = false;
     
-    // Рендерим товары
     cartItems.innerHTML = '';
     cart.forEach(item => {
         const itemElement = document.createElement('div');
         itemElement.className = 'cart-item';
         itemElement.innerHTML = `
-            <label class="checkbox cart-item-checkbox">
-                <input type="checkbox" class="cart-item-checkbox-input" data-id="${item.id}" ${item.selected ? 'checked' : ''}>
-                <span class="checkmark"></span>
-            </label>
-            <img src="${item.image}" alt="${item.name}" class="cart-item-img">
-            <div class="cart-item-details">
-                <h4 class="cart-item-title">${item.name}</h4>
-                <div class="cart-item-price">${item.price.toLocaleString()} ₽</div>
-                <div class="cart-item-controls">
-                    <button class="quantity-btn" onclick="updateQuantity(${item.id}, -1)">-</button>
-                    <input type="number" class="quantity-input" value="${item.quantity}" min="1" max="10" onchange="updateQuantity(${item.id}, 0, this.value)">
-                    <button class="quantity-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
-                    <div class="remove-item" onclick="removeFromCart(${item.id})">
-                        <i class="fas fa-trash"></i>
+            <div class="cart-item-checkbox-wrapper">
+                <label class="checkbox cart-item-checkbox">
+                    <input type="checkbox" class="cart-item-checkbox-input" data-id="${item.id}" ${item.selected ? 'checked' : ''}>
+                    <span class="checkmark"></span>
+                </label>
+            </div>
+            <div class="cart-item-content">
+                <img src="${item.image}" alt="${item.name}" class="cart-item-img">
+                <div class="cart-item-details">
+                    <h4 class="cart-item-title">${item.name}</h4>
+                    <div class="cart-item-meta">
+                        <span class="cart-item-volume">${item.volume} мл</span>
+                        <span class="cart-item-category">${getCategoryName(item.category)}</span>
+                    </div>
+                    <div class="cart-item-price">${item.price.toLocaleString()} ₽</div>
+                    <div class="cart-item-controls">
+                        <button class="quantity-btn minus" onclick="updateQuantity(${item.id}, -1)">-</button>
+                        <input type="number" class="quantity-input" value="${item.quantity}" min="1" max="10" onchange="updateQuantity(${item.id}, 0, this.value)">
+                        <button class="quantity-btn plus" onclick="updateQuantity(${item.id}, 1)">+</button>
+                        <button class="remove-item-btn" onclick="removeFromCart(${item.id})">
+                            <i class="fas fa-trash"></i> Удалить
+                        </button>
                     </div>
                 </div>
             </div>
@@ -589,7 +603,6 @@ function updateCartPopup() {
         cartItems.appendChild(itemElement);
     });
     
-    // Добавляем обработчики для чекбоксов
     document.querySelectorAll('.cart-item-checkbox-input').forEach(checkbox => {
         checkbox.addEventListener('change', function() {
             const productId = parseInt(this.dataset.id);
@@ -604,7 +617,6 @@ function updateCartPopup() {
         });
     });
     
-    // Обновляем суммы
     updateCartSummary();
     updateCheckoutButton();
 }
@@ -698,6 +710,64 @@ function updateCheckoutButton() {
         checkoutBtn.disabled = false;
         checkoutBtn.style.opacity = '1';
         checkoutBtn.style.cursor = 'pointer';
+    }
+}
+
+// ===== ИЗБРАННОЕ =====
+function updateFavoritesPopup() {
+    const favoritesItems = document.getElementById('favoritesItems');
+    const favEmpty = document.getElementById('favEmpty');
+    
+    if (!favoritesItems || !favEmpty) return;
+    
+    if (favorites.length === 0) {
+        favoritesItems.style.display = 'none';
+        favEmpty.style.display = 'flex';
+    } else {
+        favoritesItems.style.display = 'block';
+        favEmpty.style.display = 'none';
+        
+        favoritesItems.innerHTML = '';
+        
+        favorites.forEach(item => {
+            const itemElement = document.createElement('div');
+            itemElement.className = 'fav-item';
+            itemElement.dataset.id = item.id;
+            
+            itemElement.innerHTML = `
+                <div class="fav-item-content">
+                    <img src="${item.image}" alt="${item.name}" class="fav-item-img">
+                    <div class="fav-item-details">
+                        <h4 class="fav-item-title">${item.name}</h4>
+                        <div class="fav-item-price">${item.price.toLocaleString()} ₽</div>
+                        <div class="fav-item-meta">
+                            <span class="fav-item-volume">${item.volume} мл</span>
+                            <span class="fav-item-category">${getCategoryName(item.category)}</span>
+                        </div>
+                    </div>
+                    <button class="remove-from-fav" onclick="removeFromFavorites(${item.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                <button class="btn-add-to-cart-from-fav" onclick="toggleCart(${item.id})">
+                    <i class="fas fa-shopping-cart"></i> В корзину
+                </button>
+            `;
+            
+            favoritesItems.appendChild(itemElement);
+        });
+    }
+}
+
+function removeFromFavorites(productId) {
+    const index = favorites.findIndex(item => item.id === productId);
+    if (index !== -1) {
+        const product = favorites[index];
+        favorites.splice(index, 1);
+        saveToStorage(STORAGE_KEYS.FAVORITES, favorites);
+        showNotification(`${product.name} удален из избранного`, 'info');
+        updateFavoritesPopup();
+        renderProducts();
     }
 }
 
@@ -832,14 +902,12 @@ function showProductDetailsModal(product) {
     overlay.id = 'productModalOverlay';
     document.body.appendChild(overlay);
     
-    // Показываем с анимацией
     setTimeout(() => {
         modal.classList.add('show');
         overlay.classList.add('show');
         document.body.style.overflow = 'hidden';
     }, 10);
     
-    // Добавляем обработчики
     setTimeout(() => {
         const closeBtn = document.getElementById('closeDetailsModalBtn');
         const overlayEl = document.getElementById('productModalOverlay');
@@ -916,7 +984,6 @@ function showProductDetailsModal(product) {
             });
         }
         
-        // Обработчик клавиши ESC
         const escHandler = function(e) {
             if (e.key === 'Escape') {
                 closeProductDetailsModal();
@@ -1014,8 +1081,9 @@ function filterProducts() {
         case 'popular':
         default:
             filteredProducts.sort((a, b) => {
-                if (a.popular && !b.popular) return -1;
-                if (!a.popular && b.popular) return 1;
+                if (b.rating !== a.rating) {
+                    return b.rating - a.rating;
+                }
                 return b.reviews - a.reviews;
             });
             break;
@@ -1319,10 +1387,14 @@ function initEventListeners() {
     }
     
     // Сортировка
-    document.getElementById('sortBy').addEventListener('change', filterProducts);
+    document.getElementById('sortBy')?.addEventListener('change', filterProducts);
     
     // Нижнее меню
-    document.getElementById('navFavorites')?.addEventListener('click', openFavoritesPopup);
+    document.getElementById('navFavorites')?.addEventListener('click', function() {
+        updateFavoritesPopup();
+        openFavoritesPopup();
+    });
+    
     document.getElementById('navCart')?.addEventListener('click', openCartPopup);
     document.getElementById('navFilter')?.addEventListener('click', openFilterPopup);
     
@@ -1349,7 +1421,6 @@ function initEventListeners() {
     
     // Автосохранение адреса при изменении
     document.getElementById('deliveryAddress')?.addEventListener('input', function() {
-        // Дебаунс для автосохранения
         clearTimeout(this._timer);
         this._timer = setTimeout(() => {
             if (this.value.trim()) {
@@ -1446,7 +1517,6 @@ ${orderItems}
             showNotification(`Заказ на ${total.toLocaleString()}₽ отправлен менеджеру`, 'success');
         }
         
-        // Удаляем только выбранные товары из корзины
         cart = cart.filter(item => !item.selected);
         saveToStorage(STORAGE_KEYS.CART, cart);
         updateCartCount();
@@ -1460,18 +1530,29 @@ ${orderItems}
     document.addEventListener('click', function(event) {
         const target = event.target;
         
-        const cartBtn = target.closest('.btn-cart');
+        const cartBtn = target.closest('.btn-cart-wb');
         if (cartBtn) {
             event.stopPropagation();
             event.preventDefault();
             const productId = parseInt(cartBtn.dataset.id);
             if (productId) {
                 toggleCart(productId, event);
+                
+                setTimeout(() => {
+                    const isNowInCart = cart.some(item => item.id === productId);
+                    if (isNowInCart) {
+                        cartBtn.innerHTML = '<i class="fas fa-check"></i><span>В корзине</span>';
+                        cartBtn.classList.add('in-cart');
+                    } else {
+                        cartBtn.innerHTML = '<i class="fas fa-shopping-cart"></i><span>В корзину</span>';
+                        cartBtn.classList.remove('in-cart');
+                    }
+                }, 100);
             }
             return;
         }
         
-        const favBtn = target.closest('.btn-fav');
+        const favBtn = target.closest('.btn-fav-wb');
         if (favBtn) {
             event.stopPropagation();
             event.preventDefault();
@@ -1494,7 +1575,17 @@ ${orderItems}
                 }
                 
                 saveToStorage(STORAGE_KEYS.FAVORITES, favorites);
-                renderProducts();
+                
+                setTimeout(() => {
+                    const isNowInFav = favorites.some(item => item.id === productId);
+                    if (isNowInFav) {
+                        favBtn.innerHTML = '<i class="fas fa-heart"></i>';
+                        favBtn.classList.add('active');
+                    } else {
+                        favBtn.innerHTML = '<i class="far fa-heart"></i>';
+                        favBtn.classList.remove('active');
+                    }
+                }, 100);
             }
             return;
         }
