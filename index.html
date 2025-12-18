@@ -4,69 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Aura Atelier - эксклюзивные духи</title>
-    
-    <!-- Стили -->
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="https://img.icons8.com/color/96/000000/perfume-bottle.png">
-    
-    <style>
-        /* Анимации для градиентов */
-        @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-        
-        /* Анимации для модальных окон */
-        @keyframes slideInRight {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
-        }
-        
-        @keyframes modalSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes modalFadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-    </style>
 </head>
 <body>
-    <!-- Верхняя панель с аватаркой -->
+    <!-- Верхняя панель -->
     <header class="top-header">
         <div class="container">
             <div class="header-top-row">
                 <!-- Логотип -->
-                <div class="logo android-fix-logo">
+                <div class="logo">
                     <div class="logo-icon-wrapper">
-                        <i class="fas fa-sparkles logo-icon"></i>
+                        <img src="https://sun9-82.userapi.com/s/v1/ig2/5F_JvkmONdoYqXz2czQN9q6pwM2zvdUBjebAw_mIMCPmYvieHPy4z4TAR8RfTRrYwBX8xsXsOrtOLOcsR8PPWWkM.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,448x448&from=bu&u=go-YJKFAACv9HaySzsp64EDmHmtNbKSmWlHpMACSshU&cs=448x0" alt="Aura Atelier" class="logo-img">
                     </div>
                     <div class="logo-text">
                         <span class="logo-main">Aura Atelier</span>
@@ -74,40 +25,16 @@
                     </div>
                 </div>
                 
-                <!-- Аватар пользователя -->
-                <div class="user-avatar-container" id="avatarContainer">
-                    <div class="avatar-wrapper">
-                        <img src="" alt="Аватар" class="user-avatar" id="userAvatar">
-                        <div class="avatar-overlay">
-                            <i class="fas fa-camera"></i>
-                        </div>
-                        <input type="file" id="avatarUpload" accept="image/*" style="display: none;">
-                    </div>
-                    <span class="username" id="username">Гость</span>
-                </div>
-                
                 <!-- Поиск -->
                 <div class="search-container">
                     <div class="search-box">
-                        <input type="text" id="searchInput" placeholder="Поиск духов...">
+                        <input type="text" id="searchInput" placeholder="Поиск">
                         <button class="search-btn-glass" id="searchBtn">
                             <div class="search-glass-circle">
                                 <i class="fas fa-search"></i>
                             </div>
                         </button>
                     </div>
-                </div>
-                
-                <!-- Счетчики корзины и избранного -->
-                <div class="header-icons">
-                    <button class="header-icon-btn" id="headerFavBtn">
-                        <i class="far fa-heart"></i>
-                        <span class="header-badge" id="headerFavCount">0</span>
-                    </button>
-                    <button class="header-icon-btn" id="headerCartBtn">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span class="header-badge" id="headerCartCount">0</span>
-                    </button>
                 </div>
             </div>
         </div>
@@ -130,6 +57,7 @@
                     <h1>Заказы оформляем в лс</h1>
                     <div class="banner-contacts">
                         <strong>@Ayder505</strong><br>
+                        <strong>@Ma1traher</strong><br>
                         Telegram channel:<br>
                         <a href="https://t.me/Aa_Atelier" target="_blank">https://t.me/Aa_Atelier</a>
                     </div>
@@ -178,39 +106,34 @@
     </main>
 
     <!-- Нижняя панель -->
-    <nav class="bottom-nav-glass android-fix-button-container">
+    <nav class="bottom-nav-glass">
         <div class="nav-inner">
             <button class="nav-btn" id="navFavorites">
                 <i class="far fa-heart"></i>
-                <span>Избранное</span>
-                <span class="nav-badge" id="bottomFavCount">0</span>
             </button>
-            <div class="nav-divider android-fix-divider"></div>
+            <div class="nav-divider"></div>
             
             <button class="nav-btn" id="navCart">
                 <i class="fas fa-shopping-cart"></i>
-                <span>Корзина</span>
                 <span class="nav-badge" id="bottomCartCount">0</span>
             </button>
-            <div class="nav-divider android-fix-divider"></div>
+            <div class="nav-divider"></div>
             
             <button class="nav-btn" id="navFilter">
                 <i class="fas fa-filter"></i>
-                <span>Фильтр</span>
             </button>
-            <div class="nav-divider android-fix-divider"></div>
+            <div class="nav-divider"></div>
             
-            <button class="nav-btn" id="navContact">
-                <i class="fas fa-phone-alt"></i>
-                <span>Связь</span>
-            </button>
+            <a href="https://t.me/Ayder505" target="_blank" class="nav-btn" id="navContact">
+                <i class="fab fa-telegram"></i>
+            </a>
         </div>
     </nav>
 
-    <!-- Попап корзины с адресом доставки -->
+    <!-- Попап корзины -->
     <div class="cart-popup glass-popup" id="cartPopup">
         <div class="popup-header">
-            <h3><i class="fas fa-shopping-cart"></i> Корзина</h3>
+            <h3>Корзина</h3>
             <button class="close-popup" id="closeCart">
                 <i class="fas fa-times"></i>
             </button>
@@ -220,26 +143,17 @@
                 <!-- Товары в корзине -->
             </div>
             
-            <!-- Блок адреса доставки -->
-            <div class="delivery-address">
-                <h4><i class="fas fa-map-marker-alt"></i> Адрес доставки</h4>
-                <div class="address-form" id="addressForm">
-                    <div class="form-row">
-                        <input type="text" id="deliveryStreet" placeholder="Улица" value="">
-                        <input type="text" id="deliveryHouse" placeholder="Дом" value="">
-                    </div>
-                    <div class="form-row">
-                        <input type="text" id="deliveryApartment" placeholder="Квартира" value="">
-                        <input type="text" id="deliveryIntercom" placeholder="Домофон" value="">
-                    </div>
-                    <textarea id="deliveryComment" placeholder="Комментарий для курьера" rows="2"></textarea>
-                    <button class="btn-save-address" id="saveAddressBtn">
-                        <i class="fas fa-save"></i> Сохранить адрес
+            <!-- Адрес доставки -->
+            <div class="delivery-address-section">
+                <h4>Адрес доставки</h4>
+                <div class="address-input-container">
+                    <input type="text" id="deliveryAddress" class="address-input" placeholder="Введите адрес доставки">
+                    <button class="save-address-btn" id="saveAddressBtn">
+                        <i class="fas fa-check"></i>
                     </button>
                 </div>
-                <div class="saved-address" id="savedAddressDisplay" style="display: none;">
-                    <p><strong>Сохраненный адрес:</strong> <span id="addressText"></span></p>
-                    <button class="btn-edit-address" id="editAddressBtn">Изменить</button>
+                <div id="addressStatus" style="font-size: 0.8rem; color: var(--color-text-secondary); margin-top: 5px;">
+                    Адрес не указан
                 </div>
             </div>
             
@@ -247,10 +161,6 @@
                 <div class="summary-row">
                     <span>Товары</span>
                     <span id="cartTotal">0 ₽</span>
-                </div>
-                <div class="summary-row">
-                    <span>Доставка</span>
-                    <span id="deliveryCost">0 ₽</span>
                 </div>
                 <div class="summary-row total">
                     <span>Итого</span>
@@ -267,7 +177,7 @@
     <!-- Попап избранного -->
     <div class="favorites-popup glass-popup" id="favoritesPopup">
         <div class="popup-header">
-            <h3><i class="fas fa-heart"></i> Избранное</h3>
+            <h3>Избранное</h3>
             <button class="close-popup" id="closeFav">
                 <i class="fas fa-times"></i>
             </button>
@@ -290,7 +200,7 @@
     <!-- Попап фильтров -->
     <div class="filter-popup glass-popup" id="filterPopup">
         <div class="popup-header">
-            <h3><i class="fas fa-filter"></i> Фильтры</h3>
+            <h3>Фильтры</h3>
             <button class="close-popup" id="closeFilter">
                 <i class="fas fa-times"></i>
             </button>
@@ -322,9 +232,9 @@
                     <h4>Цена, ₽</h4>
                     <div class="price-range">
                         <div class="range-inputs">
-                            <input type="number" id="filterPriceMin" placeholder="0" min="0" value="0">
+                            <input type="number" id="filterPriceMin" placeholder="0" min="0">
                             <span class="range-divider">-</span>
-                            <input type="number" id="filterPriceMax" placeholder="50000" min="0" value="50000">
+                            <input type="number" id="filterPriceMax" placeholder="50000" min="0">
                         </div>
                         <div class="range-slider">
                             <input type="range" id="filterPriceRange" min="0" max="50000" value="25000">
@@ -420,86 +330,40 @@
         </div>
     </div>
 
-    <!-- Попап контактов -->
-    <div class="contact-popup glass-popup" id="contactPopup">
-        <div class="popup-header">
-            <h3><i class="fas fa-phone-alt"></i> Связь с нами</h3>
-            <button class="close-popup" id="closeContact">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="popup-body">
-            <div class="contact-info">
-                <div class="contact-item">
-                    <i class="fas fa-user"></i>
-                    <div>
-                        <strong>Менеджер по продажам</strong>
-                        <p>@Ayder505</p>
-                    </div>
-                </div>
-                <div class="contact-item">
-                    <i class="fab fa-telegram"></i>
-                    <div>
-                        <strong>Telegram канал</strong>
-                        <p><a href="https://t.me/Aa_Atelier" target="_blank">https://t.me/Aa_Atelier</a></p>
-                    </div>
-                </div>
-                <div class="contact-item">
-                    <i class="fas fa-phone"></i>
-                    <div>
-                        <strong>Телефон</strong>
-                        <p>+7 (999) 123-45-67</p>
-                    </div>
-                </div>
-                <div class="contact-item">
-                    <i class="fas fa-clock"></i>
-                    <div>
-                        <strong>Время работы</strong>
-                        <p>9:00 - 21:00 (без выходных)</p>
-                    </div>
-                </div>
-                <div class="contact-item">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <div>
-                        <strong>Адрес</strong>
-                        <p>г. Симферополь, доставка по всему городу</p>
-                    </div>
-                </div>
-            </div>
-            <div class="contact-message">
-                <h4>Напишите нам</h4>
-                <textarea id="contactMessage" placeholder="Ваше сообщение..." rows="3"></textarea>
-                <button class="btn-send-message" id="sendMessageBtn">
-                    <i class="fas fa-paper-plane"></i> Отправить сообщение
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Модальное окно деталей товара -->
-    <div class="product-modal-overlay" id="productModalOverlay"></div>
+    <!-- Модальное окно товара -->
     <div class="product-details-modal" id="productDetailsModal">
         <div class="modal-content">
-            <div class="modal-header">
-                <button class="modal-close-btn" id="closeDetailsModalBtn">
-                    <i class="fas fa-times"></i>
-                </button>
-                <span class="modal-badge modal-badge-new" id="modalBadge" style="display: none;">Новинка</span>
-            </div>
-            
-            <div class="modal-body" id="modalBody">
-                <!-- Контент загружается динамически -->
-            </div>
+            <!-- Контент загружается динамически -->
         </div>
     </div>
+    <div class="product-modal-overlay" id="productModalOverlay"></div>
 
     <!-- Оверлей для попапов -->
     <div class="overlay" id="overlay"></div>
 
-    <!-- Уведомления -->
-    <div class="notification" id="notification"></div>
-
-    <!-- Скрипты -->
     <script src="script.js"></script>
+    <script>
+        // Скрипт для переключения баннеров
+        document.addEventListener('DOMContentLoaded', function() {
+            const banner1 = document.getElementById('banner1');
+            const banner2 = document.getElementById('banner2');
+            let currentBanner = 1;
+            
+            function switchBanner() {
+                if (currentBanner === 1) {
+                    banner1.classList.remove('active');
+                    banner2.classList.add('active');
+                    currentBanner = 2;
+                } else {
+                    banner2.classList.remove('active');
+                    banner1.classList.add('active');
+                    currentBanner = 1;
+                }
+            }
+            
+            // Переключаем баннеры каждые 10 секунд
+            setInterval(switchBanner, 10000);
+        });
+    </script>
 </body>
 </html>
