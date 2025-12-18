@@ -18,8 +18,6 @@ const STORAGE_KEYS = {
     ADDRESS: 'aura_atelier_address'
 };
 
-// КАРТОЧКИ ТОВАРОВ
-const PRODUCTS_DATA = [
     // КАРТОЧКИ ТОВАРОВ
 const PRODUCTS_DATA = [
     {
