@@ -7,16 +7,19 @@ let favorites = [];
 let filteredProducts = [];
 let currentPage = 1;
 const productsPerPage = 8;
-let isFilterOpen = false;
+let savedAddress = null;
 
 // Ключи для localStorage
 const STORAGE_KEYS = {
     CART: 'aura_atelier_cart',
     FAVORITES: 'aura_atelier_favorites',
-    USER: 'aura_atelier_user'
+    USER: 'aura_atelier_user',
+    AVATAR: 'aura_atelier_avatar',
+    USERNAME: 'aura_atelier_username',
+    ADDRESS: 'aura_atelier_address'
 };
 
-// КАРТОЧКИ ТОВАРОВ
+// ДАННЫЕ ТОВАРОВ
 const PRODUCTS_DATA = [
     {
         id: 1,
@@ -37,7 +40,7 @@ const PRODUCTS_DATA = [
     {
         id: 2,
         name: "Dalal",
-        description: "Dalal — масляные духи бренда Al Rehab из ОАЭ. Относятся к семейству сладких, древесных и гурманских ароматов. Благодаря масляной консистенции духи имеют хорошую стойкость и экономичны в расходе. Запах держится до 12 часов! Аромат:  Верхние ноты: апельсин. Ноты сердца: карамель, ваниль. Базовые ноты: сандаловое дерево.Композиция напоминает о карамельном чизкейке и ванильном мороженом с апельсиновым джемом",
+        description: "Dalal — масляные духи бренда Al Rehab из ОАЭ. Относятся к семейству сладких, древесных и гурманских ароматов. Благодаря масляной консистенции духи имеют хорошую стойкость и экономичны в расходе. Запах держится до 12 часов! Аромат: Верхние ноты: апельсин. Ноты сердца: карамель, ваниль. Базовые ноты: сандаловое дерево. Композиция напоминает о карамельном чизкейке и ванильном мороженом с апельсиновым джемом.",
         price: 350,
         oldPrice: 0,
         category: "premium",
@@ -53,7 +56,7 @@ const PRODUCTS_DATA = [
     {
         id: 3,
         name: "Black Opium",
-        description: "Это - женские духи из группы восточные гурманские. Композиция глубокая, насыщенная, сладкая и притягательная. Верхние ноты: груша, розовый перец и цветок апельсина. Средние ноты: кофе, жасмин, горький миндаль и лакричник. Базовые ноты: ваниль, пачули, кедр и кашемировое дерево.",
+        description: "Это - женские духи из группы восточные гурманские. Композиция глубокая, насыщенная, сладкая и притягательная. Верхние ноты: груша, розовый перец и цветок апельсина. Средние ноты: кофе, жасмин, горький миндаль и лакричник. Базовые ноты: ваниль, пачули, кедр и кашемировое дерево.",
         price: 350,
         oldPrice: 0,
         category: "affordable",
@@ -61,7 +64,7 @@ const PRODUCTS_DATA = [
         rating: 4.6,
         reviews: 100,
         image: "https://sun9-43.userapi.com/s/v1/ig2/7OuPKSCxdwp7oHCuEccqLkHkK_-ovx6ks842VjcS4nIExZ1VGhdLfUhSz-ueglS4PgI_fh29HEvPqFLzNlKj3tej.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=DTS3NJnjcShlWzwIHzZ9tgVLIOKUx8JWVEEhGsoYZH0&cs=640x0",
-        badge: "null",
+        badge: null,
         inStock: true,
         popular: false,
         notes: ["кофе", "жасмин", "ваниль", "кедр", "горький миндаль"]
@@ -93,7 +96,7 @@ const PRODUCTS_DATA = [
         rating: 4.7,
         reviews: 187,
         image: "https://sun9-84.userapi.com/s/v1/ig2/LDMpV1ihJnWYPte5wGmG-BxwBsBptbz7QSARpRMRdZt-fpO0wy_4ZPiEPS0oWkLxjFPzRm1wdDYeA2n88xh7Fegn.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=QhV-dEoaJC83x6egk46Ej6FZETeNOMWtoQnFpIMrEII&cs=360x0",
-        badge: "null",
+        badge: null,
         inStock: true,
         popular: true,
         notes: ["маракуйя", "персик", "ваниль"]
@@ -125,7 +128,7 @@ const PRODUCTS_DATA = [
         rating: 4.8,
         reviews: 143,
         image: "https://sun9-18.userapi.com/s/v1/ig2/JPe8xzc_vL633B2Y0VenFoeipK_joP7GR9FZZ565Z7XEuh8CeoYJxM7GmBFilsfBbropmaZze7L5RJ5ISim-VNa8.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=DwhSt-8w64gm4QVZgK4wKRnie5o2V4HtkWzexyWhaos&cs=360x0",
-        badge: "null",
+        badge: null,
         inStock: true,
         popular: true,
         notes: ["ваниль", "сандал", "мускус"]
@@ -133,7 +136,7 @@ const PRODUCTS_DATA = [
     {
         id: 8,
         name: "Al Rayan G&D Limperatrice",
-        description: "Al Rayan G&D Limperatrice — это концентрированное масляное парфюмерное масло аттар. Композиция аромата включает следующие ноты: Верхние ноты: Розовый перец, ревень, киви. Средние ноты сердце: Арбуз, цикламен, жасмин. Базовые ноты: Мускус, сандал, лимонное китайское дерево. Описание Аромат описывается как яркий, игривый и энергичный, с доминирующими аккордами сочных тропических фруктов и свежестью. Он подходит для дневного ношения, особенно в весенне-летний период.",
+        description: "Al Rayan G&D Limperatrice — это концентрированное масляное парфюмерное масло аттар. Композиция аромата включает следующие ноты: Верхние ноты: Розовый перец, ревень, киви. Средние ноты сердце: Арбуз, цикламен, жасмин. Базовые ноты: Мускус, сандал, лимонное китайское дерево. Описание Аромат описывается как яркий, игривый и энергичный, с доминирующими аккордами сочных тропических фруктов и свежести. Он подходит для дневного ношения, особенно в весенне-летний период.",
         price: 350,
         oldPrice: 0,
         category: "affordable",
@@ -157,7 +160,7 @@ const PRODUCTS_DATA = [
         rating: 4.4,
         reviews: 234,
         image: "https://sun9-6.userapi.com/s/v1/ig2/j3IQyd0QOc9sOzrhRtrqAih-tEG7x5xPiZMfCVxsQyVlb3HjvwSl6OAQK_7QVoRurh9X7w1zX0dEDG12-77JCtQs.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=ytxGprY0FWbTGBoY3EXaC9oX0EfZcJY43B7M6hNMe5g&cs=360x0",
-        badge: "null",
+        badge: null,
         inStock: true,
         popular: true,
         notes: ["кедр", "абрикос", "розовый перец"]
@@ -181,7 +184,7 @@ const PRODUCTS_DATA = [
     {
         id: 11,
         name: "Black Afgano",
-        description: "Изображенный на фото товар — это масляные духи с феромонами объемом  6 мл под названием Black Afgano, выпущенные под маркой Pheromon Limited Edition. Описание продукта: Масляные духи с феромонами унисекс. Аромат: Это парфюмерное масло вдохновлено известным оригинальным ароматом Nasomatto Black Afgano, который отличается густым, дымным, древесным и плотным звучанием с нотами  смолы, кофе, табака и ладана",
+        description: "Изображенный на фото товар — это масляные духи с феромонами объемом  6 мл под названием Black Afgano, выпущенные под маркой Pheromon Limited Edition. Описание продукта: Масляные духи с феромонами унисекс. Аромат: Это парфюмерное масло вдохновлено известным оригинальным ароматом Nasomatto Black Afgano, который отличается густым, дымным, древесным и плотным звучанием с нотами смолы, кофе, табака и ладана",
         price: 350,
         oldPrice: 0,
         category: "affordable",
@@ -208,7 +211,7 @@ const PRODUCTS_DATA = [
         badge: "hit",
         inStock: true,
         popular: true,
-        notes: [".", ".", "."]
+        notes: ["вишня", "миндаль", "роза"]
     },
     {
         id: 13,
@@ -224,7 +227,7 @@ const PRODUCTS_DATA = [
         badge: null,
         inStock: true,
         popular: false,
-        notes: ["фужерный", "древестный"]
+        notes: ["древесный", "фужерный"]
     },
     {
         id: 14,
@@ -240,7 +243,7 @@ const PRODUCTS_DATA = [
         badge: null,
         inStock: true,
         popular: false,
-        notes: ["нота1", "нота", "нота3"]
+        notes: ["цитрус", "морской", "древесный"]
     },
     {
         id: 15,
@@ -277,7 +280,7 @@ const PRODUCTS_DATA = [
     {
         id: 17,
         name: "Aamal Perfume Kirkèy",
-        description: "Aamal Perfume Kirkèy — выразительный и устойчивый аромат в стильном серебристом  флаконе объёмом 10 мл. Композиция раскрывается яркими верхними акцентами, продолжает с насыщенным сердцем, а в базе остаётся тёплая, благородная древесно-амбровая подложка.",
+        description: "Aamal Perfume Kirkèy — выразительный и устойчивый аромат в стильном серебристом флаконе объёмом 10 мл. Композиция раскрывается яркими верхними акцентами, продолжает с насыщенным сердцем, а в базе остаётся тёплая, благородная древесно-амбровая подложка.",
         price: 600,
         oldPrice: 0,
         category: "premium",
@@ -288,8 +291,8 @@ const PRODUCTS_DATA = [
         badge: null,
         inStock: true,
         popular: true,
-        notes: ["дерево", "амбра", "сердце"]
-    },
+        notes: ["дерево", "амбра", "ваниль"]
+    }
 ];
 
 // ===== ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ =====
@@ -297,10 +300,12 @@ document.addEventListener('DOMContentLoaded', function() {
     initApp();
     loadData();
     renderProducts();
-    updateCartCount();
-    updateFavoritesCount();
-    setupFilterPopup();
+    updateCounters();
+    initBannerSwitcher();
+    initAvatarSystem();
+    initDeliveryAddress();
     initEventListeners();
+    setupProductCardClick();
 });
 
 function initApp() {
@@ -369,6 +374,172 @@ function loadData() {
         cart: cart.length,
         favorites: favorites.length
     });
+}
+
+// ===== СИСТЕМА АВАТАРОК =====
+function initAvatarSystem() {
+    const avatarUpload = document.getElementById('avatarUpload');
+    const userAvatar = document.getElementById('userAvatar');
+    const avatarContainer = document.querySelector('.user-avatar-container');
+    const userNameEl = document.getElementById('username');
+
+    // Загружаем сохраненные данные
+    const savedAvatar = localStorage.getItem(STORAGE_KEYS.AVATAR);
+    const savedName = localStorage.getItem(STORAGE_KEYS.USERNAME) || (user ? user.firstName : 'Гость');
+
+    if (savedAvatar) {
+        userAvatar.src = savedAvatar;
+    } else {
+        // Устанавливаем стандартный аватар
+        userAvatar.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="40" r="20" fill="%238A2BE2"/><circle cx="50" cy="90" r="30" fill="%238A2BE2"/></svg>';
+    }
+    
+    userNameEl.textContent = savedName;
+
+    // Обработчик клика для загрузки фото
+    avatarContainer.addEventListener('click', function(e) {
+        e.preventDefault();
+        avatarUpload.click();
+    });
+
+    avatarUpload.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Проверяем тип файла
+        if (!file.type.match('image.*')) {
+            showNotification('Пожалуйста, выберите файл изображения', 'error');
+            return;
+        }
+
+        // Проверяем размер файла (макс. 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            showNotification('Изображение слишком большое (макс. 5MB)', 'error');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            userAvatar.src = event.target.result;
+            localStorage.setItem(STORAGE_KEYS.AVATAR, event.target.result);
+            showNotification('Аватар обновлен!', 'success');
+        };
+        reader.onerror = function() {
+            showNotification('Ошибка при загрузке изображения', 'error');
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // Редактирование имени
+    userNameEl.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const newName = prompt('Введите ваше имя:', this.textContent);
+        if (newName && newName.trim() !== '') {
+            const trimmedName = newName.trim();
+            this.textContent = trimmedName;
+            localStorage.setItem(STORAGE_KEYS.USERNAME, trimmedName);
+            showNotification('Имя обновлено!', 'success');
+        }
+    });
+}
+
+// ===== СИСТЕМА АДРЕСА ДОСТАВКИ =====
+function initDeliveryAddress() {
+    const saveBtn = document.getElementById('saveAddressBtn');
+    const editBtn = document.getElementById('editAddressBtn');
+    const addressDisplay = document.getElementById('savedAddressDisplay');
+    const addressText = document.getElementById('addressText');
+    const addressForm = document.getElementById('addressForm');
+
+    // Загружаем сохраненный адрес
+    savedAddress = loadFromStorage(STORAGE_KEYS.ADDRESS, null);
+
+    function updateAddressDisplay() {
+        if (savedAddress && savedAddress.street) {
+            const addr = `${savedAddress.street}, д. ${savedAddress.house}` + 
+                       (savedAddress.apartment ? `, кв. ${savedAddress.apartment}` : '') +
+                       (savedAddress.intercom ? ` (домофон: ${savedAddress.intercom})` : '');
+            addressText.textContent = addr;
+            addressDisplay.style.display = 'block';
+            addressForm.style.display = 'none';
+        } else {
+            addressDisplay.style.display = 'none';
+            addressForm.style.display = 'block';
+        }
+        updateDeliveryCost();
+    }
+
+    updateAddressDisplay();
+
+    // Сохранение адреса
+    saveBtn.addEventListener('click', function() {
+        const addressData = {
+            street: document.getElementById('deliveryStreet').value.trim(),
+            house: document.getElementById('deliveryHouse').value.trim(),
+            apartment: document.getElementById('deliveryApartment').value.trim(),
+            intercom: document.getElementById('deliveryIntercom').value.trim(),
+            comment: document.getElementById('deliveryComment').value.trim()
+        };
+
+        if (!addressData.street || !addressData.house) {
+            showNotification('Заполните обязательные поля: улица и дом', 'warning');
+            return;
+        }
+
+        savedAddress = addressData;
+        localStorage.setItem(STORAGE_KEYS.ADDRESS, JSON.stringify(addressData));
+        updateAddressDisplay();
+        showNotification('Адрес сохранен!', 'success');
+    });
+
+    // Редактирование адреса
+    editBtn.addEventListener('click', function() {
+        if (savedAddress) {
+            document.getElementById('deliveryStreet').value = savedAddress.street || '';
+            document.getElementById('deliveryHouse').value = savedAddress.house || '';
+            document.getElementById('deliveryApartment').value = savedAddress.apartment || '';
+            document.getElementById('deliveryIntercom').value = savedAddress.intercom || '';
+            document.getElementById('deliveryComment').value = savedAddress.comment || '';
+        }
+        addressDisplay.style.display = 'none';
+        addressForm.style.display = 'block';
+    });
+}
+
+function updateDeliveryCost() {
+    const deliveryCostEl = document.getElementById('deliveryCost');
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    let deliveryCost = 0;
+
+    // Бесплатная доставка от 5000 рублей
+    if (subtotal < 5000 && subtotal > 0) {
+        deliveryCost = 300; // Стоимость доставки
+    }
+
+    deliveryCostEl.textContent = `${deliveryCost.toLocaleString()} ₽`;
+    return deliveryCost;
+}
+
+// ===== БАННЕРЫ =====
+function initBannerSwitcher() {
+    const banner1 = document.getElementById('banner1');
+    const banner2 = document.getElementById('banner2');
+    let currentBanner = 1;
+    
+    function switchBanner() {
+        if (currentBanner === 1) {
+            banner1.classList.remove('active');
+            banner2.classList.add('active');
+            currentBanner = 2;
+        } else {
+            banner2.classList.remove('active');
+            banner1.classList.add('active');
+            currentBanner = 1;
+        }
+    }
+    
+    // Переключаем баннеры каждые 10 секунд
+    setInterval(switchBanner, 10000);
 }
 
 // ===== РЕНДЕРИНГ ТОВАРОВ =====
@@ -560,25 +731,9 @@ function toggleCart(productId, event) {
     saveToStorage(STORAGE_KEYS.CART, cart);
     
     // Обновляем UI
-    updateCartCount();
+    updateCounters();
     updateCartPopup();
     renderProducts();
-}
-
-function updateCartCount() {
-    const cartCount = document.getElementById('cartCount');
-    const bottomCartCount = document.getElementById('bottomCartCount');
-    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-    
-    if (cartCount) {
-        cartCount.textContent = totalItems;
-        cartCount.style.display = totalItems > 0 ? 'flex' : 'none';
-    }
-    
-    if (bottomCartCount) {
-        bottomCartCount.textContent = totalItems;
-        bottomCartCount.style.display = totalItems > 0 ? 'flex' : 'none';
-    }
 }
 
 function updateCartPopup() {
@@ -598,6 +753,7 @@ function updateCartPopup() {
         `;
         cartTotal.textContent = '0 ₽';
         cartFinal.textContent = '0 ₽';
+        document.getElementById('deliveryCost').textContent = '0 ₽';
         return;
     }
     
@@ -609,7 +765,8 @@ function updateCartPopup() {
         }
         return sum;
     }, 0);
-    const total = subtotal - discount;
+    const deliveryCost = updateDeliveryCost();
+    const total = subtotal - discount + deliveryCost;
     
     // Рендерим товары
     cartItems.innerHTML = '';
@@ -657,7 +814,7 @@ function updateQuantity(productId, delta, newValue = null) {
     saveToStorage(STORAGE_KEYS.CART, cart);
     
     // Обновляем UI
-    updateCartCount();
+    updateCounters();
     updateCartPopup();
     renderProducts();
 }
@@ -669,7 +826,7 @@ function removeFromCart(productId) {
     saveToStorage(STORAGE_KEYS.CART, cart);
     
     // Обновляем UI
-    updateCartCount();
+    updateCounters();
     updateCartPopup();
     renderProducts();
     
@@ -705,14 +862,9 @@ function toggleFavorite(productId, event) {
     saveToStorage(STORAGE_KEYS.FAVORITES, favorites);
     
     // Обновляем UI
-    updateFavoritesCount();
+    updateCounters();
     updateFavoritesPopup();
     renderProducts();
-}
-
-function updateFavoritesCount() {
-    // В данном интерфейсе счетчик избранного находится только в нижнем меню
-    // Можно добавить при необходимости
 }
 
 function updateFavoritesPopup() {
@@ -758,11 +910,45 @@ function removeFromFavorites(productId) {
     saveToStorage(STORAGE_KEYS.FAVORITES, favorites);
     
     // Обновляем UI
-    updateFavoritesCount();
+    updateCounters();
     updateFavoritesPopup();
     renderProducts();
     
     showNotification('Товар удален из избранного', 'info');
+}
+
+// ===== ОБНОВЛЕНИЕ СЧЕТЧИКОВ =====
+function updateCounters() {
+    const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const favCount = favorites.length;
+    
+    // Обновляем счетчики в хедере
+    const headerCartCount = document.getElementById('headerCartCount');
+    const headerFavCount = document.getElementById('headerFavCount');
+    
+    if (headerCartCount) {
+        headerCartCount.textContent = cartCount;
+        headerCartCount.style.display = cartCount > 0 ? 'flex' : 'none';
+    }
+    
+    if (headerFavCount) {
+        headerFavCount.textContent = favCount;
+        headerFavCount.style.display = favCount > 0 ? 'flex' : 'none';
+    }
+    
+    // Обновляем счетчики в нижней панели
+    const bottomCartCount = document.getElementById('bottomCartCount');
+    const bottomFavCount = document.getElementById('bottomFavCount');
+    
+    if (bottomCartCount) {
+        bottomCartCount.textContent = cartCount;
+        bottomCartCount.style.display = cartCount > 0 ? 'flex' : 'none';
+    }
+    
+    if (bottomFavCount) {
+        bottomFavCount.textContent = favCount;
+        bottomFavCount.style.display = favCount > 0 ? 'flex' : 'none';
+    }
 }
 
 // ===== ФИЛЬТРЫ И ПОИСК =====
@@ -873,168 +1059,6 @@ function resetFilters() {
     showNotification('Фильтры сброшены', 'info');
 }
 
-function setupFilterPopup() {
-    const filterContent = document.querySelector('.filter-content');
-    if (!filterContent) return;
-    
-    // Создаем HTML для фильтров
-    filterContent.innerHTML = `
-        <div class="filter-group">
-            <h4>Категории</h4>
-            <div class="checkbox-group">
-                <label class="checkbox">
-                    <input type="checkbox" class="filter-category" value="arabian" checked>
-                    <span class="checkmark"></span>
-                    Арабские духи
-                </label>
-                <label class="checkbox">
-                    <input type="checkbox" class="filter-category" value="premium" checked>
-                    <span class="checkmark"></span>
-                    Премиум
-                </label>
-                <label class="checkbox">
-                    <input type="checkbox" class="filter-category" value="affordable" checked>
-                    <span class="checkmark"></span>
-                    Доступные
-                </label>
-            </div>
-        </div>
-        
-        <div class="filter-group">
-            <h4>Цена, ₽</h4>
-            <div class="price-range">
-                <div class="range-inputs">
-                    <input type="number" id="filterPriceMin" placeholder="0" min="0">
-                    <span class="range-divider">-</span>
-                    <input type="number" id="filterPriceMax" placeholder="50000" min="0">
-                </div>
-                <div class="range-slider">
-                    <input type="range" id="filterPriceRange" min="0" max="50000" value="25000">
-                </div>
-            </div>
-        </div>
-        
-        <div class="filter-group">
-            <h4>Объем, мл</h4>
-            <div class="checkbox-group">
-                <label class="checkbox">
-                    <input type="checkbox" class="filter-volume" value="30">
-                    <span class="checkmark"></span>
-                    30 мл
-                </label>
-                <label class="checkbox">
-                    <input type="checkbox" class="filter-volume" value="50">
-                    <span class="checkmark"></span>
-                    50 мл
-                </label>
-                <label class="checkbox">
-                    <input type="checkbox" class="filter-volume" value="100">
-                    <span class="checkmark"></span>
-                    100 мл
-                </label>
-                <label class="checkbox">
-                    <input type="checkbox" class="filter-volume" value="200">
-                    <span class="checkmark"></span>
-                    200 мл
-                </label>
-            </div>
-        </div>
-        
-        <div class="filter-group">
-            <h4>Рейтинг</h4>
-            <div class="rating-filter">
-                <label class="star-rating">
-                    <input type="radio" name="filterRating" value="0" checked>
-                    <span class="stars">
-                        <i class="far fa-star"></i>
-                        <i class="far fa-star"></i>
-                        <i class="far fa-star"></i>
-                        <i class="far fa-star"></i>
-                        <i class="far fa-star"></i>
-                    </span>
-                    <span class="rating-text">Любой</span>
-                </label>
-                <label class="star-rating">
-                    <input type="radio" name="filterRating" value="3">
-                    <span class="stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="far fa-star"></i>
-                        <i class="far fa-star"></i>
-                    </span>
-                    <span class="rating-text">3 и выше</span>
-                </label>
-                <label class="star-rating">
-                    <input type="radio" name="filterRating" value="4">
-                    <span class="stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="far fa-star"></i>
-                    </span>
-                    <span class="rating-text">4 и выше</span>
-                </label>
-                <label class="star-rating">
-                    <input type="radio" name="filterRating" value="4.5">
-                    <span class="stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star-half-alt"></i>
-                    </span>
-                    <span class="rating-text">4.5 и выше</span>
-                </label>
-            </div>
-        </div>
-        
-        <div class="filter-buttons">
-            <button class="btn-filter-apply" id="applyFilterBtn">
-                <i class="fas fa-check"></i> Применить
-            </button>
-            <button class="btn-filter-reset" id="resetFilterBtn">
-                <i class="fas fa-redo"></i> Сбросить
-            </button>
-        </div>
-    `;
-    
-    // Настройка слайдера цены
-    const priceRange = document.getElementById('filterPriceRange');
-    const priceMinInput = document.getElementById('filterPriceMin');
-    const priceMaxInput = document.getElementById('filterPriceMax');
-    
-    if (priceRange && priceMinInput && priceMaxInput) {
-        priceRange.addEventListener('input', function() {
-            const value = parseInt(this.value);
-            priceMinInput.value = Math.max(0, value - 10000);
-            priceMaxInput.value = Math.min(50000, value + 10000);
-        });
-        
-        priceMinInput.addEventListener('change', function() {
-            const min = parseInt(this.value) || 0;
-            const max = parseInt(priceMaxInput.value) || 50000;
-            priceRange.value = Math.floor((min + max) / 2);
-        });
-        
-        priceMaxInput.addEventListener('change', function() {
-            const min = parseInt(priceMinInput.value) || 0;
-            const max = parseInt(this.value) || 50000;
-            priceRange.value = Math.floor((min + max) / 2);
-        });
-    }
-    
-    // Обработчики для кнопок фильтра
-    document.getElementById('applyFilterBtn')?.addEventListener('click', function() {
-        filterProducts();
-        closeFilterPopup();
-        showNotification('Фильтры применены', 'success');
-    });
-    
-    document.getElementById('resetFilterBtn')?.addEventListener('click', resetFilters);
-}
-
 // ===== МОДАЛЬНОЕ ОКНО ДЕТАЛЕЙ ТОВАРА =====
 function setupProductCardClick() {
     // Используем делегирование событий
@@ -1060,169 +1084,137 @@ function showProductDetailsModal(product) {
     closeCartPopup();
     closeFavoritesPopup();
     closeFilterPopup();
-    closeProductModal();
+    closeContactPopup();
+    closeProductDetailsModal();
     
-    // Удаляем существующее модальное окно если есть
-    const existingModal = document.getElementById('productDetailsModal');
-    const existingOverlay = document.querySelector('.product-modal-overlay');
-    if (existingModal) existingModal.remove();
-    if (existingOverlay) existingOverlay.remove();
+    const modal = document.getElementById('productDetailsModal');
+    const modalBody = document.getElementById('modalBody');
+    const modalBadge = document.getElementById('modalBadge');
+    const overlay = document.getElementById('productModalOverlay');
     
-    const modal = document.createElement('div');
-    modal.className = 'product-details-modal';
-    modal.id = 'productDetailsModal';
+    if (!modal || !modalBody) return;
     
     const isInCart = cart.some(item => item.id === product.id);
     const isInFavorites = favorites.some(item => item.id === product.id);
+    
+    // Определяем бейдж
+    let badgeHtml = '';
+    if (product.badge === 'new') {
+        modalBadge.className = 'modal-badge modal-badge-new';
+        modalBadge.textContent = 'Новинка';
+        modalBadge.style.display = 'block';
+    } else if (product.badge === 'sale') {
+        modalBadge.className = 'modal-badge modal-badge-sale';
+        modalBadge.textContent = 'Скидка';
+        modalBadge.style.display = 'block';
+    } else if (product.badge === 'hit') {
+        modalBadge.className = 'modal-badge modal-badge-hit';
+        modalBadge.textContent = 'Хит';
+        modalBadge.style.display = 'block';
+    } else {
+        modalBadge.style.display = 'none';
+    }
     
     // Расчет скидки
     const discountPercent = product.oldPrice > 0 
         ? Math.round((1 - product.price / product.oldPrice) * 100)
         : 0;
     
-    // Определяем бейдж
-    let badgeHtml = '';
-    if (product.badge === 'new') {
-        badgeHtml = '<span class="modal-badge modal-badge-new">Новинка</span>';
-    } else if (product.badge === 'sale') {
-        badgeHtml = '<span class="modal-badge modal-badge-sale">Скидка</span>';
-    } else if (product.badge === 'hit') {
-        badgeHtml = '<span class="modal-badge modal-badge-hit">Хит</span>';
-    }
-    
     // Создаем HTML для нот аромата
     const notesHtml = product.notes ? 
         product.notes.map(note => `<span class="note-tag">${note}</span>`).join('') : 
         '';
     
-    modal.innerHTML = `
-        <div class="modal-content">
-            <div class="modal-header">
-                <button class="modal-close-btn" id="closeDetailsModalBtn">
-                    <i class="fas fa-times"></i>
-                </button>
-                ${badgeHtml}
+    modalBody.innerHTML = `
+        <div class="product-image-section">
+            <img src="${product.image}" alt="${product.name}" class="modal-product-image">
+        </div>
+        
+        <div class="product-info-section">
+            <h2 class="modal-product-title">${product.name}</h2>
+            
+            <div class="product-meta">
+                <span class="meta-category">
+                    <i class="fas fa-tag"></i> ${getCategoryName(product.category)}
+                </span>
+                <span class="meta-volume">
+                    <i class="fas fa-weight"></i> ${product.volume} мл
+                </span>
+                <span class="meta-stock ${product.inStock ? 'in-stock' : 'out-of-stock'}">
+                    <i class="fas ${product.inStock ? 'fa-check-circle' : 'fa-times-circle'}"></i> 
+                    ${product.inStock ? 'В наличии' : 'Нет в наличии'}
+                </span>
             </div>
             
-            <div class="modal-body">
-                <div class="product-image-section">
-                    <img src="${product.image}" alt="${product.name}" class="modal-product-image">
+            <div class="modal-rating">
+                <div class="modal-stars">
+                    ${renderStars(product.rating)}
                 </div>
-                
-                <div class="product-info-section">
-                    <h2 class="modal-product-title">${product.name}</h2>
-                    
-                    <div class="product-meta">
-                        <span class="meta-category">
-                            <i class="fas fa-tag"></i> ${getCategoryName(product.category)}
-                        </span>
-                        <span class="meta-volume">
-                            <i class="fas fa-weight"></i> ${product.volume} мл
-                        </span>
-                        <span class="meta-stock ${product.inStock ? 'in-stock' : 'out-of-stock'}">
-                            <i class="fas ${product.inStock ? 'fa-check-circle' : 'fa-times-circle'}"></i> 
-                            ${product.inStock ? 'В наличии' : 'Нет в наличии'}
-                        </span>
-                    </div>
-                    
-                    <div class="product-rating-section">
-                        <div class="modal-rating">
-                            <div class="modal-stars">
-                                ${renderStars(product.rating)}
-                            </div>
-                            <span class="modal-rating-value">${product.rating}</span>
-                            <span class="modal-reviews">(${product.reviews} отзывов)</span>
+                <span class="modal-rating-value">${product.rating}</span>
+                <span class="modal-reviews">(${product.reviews} отзывов)</span>
+            </div>
+            
+            <div class="product-description">
+                <h3><i class="fas fa-info-circle"></i> Описание</h3>
+                <p>${product.description}</p>
+            </div>
+            
+            <div class="product-notes">
+                <h3><i class="fas fa-wind"></i> Ноты аромата</h3>
+                <div class="notes-container">
+                    ${notesHtml}
+                </div>
+            </div>
+            
+            <div class="product-pricing">
+                <div class="price-section">
+                    <div class="current-price">${product.price.toLocaleString()} ₽</div>
+                    ${product.oldPrice > 0 ? `
+                        <div class="old-price-section">
+                            <span class="old-price">${product.oldPrice.toLocaleString()} ₽</span>
+                            <span class="discount-badge">-${discountPercent}%</span>
                         </div>
-                    </div>
-                    
-                    <div class="product-description">
-                        <h3><i class="fas fa-info-circle"></i> Описание</h3>
-                        <p>${product.description}</p>
-                    </div>
-                    
-                    <div class="product-notes">
-                        <h3><i class="fas fa-wind"></i> Ноты аромата</h3>
-                        <div class="notes-container">
-                            ${notesHtml}
-                        </div>
-                    </div>
-                    
-                    <div class="product-pricing">
-                        <div class="price-section">
-                            <div class="current-price">${product.price.toLocaleString()} ₽</div>
-                            ${product.oldPrice > 0 ? `
-                                <div class="old-price-section">
-                                    <span class="old-price">${product.oldPrice.toLocaleString()} ₽</span>
-                                    <span class="discount-badge">-${discountPercent}%</span>
-                                </div>
-                            ` : ''}
-                        </div>
-                    </div>
-                    
-                    <div class="product-actions-modal">
-                        <button class="btn-add-to-cart ${isInCart ? 'in-cart' : ''}" data-id="${product.id}">
-                            <i class="fas ${isInCart ? 'fa-check' : 'fa-shopping-cart'}"></i>
-                            ${isInCart ? 'В корзине' : 'Добавить в корзину'}
-                        </button>
-                        <button class="btn-add-to-fav ${isInFavorites ? 'active' : ''}" data-id="${product.id}">
-                            <i class="${isInFavorites ? 'fas' : 'far'} fa-heart"></i>
-                        </button>
-                    </div>
-                    
-                    <div class="product-features">
-                        <div class="feature">
-                            <i class="fas fa-shipping-fast"></i>
-                            <span>Бесплатная доставка по Симферополю</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-shield-alt"></i>
-                            <span>100% оригинальная продукция</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-award"></i>
-                            <span>Гарантия качества</span>
-                        </div>
-                    </div>
+                    ` : ''}
+                </div>
+            </div>
+            
+            <div class="product-actions-modal">
+                <button class="btn-add-to-cart ${isInCart ? 'in-cart' : ''}" data-id="${product.id}">
+                    <i class="fas ${isInCart ? 'fa-check' : 'fa-shopping-cart'}"></i>
+                    ${isInCart ? 'В корзине' : 'Добавить в корзину'}
+                </button>
+                <button class="btn-add-to-fav ${isInFavorites ? 'active' : ''}" data-id="${product.id}">
+                    <i class="${isInFavorites ? 'fas' : 'far'} fa-heart"></i>
+                </button>
+            </div>
+            
+            <div class="product-features">
+                <div class="feature">
+                    <i class="fas fa-shipping-fast"></i>
+                    <span>Бесплатная доставка по Симферополю от 5000₽</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>100% оригинальная продукция</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-award"></i>
+                    <span>Гарантия качества</span>
                 </div>
             </div>
         </div>
     `;
     
-    document.body.appendChild(modal);
+    // Показываем модальное окно
+    modal.classList.add('show');
+    overlay.classList.add('show');
+    document.body.style.overflow = 'hidden';
     
-    // Добавляем оверлей
-    const overlay = document.createElement('div');
-    overlay.className = 'product-modal-overlay';
-    overlay.id = 'productModalOverlay';
-    document.body.appendChild(overlay);
-    
-    // Показываем с анимацией
+    // Добавляем обработчики для кнопок в модальном окне
     setTimeout(() => {
-        modal.classList.add('show');
-        overlay.classList.add('show');
-        document.body.style.overflow = 'hidden';
-    }, 10);
-    
-    // Добавляем обработчики
-    setTimeout(() => {
+        const cartBtn = modalBody.querySelector('.btn-add-to-cart');
+        const favBtn = modalBody.querySelector('.btn-add-to-fav');
         const closeBtn = document.getElementById('closeDetailsModalBtn');
-        const overlayEl = document.getElementById('productModalOverlay');
-        const cartBtn = modal.querySelector('.btn-add-to-cart');
-        const favBtn = modal.querySelector('.btn-add-to-fav');
-        
-        if (closeBtn) {
-            closeBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                closeProductDetailsModal();
-            });
-        }
-        
-        if (overlayEl) {
-            overlayEl.addEventListener('click', function(e) {
-                e.stopPropagation();
-                closeProductDetailsModal();
-            });
-        }
         
         if (cartBtn) {
             cartBtn.addEventListener('click', function(e) {
@@ -1266,6 +1258,13 @@ function showProductDetailsModal(product) {
             });
         }
         
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closeProductDetailsModal);
+        }
+        
+        // Обработчик для оверлея
+        overlay.addEventListener('click', closeProductDetailsModal);
+        
         // Обработчик клавиши ESC
         const escHandler = function(e) {
             if (e.key === 'Escape') {
@@ -1289,125 +1288,13 @@ function closeProductDetailsModal() {
         if (modal._escHandler) {
             document.removeEventListener('keydown', modal._escHandler);
         }
-        
-        setTimeout(() => {
-            if (modal.parentNode) {
-                modal.parentNode.removeChild(modal);
-            }
-        }, 300);
     }
     
     if (overlay) {
         overlay.classList.remove('show');
-        setTimeout(() => {
-            if (overlay.parentNode) {
-                overlay.parentNode.removeChild(overlay);
-            }
-        }, 300);
     }
     
     document.body.style.overflow = 'auto';
-}
-
-// ===== МОДАЛЬНОЕ ОКНО ТОВАРА (старое) =====
-function showProductModal(product) {
-    const modal = document.getElementById('productModal');
-    const modalBody = document.getElementById('modalBody');
-    
-    if (!modal || !modalBody) return;
-    
-    const isInCart = cart.some(item => item.id === product.id);
-    const isInFavorites = favorites.some(item => item.id === product.id);
-    
-    const discountPercent = product.oldPrice > 0 
-        ? Math.round((1 - product.price / product.oldPrice) * 100)
-        : 0;
-    
-    modalBody.innerHTML = `
-        <div class="modal-product">
-            <div class="modal-product-images">
-                <img src="${product.image}" alt="${product.name}" class="modal-main-image">
-            </div>
-            <div class="modal-product-info">
-                <div class="modal-badges">
-                    ${product.badge === 'new' ? '<span class="badge-new">Новинка</span>' : ''}
-                    ${product.badge === 'sale' ? '<span class="badge-sale">Скидка</span>' : ''}
-                    ${product.badge === 'hit' ? '<span class="badge-hit">Хит</span>' : ''}
-                </div>
-                <h2 class="modal-product-title">${product.name}</h2>
-                <div class="modal-product-meta">
-                    <span class="modal-category">${getCategoryName(product.category)}</span>
-                    <span class="modal-volume">${product.volume} мл</span>
-                    <div class="modal-rating">
-                        ${renderStars(product.rating)}
-                        <span>${product.rating} (${product.reviews} отзывов)</span>
-                    </div>
-                </div>
-                
-                <div class="modal-description">
-                    <h3>Описание</h3>
-                    <p>${product.description}</p>
-                </div>
-                
-                <div class="modal-notes">
-                    <h3>Ноты аромата</h3>
-                    <div class="notes-tags">
-                        ${product.notes.map(note => `<span class="note-tag">${note}</span>`).join('')}
-                    </div>
-                </div>
-                
-                <div class="modal-prices">
-                    <div class="modal-price-current">
-                        ${product.price.toLocaleString()} ₽
-                    </div>
-                    ${product.oldPrice > 0 ? `
-                        <div class="modal-price-old">
-                            <span>${product.oldPrice.toLocaleString()} ₽</span>
-                            <span class="modal-discount">-${discountPercent}%</span>
-                        </div>
-                    ` : ''}
-                </div>
-                
-                <div class="modal-actions">
-                    <button class="modal-btn-cart ${isInCart ? 'in-cart' : ''}" onclick="toggleCart(${product.id})">
-                        ${isInCart ? '<i class="fas fa-check"></i> В корзине' : '<i class="fas fa-shopping-cart"></i> В корзину'}
-                    </button>
-                    <button class="modal-btn-fav ${isInFavorites ? 'active' : ''}" onclick="toggleFavorite(${product.id})">
-                        <i class="${isInFavorites ? 'fas' : 'far'} fa-heart"></i>
-                        ${isInFavorites ? 'В избранном' : 'В избранное'}
-                    </button>
-                </div>
-                
-                <div class="modal-features">
-                    <div class="feature-item">
-                        <i class="fas fa-truck"></i>
-                        <span>Бесплатная доставка от 5000₽</span>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-shield-alt"></i>
-                        <span>Гарантия подлинности 100%</span>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-undo"></i>
-                        <span>Возврат в течение 14 дней</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    modal.classList.add('show');
-    document.getElementById('overlay').classList.add('show');
-    document.body.style.overflow = 'hidden';
-}
-
-function closeProductModal() {
-    const modal = document.getElementById('productModal');
-    if (modal) {
-        modal.classList.remove('show');
-        document.getElementById('overlay').classList.remove('show');
-        document.body.style.overflow = 'auto';
-    }
 }
 
 // ===== УПРАВЛЕНИЕ ПОПАПАМИ =====
@@ -1449,6 +1336,18 @@ function closeFilterPopup() {
     document.body.style.overflow = 'auto';
 }
 
+function openContactPopup() {
+    document.getElementById('contactPopup').classList.add('show');
+    document.getElementById('overlay').classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeContactPopup() {
+    document.getElementById('contactPopup').classList.remove('show');
+    document.getElementById('overlay').classList.remove('show');
+    document.body.style.overflow = 'auto';
+}
+
 // ===== УТИЛИТЫ =====
 function getCategoryName(category) {
     const categories = {
@@ -1463,11 +1362,19 @@ function getCategoryName(category) {
 
 function showNotification(message, type = 'info') {
     // Удаляем предыдущие уведомления
-    document.querySelectorAll('.notification').forEach(n => n.remove());
+    const existingNotifications = document.querySelectorAll('.notification');
+    existingNotifications.forEach(n => {
+        n.classList.remove('show');
+        setTimeout(() => {
+            if (n.parentNode) {
+                n.parentNode.removeChild(n);
+            }
+        }, 300);
+    });
     
     // Создаем уведомление
     const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
+    notification.className = `notification ${type}`;
     
     let icon = 'info-circle';
     if (type === 'success') icon = 'check-circle';
@@ -1481,35 +1388,21 @@ function showNotification(message, type = 'info') {
         </div>
     `;
     
-    // Добавляем стили
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: rgba(30, 30, 46, 0.95);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        border-radius: 16px;
-        padding: 16px 24px;
-        color: white;
-        font-weight: 500;
-        z-index: 10000;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-        animation: slideInRight 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
-        max-width: 300px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    `;
-    
     document.body.appendChild(notification);
+    
+    // Показываем с задержкой
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 10);
     
     // Удаляем через 3 секунды
     setTimeout(() => {
-        if (notification.parentNode) {
-            notification.parentNode.removeChild(notification);
-        }
+        notification.classList.remove('show');
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
     }, 3000);
 }
 
@@ -1526,9 +1419,7 @@ function initEventListeners() {
             }
         });
         
-        // Убираем input listener чтобы не лагало
         searchInput.addEventListener('input', function() {
-            // Используем debounce для предотвращения лагов
             clearTimeout(this._timer);
             this._timer = setTimeout(() => {
                 if (this.value.trim() === '') {
@@ -1536,7 +1427,7 @@ function initEventListeners() {
                     currentPage = 1;
                     renderProducts();
                 }
-            }, 300);
+            }, 500);
         });
     }
     
@@ -1551,15 +1442,15 @@ function initEventListeners() {
     // Сортировка
     document.getElementById('sortBy').addEventListener('change', filterProducts);
     
-    // Профиль
-    document.getElementById('userBtn')?.addEventListener('click', function() {
-        showNotification(`Привет, ${user.firstName}! Профиль в разработке.`, 'info');
-    });
+    // Иконки в хедере
+    document.getElementById('headerFavBtn')?.addEventListener('click', openFavoritesPopup);
+    document.getElementById('headerCartBtn')?.addEventListener('click', openCartPopup);
     
     // Нижнее меню
     document.getElementById('navFavorites')?.addEventListener('click', openFavoritesPopup);
     document.getElementById('navCart')?.addEventListener('click', openCartPopup);
     document.getElementById('navFilter')?.addEventListener('click', openFilterPopup);
+    document.getElementById('navContact')?.addEventListener('click', openContactPopup);
     
     // Кнопка "Перейти в каталог" в пустом избранном
     document.getElementById('browseBtn')?.addEventListener('click', function() {
@@ -1571,14 +1462,14 @@ function initEventListeners() {
     document.getElementById('closeCart')?.addEventListener('click', closeCartPopup);
     document.getElementById('closeFav')?.addEventListener('click', closeFavoritesPopup);
     document.getElementById('closeFilter')?.addEventListener('click', closeFilterPopup);
-    document.getElementById('closeModal')?.addEventListener('click', closeProductModal);
+    document.getElementById('closeContact')?.addEventListener('click', closeContactPopup);
     
     // Оверлей для закрытия попапов
     document.getElementById('overlay')?.addEventListener('click', function() {
         closeCartPopup();
         closeFavoritesPopup();
         closeFilterPopup();
-        closeProductModal();
+        closeContactPopup();
         closeProductDetailsModal();
     });
     
@@ -1589,7 +1480,22 @@ function initEventListeners() {
             return;
         }
         
-        const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        // Проверяем адрес доставки
+        if (!savedAddress || !savedAddress.street) {
+            showNotification('Пожалуйста, укажите адрес доставки', 'warning');
+            return;
+        }
+        
+        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const discount = cart.reduce((sum, item) => {
+            if (item.oldPrice > 0) {
+                return sum + ((item.oldPrice - item.price) * item.quantity);
+            }
+            return sum;
+        }, 0);
+        const deliveryCost = updateDeliveryCost();
+        const total = subtotal - discount + deliveryCost;
+        
         const orderItems = cart.map(item => 
             `${item.name} - ${item.quantity} × ${item.price.toLocaleString()}₽ = ${(item.price * item.quantity).toLocaleString()}₽`
         ).join('\n');
@@ -1599,6 +1505,10 @@ function initEventListeners() {
 
 📦 **Товары:**
 ${orderItems}
+
+🏠 **Адрес доставки:**
+${savedAddress.street}, д. ${savedAddress.house}${savedAddress.apartment ? `, кв. ${savedAddress.apartment}` : ''}${savedAddress.intercom ? ` (домофон: ${savedAddress.intercom})` : ''}
+${savedAddress.comment ? `💬 Комментарий: ${savedAddress.comment}` : ''}
 
 🧾 **Итого:** ${total.toLocaleString()}₽
 📅 **Дата:** ${new Date().toLocaleString('ru-RU')}
@@ -1610,12 +1520,13 @@ ${orderItems}
                 userId: user.id,
                 username: user.username,
                 items: cart,
+                address: savedAddress,
                 total: total,
                 timestamp: new Date().toISOString()
             };
             
             tg.sendData(JSON.stringify(orderData));
-            tg.showAlert(`Заказ оформлен!\n\nСумма: ${total.toLocaleString()}₽\nТоваров: ${cart.length}\n\nС вами свяжется менеджер для подтверждения.`);
+            tg.showAlert(`Заказ оформлен!\n\nСумма: ${total.toLocaleString()}₽\nТоваров: ${cart.length}\nАдрес: ${savedAddress.street}, д. ${savedAddress.house}\n\nС вами свяжется менеджер для подтверждения.`);
         } else {
             // Вне Telegram - открываем ссылку с предзаполненным сообщением
             const telegramUrl = `https://t.me/Ayder505?text=${encodeURIComponent(orderText)}`;
@@ -1626,14 +1537,31 @@ ${orderItems}
         // Очищаем корзину
         cart = [];
         saveToStorage(STORAGE_KEYS.CART, cart);
-        updateCartCount();
+        updateCounters();
         updateCartPopup();
         renderProducts();
         
         closeCartPopup();
     });
     
-    // Обработка кликов по кнопкам в карточках товаров (делегирование)
+    // Отправка сообщения в попапе контактов
+    document.getElementById('sendMessageBtn')?.addEventListener('click', function() {
+        const message = document.getElementById('contactMessage').value.trim();
+        if (!message) {
+            showNotification('Введите сообщение', 'warning');
+            return;
+        }
+        
+        const fullMessage = `Сообщение от пользователя:\n\n${message}`;
+        const telegramUrl = `https://t.me/Ayder505?text=${encodeURIComponent(fullMessage)}`;
+        window.open(telegramUrl, '_blank');
+        
+        document.getElementById('contactMessage').value = '';
+        showNotification('Сообщение готово к отправке', 'success');
+        closeContactPopup();
+    });
+    
+    // Обработка кликов по кнопкам в карточках товаров
     document.addEventListener('click', function(event) {
         const target = event.target;
         
@@ -1662,46 +1590,51 @@ ${orderItems}
         }
     });
     
+    // Кнопки фильтров
+    document.getElementById('applyFilterBtn')?.addEventListener('click', function() {
+        filterProducts();
+        closeFilterPopup();
+        showNotification('Фильтры применены', 'success');
+    });
+    
+    document.getElementById('resetFilterBtn')?.addEventListener('click', resetFilters);
+    
+    // Настройка слайдера цены
+    const priceRange = document.getElementById('filterPriceRange');
+    const priceMinInput = document.getElementById('filterPriceMin');
+    const priceMaxInput = document.getElementById('filterPriceMax');
+    
+    if (priceRange && priceMinInput && priceMaxInput) {
+        priceRange.addEventListener('input', function() {
+            const value = parseInt(this.value);
+            priceMinInput.value = Math.max(0, value - 10000);
+            priceMaxInput.value = Math.min(50000, value + 10000);
+        });
+        
+        priceMinInput.addEventListener('change', function() {
+            const min = parseInt(this.value) || 0;
+            const max = parseInt(priceMaxInput.value) || 50000;
+            priceRange.value = Math.floor((min + max) / 2);
+        });
+        
+        priceMaxInput.addEventListener('change', function() {
+            const min = parseInt(priceMinInput.value) || 0;
+            const max = parseInt(this.value) || 50000;
+            priceRange.value = Math.floor((min + max) / 2);
+        });
+    }
+    
     // Закрытие по клавише ESC
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closeCartPopup();
             closeFavoritesPopup();
             closeFilterPopup();
-            closeProductModal();
+            closeContactPopup();
             closeProductDetailsModal();
         }
     });
-    
-    // Инициализация клика по карточкам товаров
-    setupProductCardClick();
 }
-
-// ===== ИНИЦИАЛИЗАЦИЯ =====
-// Добавляем стили для анимаций
-const animationStyles = document.createElement('style');
-animationStyles.textContent = `
-    @keyframes slideInRight {
-        from {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
-    }
-    
-    @keyframes fadeOut {
-        from {
-            opacity: 1;
-        }
-        to {
-            opacity: 0;
-        }
-    }
-`;
-document.head.appendChild(animationStyles);
 
 // ===== ГЛОБАЛЬНЫЙ ЭКСПОРТ ДЛЯ ОТЛАДКИ =====
 window.app = {
@@ -1710,17 +1643,16 @@ window.app = {
     cart,
     favorites,
     filteredProducts,
+    savedAddress,
     filterProducts,
     toggleCart,
     toggleFavorite,
-    showProductModal,
-    closeProductModal,
-    showProductDetailsModal,
-    closeProductDetailsModal,
     resetFilters,
     openCartPopup,
     openFavoritesPopup,
-    openFilterPopup
+    openFilterPopup,
+    openContactPopup,
+    closeProductDetailsModal
 };
 
 console.log('Aura Atelier приложение инициализировано');
