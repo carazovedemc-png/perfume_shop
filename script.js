@@ -323,6 +323,23 @@ const PRODUCTS_DATA = [
         inStock: true,
         popular: true,
     },
+    {
+        id: 20,
+        name: "Savage Aksa 
+Esans",
+        description: "Авто духи Savage Aksa 
+Esans. Описание продукта: Авто духи Savage Aksa Esans — это уникальный аромат для вашего автомобиля, который наполняет пространство свежестью и создает атмосферу комфорта. Характеристики: Форма: Масляные духи без спиртовой основы. Производитель: Турецкая компания Aksa Esans. Стойкость: Длительное время, благодаря концентрированной формуле. Аромат: Savage Aksa Esans сочетает в себе насыщенные восточные и древесные ноты, создавая гармоничное и притягательное звучание. Способ применения: Нанесите несколько капель на вату или специальный ароматизатор и разместите в салоне автомобиля. Также можно использовать в качестве ароматизатора для помещений.",
+        price: 350,
+        oldPrice: 0,
+        category: "new",
+        volume: 6,
+        rating: 4.9,
+        reviews: 104,
+        image: "https://sun9-16.userapi.com/s/v1/ig2/R1rTPUArQ0ZySKG16cmdEx6t-FsPqsE2_dmTvKjA8J890RnY9EXEEBvFW77WBGAXqPVcWcaBGEkc2_F1IPnUrN2x.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=9ZwHw-HBGKjeL1YyOjr20WYtv-XhFDMjw7bWMU3Rlg4&cs=360x0",
+        badge: "new",
+        inStock: true,
+        popular: true,
+    },
 ];
 
 // ===== ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ =====
