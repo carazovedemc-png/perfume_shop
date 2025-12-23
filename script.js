@@ -18,7 +18,7 @@ const STORAGE_KEYS = {
     ADDRESS: 'aura_atelier_address'
 };
 
-    // КАРТОЧКИ ТОВАРОВ
+// КАРТОЧКИ ТОВАРОВ
 const PRODUCTS_DATA = [
     {
         id: 1,
@@ -28,6 +28,7 @@ const PRODUCTS_DATA = [
         oldPrice: 0,
         category: "premium",
         volume: 6,
+        gender: "unisex", // Добавлено
         rating: 4.8,
         reviews: 124,
         image: "https://sun9-80.userapi.com/s/v1/ig2/POV_jt4v0MEj7d-4gdkRYIFYTBL-hvXmDLOjJKlY-RqeOgcO1NxWHXAss7UBTzkvI8rdLMEdpqZwJeARBqh7iyc3.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=tt6otIk9Wzym_IH9u6oWb4gDXhDWpPwiNQ5muEOgTHo&cs=240x0",
@@ -44,6 +45,7 @@ const PRODUCTS_DATA = [
         oldPrice: 0,
         category: "premium",
         volume: 6,
+        gender: "unisex", // Добавлено
         rating: 4.9,
         reviews: 100,
         image: "https://sun9-41.userapi.com/s/v1/ig2/vkEyo2KDCGJhawzJ2PSYbdY9h4EOrh30HrjwefVSCbYOSqJPoXruX0WobRyxKbRBw8BvdlL8sejPGZ4p-RrVjUOO.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=m0AEgal8BacMT-TAXZva7xEf1ZAAdIa_7ZvmQJYgIsY&cs=360x0",
@@ -55,15 +57,16 @@ const PRODUCTS_DATA = [
     {
         id: 3,
         name: "Black Opium",
-        description: "Это - женские духи из группы восточные гурманские. Композиция глубокая, насыщенная, сладкая и притягательная. Верхние ноты: груша, розовый перец и цветок апельсина. Средние ноты: кофе, жасмин, горький миндаль и лакричник. Базовые ноты: ваниль, пачули, кедр и кашемировое дерево.",
+        description: "Это - женские духи из группы восточные гурманские. Композиция глубокая, насыщенная, сладкая и притягательная. Верхние ноты: груша, розовый перец и цветок апельсина. Средние ноты: кофе, жасмин, горький миндаль и лакричник. Базовые ноты: ваниль, пачули, кедр и кашемировое дерево.",
         price: 350,
         oldPrice: 0,
         category: "affordable",
         volume: 6,
+        gender: "female", // Добавлено
         rating: 4.6,
         reviews: 100,
         image: "https://sun9-43.userapi.com/s/v1/ig2/7OuPKSCxdwp7oHCuEccqLkHkK_-ovx6ks842VjcS4nIExZ1VGhdLfUhSz-ueglS4PgI_fh29HEvPqFLzNlKj3tej.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=DTS3NJnjcShlWzwIHzZ9tgVLIOKUx8JWVEEhGsoYZH0&cs=640x0",
-        badge: "null",
+        badge: null,
         inStock: true,
         popular: false,
         notes: ["кофе", "жасмин", "ваниль", "кедр", "горький миндаль"]
@@ -76,6 +79,7 @@ const PRODUCTS_DATA = [
         oldPrice: 0,
         category: "premium",
         volume: 6,
+        gender: "female", // Добавлено
         rating: 4.9,
         reviews: 167,
         image: "https://sun9-79.userapi.com/s/v1/ig2/XOkgSK57rv_tI2P2NE_TQ_5nKYuTRM_AUJfT2YQ53g0-5lW9ETR7FbZ4yRYeNTHIuBcNPhP4lKiON3Nwe1sMTy0S.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=L5LPBfopJzZuCDe9YN9SywE0Br_mxxQTJfwhp4lDlAI&cs=360x0",
@@ -92,10 +96,11 @@ const PRODUCTS_DATA = [
         oldPrice: 0,
         category: "premium",
         volume: 6,
+        gender: "unisex", // Добавлено
         rating: 4.7,
         reviews: 187,
         image: "https://sun9-84.userapi.com/s/v1/ig2/LDMpV1ihJnWYPte5wGmG-BxwBsBptbz7QSARpRMRdZt-fpO0wy_4ZPiEPS0oWkLxjFPzRm1wdDYeA2n88xh7Fegn.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=QhV-dEoaJC83x6egk46Ej6FZETeNOMWtoQnFpIMrEII&cs=360x0",
-        badge: "null",
+        badge: null,
         inStock: true,
         popular: true,
         notes: ["маракуйя", "персик", "ваниль"]
@@ -108,6 +113,7 @@ const PRODUCTS_DATA = [
         oldPrice: 0,
         category: "affordable",
         volume: 6,
+        gender: "female", // Добавлено
         rating: 4.5,
         reviews: 92,
         image: "https://sun9-37.userapi.com/s/v1/ig2/sE51AVESqed4uV7s0G1BwL6YiNvoyG81xw3TEiygep-FuH_44Vl82QuVDfVZteIIdCAa1NAXQ2A-fQDnoOtisjq4.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=RXKCzPLanm6VtxbnzBnP-I3Ki7th8SeNxFq2aFmrLDE&cs=360x0",
@@ -124,10 +130,11 @@ const PRODUCTS_DATA = [
         oldPrice: 0,
         category: "premium",
         volume: 6,
+        gender: "unisex", // Добавлено
         rating: 4.8,
         reviews: 143,
         image: "https://sun9-18.userapi.com/s/v1/ig2/JPe8xzc_vL633B2Y0VenFoeipK_joP7GR9FZZ565Z7XEuh8CeoYJxM7GmBFilsfBbropmaZze7L5RJ5ISim-VNa8.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=DwhSt-8w64gm4QVZgK4wKRnie5o2V4HtkWzexyWhaos&cs=360x0",
-        badge: "null",
+        badge: null,
         inStock: true,
         popular: true,
         notes: ["ваниль", "сандал", "мускус"]
@@ -140,6 +147,7 @@ const PRODUCTS_DATA = [
         oldPrice: 0,
         category: "affordable",
         volume: 6,
+        gender: "unisex", // Добавлено
         rating: 4.6,
         reviews: 56,
         image: "https://sun9-32.userapi.com/s/v1/ig2/u7kV68pjiyC_Ep97GMc8IEBXIH5cX50pFb6q5MNe7wnyULSvSD4-xUH6qRePG96lG1aWbOChxMLH_QshKz3HP9Uj.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=lf3dVx7r5RsUdRttLycIgRe0gYshLVfBPnVAmBYt9_0&cs=360x0",
@@ -156,10 +164,11 @@ const PRODUCTS_DATA = [
         oldPrice: 0,
         category: "affordable",
         volume: 6,
+        gender: "unisex", // Добавлено
         rating: 4.4,
         reviews: 234,
         image: "https://sun9-6.userapi.com/s/v1/ig2/j3IQyd0QOc9sOzrhRtrqAih-tEG7x5xPiZMfCVxsQyVlb3HjvwSl6OAQK_7QVoRurh9X7w1zX0dEDG12-77JCtQs.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=ytxGprY0FWbTGBoY3EXaC9oX0EfZcJY43B7M6hNMe5g&cs=360x0",
-        badge: "null",
+        badge: null,
         inStock: true,
         popular: true,
         notes: ["кедр", "абрикос", "розовый перец"]
@@ -167,11 +176,12 @@ const PRODUCTS_DATA = [
     {
         id: 10,
         name: "Lacoste green",
-        description: "Это — фужерный, цитрусовый аромат для мужчин. стойкое звучание аромата благодаря натуральным маслам и отсутствию спирта; шлейф благодаря тяжёлым молекулам, который раскрывается неторопливо под воздействием тепла кожи и перемены окружающей среды; изменчивость аромата: в тёплом помещении или на жаркой летней улице духи звучат сильнее, раскрываясь под воздействием температуры. Верхние ноты: грейпфрут, дыня, ноты бергамота. Ноты сердца: лимонная вербена, лаванда, тмин. Базовые ноты: берёза, инжир.",
+        description: "Это — фужерный, цитрусовый аромат для мужчин. стойкое звучание аромата благодаря натуральным маслам и отсутствию спирта; шлейф благодаря тяжёлым молекулам, который раскрывается неторопливо под воздействием тепла кожи и перемены окружающей среды; изменчивость аромата: в тёплом помещении или на жаркой летной улице духи звучат сильнее, раскрываясь под воздействием температуры. Верхние ноты: грейпфрут, дыня, ноты бергамота. Ноты сердца: лимонная вербена, лаванда, тмин. Базовые ноты: берёза, инжир.",
         price: 350,
         oldPrice: 0,
         category: "premium",
         volume: 6,
+        gender: "male", // Добавлено
         rating: 4.9,
         reviews: 189,
         image: "https://sun9-78.userapi.com/s/v1/ig2/NjbkM41fqN_ElkBHjJWyzjAoGorjvfDBd881IiagMDgy853FarvwWKOFlIK8N_cXQH2xd0lgrKkQb3tIMWLVpBHo.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=VPX8vTYi-reFtDkiHwd1GmDpWymqCFgG4vqjSKpfa4Y&cs=640x0",
@@ -188,6 +198,7 @@ const PRODUCTS_DATA = [
         oldPrice: 0,
         category: "affordable",
         volume: 6,
+        gender: "unisex", // Добавлено
         rating: 4.5,
         reviews: 78,
         image: "https://sun9-4.userapi.com/s/v1/ig2/XtGtcV14S3upSGqy5SMaZwgHF1oUkavESD9-FDqy08tU3pzNmPw9VN9tMjRx0nVdPIpeM-FfdeutQbG-9o5R8qHR.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=4GI8IGXu6hM54RSYQlvBZjdBhjxuFYbLoDgmtTTHXZM&cs=240x0",
@@ -204,13 +215,14 @@ const PRODUCTS_DATA = [
         oldPrice: 0,
         category: "premium",
         volume: 6,
+        gender: "female", // Добавлено
         rating: 4.8,
         reviews: 312,
         image: "https://sun9-38.userapi.com/s/v1/ig2/uPgqjLUFPMlBHeNEe9CCZYzn1wappYDHmT_cDn8aldq8HidoeXPwyOAX5OHL1YJ1s94WORcWvEZY9hZPwfHFJSZV.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=o2THPZ5FizJ22_R1Sr3J0c12VSXfXGC4rYgfpYfpR1c&cs=240x0",
         badge: "hit",
         inStock: true,
         popular: true,
-        notes: [".", ".", "."]
+        notes: ["ваниль", "черешня", "миндаль"] // Исправлено
     },
     {
         id: 13,
@@ -220,13 +232,14 @@ const PRODUCTS_DATA = [
         oldPrice: 0,
         category: "affordable",
         volume: 6,
+        gender: "male", // Добавлено
         rating: 4.5,
         reviews: 137,
         image: "https://sun9-22.userapi.com/s/v1/ig2/q2Pv9a9helePHmcz5NOLAfWetXLXxiksBtqbkvLyhqcIH3WDHiF0WcdYKakuhqtM_5FKe7_qO_DXn2BSWh07-CtR.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=vWg79uv0PR6vMntoQuUoyKEJJtWacOOeOXpjH-juSrw&cs=240x0",
         badge: null,
         inStock: true,
         popular: false,
-        notes: ["фужерный", "древестный"]
+        notes: ["бергамот", "мускус", "сандал"] // Исправлено
     },
     {
         id: 14,
@@ -236,13 +249,14 @@ const PRODUCTS_DATA = [
         oldPrice: 0,
         category: "affordable",
         volume: 6,
+        gender: "male", // Добавлено
         rating: 4.4,
         reviews: 146,
         image: "https://sun9-3.userapi.com/s/v1/ig2/SPsgBvzNMm9FCG0YhncWZd7GwB075inz1ZySBRggHyw8GU51Yw96PUJq27KzHFV7DRUHMixSIG6qzfHo_jOOZeKk.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=g54CooC5RUFBToh3mgEDVpcyjM5ZOBuPHTAxQSTK4_g&cs=240x0",
         badge: null,
         inStock: true,
         popular: false,
-        notes: ["нота1", "нота", "нота3"]
+        notes: ["цитрусовые", "морские ноты", "кедр"] // Исправлено
     },
     {
         id: 15,
@@ -252,6 +266,7 @@ const PRODUCTS_DATA = [
         oldPrice: 0,
         category: "affordable",
         volume: 6,
+        gender: "male", // Добавлено
         rating: 4.7,
         reviews: 155,
         image: "https://sun9-66.userapi.com/s/v1/ig2/sUV2Bm7T9gnxiIqW9DeH4hUXCVNMM4X9xK5wGFKb3ULdjzYum2NsCq7MnCwZi_M76c_dZOsIml1i8tKRn0m9siRM.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=FOrDOsjR7X_6WNiekSjoAHlQU__DAfnKBnvSaCF4bzw&cs=240x0",
@@ -268,6 +283,7 @@ const PRODUCTS_DATA = [
         oldPrice: 0,
         category: "affordable",
         volume: 6,
+        gender: "female", // Добавлено
         rating: 4.6,
         reviews: 212,
         image: "https://sun9-49.userapi.com/s/v1/ig2/HlvVp54Fl1yUYEQrIdMsqsbhrFZjmkzV7Kc3WHJiFUW8SLzG8ptT3CHHRYgCyPp1t3SsCtIjqmnFt1DohZTPoqzf.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=iSxrvU5lePOWtaEQ2vUPQra_jXzu-0msPIKa2wzHVRw&cs=360x0",
@@ -284,13 +300,14 @@ const PRODUCTS_DATA = [
         oldPrice: 0,
         category: "premium",
         volume: 10,
+        gender: "female", // Добавлено
         rating: 4.9,
         reviews: 812,
         image: "https://sun9-88.userapi.com/s/v1/ig2/rTw-cKmVkkw3lCPa5uzf-XhDLQXVxkC97Wp14jqjC--1nMdE5qDAK82u9q-yoYe3j7e_0Wshx9EGY-JSE1FVBkzV.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=cB1Hj3xqPdYrsJuEGjMwZ8cjtK3h4jxlBiJBYwKJwmE&cs=360x0",
         badge: "new",
         inStock: true,
         popular: true,
-        notes: ["дерево", "амбра", "сердце"]
+        notes: ["дерево", "амбра", "ваниль"] // Исправлено
     },   
     {
         id: 18,
@@ -300,13 +317,14 @@ const PRODUCTS_DATA = [
         oldPrice: 0,
         category: "premium",
         volume: 25,
+        gender: "female", // Добавлено
         rating: 4.9,
         reviews: 832,
         image: "https://sun9-69.userapi.com/s/v1/ig2/gA5hz2p9kPwvAerpx6g5Eg19OK0Gqu9Tcc92rXgZ1eJP7LT4CgdYwojrELgx8tFUq1mexghkxK9GCZVT_ZPwfvn4.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=qhXA7Smf8X5x0aDKtq2k_QGxp0csE1vR3Qo8nQu3HKo&cs=360x0",
         badge: "new",
         inStock: true,
         popular: true,
-        notes: ["цитрусы", "зелёные фрукты", "древесно-мускусный"]
+        notes: ["цитрусы", "зелёные фрукты", "древесно-мускусный"] // Исправлено
     },
     {
         id: 19,
@@ -314,29 +332,33 @@ const PRODUCTS_DATA = [
         description: "Авто духи Narcotiq Aksa Esans — это идеальное решение для тех, кто хочет добавить уникальный аромат в свой автомобиль Особенности Narcotiq Aksa Esans: Уникальный аромат: Сочетание свежести и теплоты, которое создаст атмосферу уюта и комфорта в вашем автомобиле. Почему стоит выбрать Narcotiq Aksa Esans? Эти авто духи идеально подходят для любых автомобилей и станут отличным подарком для друзей и близких. Создайте уникальную атмосферу в своем автомобиле с Narcotiq Aksa Esans! Не упустите возможность сделать ваши поездки более приятными! Заказывайте уже сегодня! Эти духи созданы с использованием высококачественных ингредиентов, что обеспечивает стойкость и насыщенность аромата.",
         price: 350,
         oldPrice: 0,
-        category: "new",
+        category: "auto",
         volume: 6,
+        gender: "unisex", // Добавлено
         rating: 4.9,
         reviews: 152,
         image: "https://sun9-21.userapi.com/s/v1/ig2/3APuudW8_9XaoVk5ejtsGuhqnMUEvnAwTe_2PPc2d2JqW5p0kFY-JiA39U11ooLnSje7xtPr0es-r2KjmLkPwI8E.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=XI58JvJb2axcWb8x7spZ00qQmoorfkkdf53Oosgg6t4&cs=360x0",
         badge: "new",
         inStock: true,
         popular: true,
+        notes: ["свежесть", "древесные ноты", "цитрусы"] // Добавлено
     },
     {
         id: 20,
         name: "Savage Aksa Esans",
-        description: "Авто духи Savage Aksa Esans. Описание продукта: Авто духи Savage Aksa Esans — это уникальный аромат для вашего автомобиля, который наполняет пространство свежестью и создает атмосферу комфорта. Характеристики: Форма: Масляные духи без спиртовой основы. Производитель: Турецкая компания Aksa Esans. Стойкость: Длительное время, благодаря концентрированной формуле. Аромат: Savage Aksa Esans сочетает в себе насыщенные восточные и древесные ноты, создавая гармоничное и притягательное звучание. Способ применения: Нанесите несколько капель на вату или специальный ароматизатор и разместите в салоне автомобиля. Также можно использовать в качестве ароматизатора для помещений.",
+        description: "Авто духи Savage Aksa Esans — это уникальный аромат для вашего автомобиля, который наполняет пространство свежестью и создает атмосферу комфорта. Характеристики: Форма: Масляные духи без спиртовой основы. Производитель: Турецкая компания Aksa Esans. Стойкость: Длительное время, благодаря концентрированной формуле. Аромат: Savage Aksa Esans сочетает в себе насыщенные восточные и древесные ноты, создавая гармоничное и притягательное звучание. Способ применения: Нанесите несколько капель на вату или специальный ароматизатор и разместите в салоне автомобиля. Также можно использовать в качестве ароматизатора для помещений.",
         price: 350,
         oldPrice: 0,
-        category: "new",
+        category: "auto",
         volume: 6,
+        gender: "unisex", // Добавлено
         rating: 4.9,
         reviews: 104,
         image: "https://sun9-16.userapi.com/s/v1/ig2/R1rTPUArQ0ZySKG16cmdEx6t-FsPqsE2_dmTvKjA8J890RnY9EXEEBvFW77WBGAXqPVcWcaBGEkc2_F1IPnUrN2x.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=9ZwHw-HBGKjeL1YyOjr20WYtv-XhFDMjw7bWMU3Rlg4&cs=360x0",
         badge: "new",
         inStock: true,
         popular: true,
+        notes: ["восточные ноты", "древесные ноты", "мускус"] // Добавлено
     },
     {
         id: 21,
@@ -346,12 +368,14 @@ const PRODUCTS_DATA = [
         oldPrice: 0,
         category: "new",
         volume: 6,
+        gender: "unisex", // Добавлено
         rating: 5.0,
         reviews: 244,
         image: "https://sun9-39.userapi.com/s/v1/ig2/LTjwjGG__SCRXVQfIgd2cx-2OV8nng3r-Gvo18Hpqxete9VKjGgrsb8K7-E5XSrKjMwRhrG2JlV7bzn5hTxObl06.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=LOordP3a_j18NgabckULWlTMPxtGLtYD2yXIB7jA6G8&cs=360x0",
         badge: "new",
         inStock: true,
         popular: true,
+        notes: ["цитрусы", "зелёные ноты", "мускус", "амбра"] // Добавлено
     },
     {
         id: 22,
@@ -361,12 +385,14 @@ const PRODUCTS_DATA = [
         oldPrice: 0,
         category: "new",
         volume: 6,
+        gender: "female", // Добавлено
         rating: 4.7,
         reviews: 201,
         image: "https://sun9-61.userapi.com/s/v1/ig2/RL0hQOXGOQqhq3G6OdtOkwsVcWy72U03b3PQ8ebmkcFwKHEZ-gRf5VVkOxZ1Hv6iqYqa_WfPV-OEGt_4SDIYiTvi.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=19GFWqJdGo4RLXtt5RJW4_zWH2nu4HrbJ_mxBNSAFWk&cs=360x0",
         badge: "new",
         inStock: true,
         popular: true,
+        notes: ["роза", "сладкие ноты", "пряности"] // Добавлено
     },
     {
         id: 23,
@@ -376,12 +402,14 @@ const PRODUCTS_DATA = [
         oldPrice: 0,
         category: "new",
         volume: 6,
+        gender: "male", // Добавлено
         rating: 4.8,
         reviews: 167,
         image: "https://sun9-74.userapi.com/s/v1/ig2/oOCV-RGTvzmgaKkjeS5dUale0YWiGwO7k69b6wZ2sZFuI8De9wyFnR6wSA96G-Pa-MZVXqGcoKJAtRsAdn0GRq0I.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2560x2560&from=bu&u=PdfutB6y1btkbh8q2oenNOx87J7D50up_n0P7Z3qXbk&cs=360x0",
         badge: "new",
         inStock: true,
         popular: true,
+        notes: ["пряности", "древесные ноты", "амбра"] // Добавлено
     },
 ];
 
