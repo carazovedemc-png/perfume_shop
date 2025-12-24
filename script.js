@@ -1,5 +1,4 @@
 // ===== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ И КОНСТАНТЫ =====
-const tg = window.Telegram?.WebApp || {};
 let user = null;
 let allProducts = [];
 let cart = [];
@@ -9,13 +8,57 @@ let currentPage = 1;
 const productsPerPage = 8;
 let deliveryAddress = '';
 let isAddressSaved = false;
+let selectedCartItems = [];
+let isLoggedIn = false;
+let userProfile = null;
+let transactions = [];
+
+// Конфигурация баннеров (легко редактировать)
+let bannerConfig = {
+    banners: [
+        {
+            id: 1,
+            title: "Эксклюзивные ароматы",
+            text: "Только оригинальная парфюмерия с гарантией качества",
+            type: "gradient", // "gradient" или "image"
+            gradient: "exclusive", // "exclusive" или "contacts"
+            imageUrl: "", // URL изображения, если type="image"
+            link: "", // Ссылка при клике (оставить пустым для отключения)
+            enabled: true // true/false для включения/отключения
+        },
+        {
+            id: 2,
+            title: "Заказы оформляем в лс",
+            text: "@Ayder505<br>Telegram channel:<br><a href='https://t.me/Aa_Atelier' target='_blank'>https://t.me/Aa_Atelier</a>",
+            type: "gradient",
+            gradient: "contacts",
+            imageUrl: "",
+            link: "",
+            enabled: true
+        },
+        {
+            id: 3,
+            title: "",
+            text: "",
+            type: "image",
+            gradient: "",
+            imageUrl: "https://sun9-2.userapi.com/s/v1/ig2/-23lLxLyFhE7viOEUD86RzLxMRlwKIdoIZF5PGYY_DsXHQsbXqrw5TwgurrXUBQCNPY5tJurX7CWsqWwPlyHFemD.jpg?quality=95&as=32x16,48x23,72x35,108x53,160x78,240x117,360x176,480x235,540x264,640x313,720x352,964x471&from=bu&u=tgC8ayUUqzwUxJInHliFRTCgWqCaoN5HbE1qrkfkLDc&cs=640x0",
+            link: "https://t.me/EDM_TM",
+            enabled: true
+        }
+    ],
+    switchInterval: 10000 // Интервал переключения в миллисекундах
+};
 
 // Ключи для localStorage
 const STORAGE_KEYS = {
     CART: 'aura_atelier_cart',
     FAVORITES: 'aura_atelier_favorites',
-    USER: 'aura_atelier_user',
-    ADDRESS: 'aura_atelier_address'
+    ADDRESS: 'aura_atelier_address',
+    PROFILE: 'aura_atelier_profile',
+    TRANSACTIONS: 'aura_atelier_transactions',
+    AUTH: 'aura_atelier_auth',
+    USERS: 'aura_atelier_users'
 };
 
 // КАРТОЧКИ ТОВАРОВ
@@ -415,40 +458,161 @@ const PRODUCTS_DATA = [
 
 // ===== ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ =====
 document.addEventListener('DOMContentLoaded', function() {
-    initApp();
+    console.log('DOM загружен, инициализируем приложение...');
+    
+    // Инициализация авторизации
+    initAuth();
+    
+    // Затем остальные компоненты
     loadData();
+    setupBanners();
     renderProducts();
     updateCartCount();
     setupFilterPopup();
     initEventListeners();
     loadAddress();
+    
+    console.log('Приложение инициализировано. Авторизация:', isLoggedIn ? 'Да' : 'Нет');
 });
 
-function initApp() {
-    // Инициализация Telegram WebApp
-    if (tg.initDataUnsafe?.user) {
-        user = {
-            id: tg.initDataUnsafe.user.id,
-            username: tg.initDataUnsafe.user.username || `user_${tg.initDataUnsafe.user.id}`,
-            firstName: tg.initDataUnsafe.user.first_name,
-            lastName: tg.initDataUnsafe.user.last_name
-        };
-        
-        tg.expand();
-        tg.setHeaderColor('#0F0F1E');
-        tg.setBackgroundColor('#0F0F1E');
-    } else {
-        // Режим демо (вне Telegram)
-        user = {
-            id: 1,
-            username: 'demo_user',
-            firstName: 'Демо',
-            lastName: 'Пользователь'
-        };
+// ===== СИСТЕМА АВТОРИЗАЦИИ =====
+let authUser = null;
+
+function generateUserId() {
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let result = '';
+    for (let i = 0; i < 9; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+}
+
+function initAuth() {
+    // Загружаем сохраненную сессию
+    const savedAuth = loadFromStorage(STORAGE_KEYS.AUTH);
+    if (savedAuth && savedAuth.userId && savedAuth.username) {
+        authUser = savedAuth;
+        isLoggedIn = true;
+        updateProfileUI();
     }
     
-    // Сохраняем пользователя в localStorage
-    saveToStorage(STORAGE_KEYS.USER, user);
+    // Инициализируем базу пользователей (для демо)
+    if (!loadFromStorage(STORAGE_KEYS.USERS)) {
+        saveToStorage(STORAGE_KEYS.USERS, {
+            'demo': {
+                password: 'demo123',
+                userId: generateUserId(),
+                username: 'demo',
+                firstName: 'Демо',
+                lastName: 'Пользователь',
+                created: new Date().toISOString()
+            }
+        });
+    }
+}
+
+function login(username, password) {
+    const users = loadFromStorage(STORAGE_KEYS.USERS, {});
+    
+    if (!users[username]) {
+        // Создаем нового пользователя
+        const userId = generateUserId();
+        users[username] = {
+            password: password,
+            userId: userId,
+            username: username,
+            firstName: username,
+            lastName: '',
+            created: new Date().toISOString()
+        };
+        saveToStorage(STORAGE_KEYS.USERS, users);
+    } else if (users[username].password !== password) {
+        return { success: false, message: 'Неверный пароль' };
+    }
+    
+    // Сохраняем сессию
+    authUser = {
+        userId: users[username].userId,
+        username: username,
+        firstName: users[username].firstName,
+        lastName: users[username].lastName
+    };
+    
+    saveToStorage(STORAGE_KEYS.AUTH, authUser);
+    isLoggedIn = true;
+    
+    // Обновляем профиль
+    userProfile = {
+        id: authUser.userId,
+        username: authUser.username,
+        firstName: authUser.firstName,
+        lastName: authUser.lastName || '',
+        authDate: Date.now()
+    };
+    
+    updateProfileUI();
+    updateCheckoutButton(); // Обновляем кнопку оформления заказа
+    
+    return { success: true };
+}
+
+function logout() {
+    authUser = null;
+    isLoggedIn = false;
+    userProfile = null;
+    saveToStorage(STORAGE_KEYS.AUTH, null);
+    updateProfileUI();
+    updateCheckoutButton(); // Обновляем кнопку оформления заказа
+    showNotification('Вы вышли из аккаунта', 'info');
+    closeAuthModal();
+    closeProfilePopup();
+}
+
+// ===== МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ =====
+function openAuthModal() {
+    const modal = document.getElementById('authModal');
+    const overlay = document.getElementById('overlay');
+    
+    if (modal && overlay) {
+        modal.classList.add('show');
+        overlay.classList.add('show');
+        document.body.style.overflow = 'hidden';
+        
+        // Фокус на поле ввода
+        setTimeout(() => {
+            const usernameInput = document.getElementById('authUsername');
+            if (usernameInput) usernameInput.focus();
+        }, 100);
+    }
+}
+
+function closeAuthModal() {
+    const modal = document.getElementById('authModal');
+    const overlay = document.getElementById('overlay');
+    
+    if (modal) modal.classList.remove('show');
+    if (overlay) overlay.classList.remove('show');
+    document.body.style.overflow = 'auto';
+}
+
+function handleLogin() {
+    const username = document.getElementById('authUsername').value.trim();
+    const password = document.getElementById('authPassword').value;
+    
+    if (!username || !password) {
+        showNotification('Заполните все поля', 'warning');
+        return;
+    }
+    
+    const result = login(username, password);
+    
+    if (result.success) {
+        showNotification('Вы успешно вошли!', 'success');
+        closeAuthModal();
+        closeProfilePopup();
+    } else {
+        showNotification(result.message, 'error');
+    }
 }
 
 // ===== LOCALSTORAGE ФУНКЦИИ =====
@@ -480,6 +644,12 @@ function loadData() {
     
     // Загружаем избранное из localStorage
     favorites = loadFromStorage(STORAGE_KEYS.FAVORITES, []);
+    
+    // Загружаем транзакции из localStorage
+    transactions = loadFromStorage(STORAGE_KEYS.TRANSACTIONS, []);
+    
+    // Сортируем по новизне (по умолчанию)
+    filteredProducts.sort((a, b) => b.id - a.id);
 }
 
 function loadAddress() {
@@ -494,6 +664,109 @@ function loadAddress() {
         updateAddressStatus();
         updateCheckoutButton();
     }
+}
+
+// ===== ФУНКЦИИ ПРОФИЛЯ =====
+function updateProfileUI() {
+    const userInfo = document.getElementById('userInfo');
+    const loginBtn = document.getElementById('profileLoginBtn');
+    const loginBtnText = document.getElementById('loginBtnText');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const logoutContainer = document.getElementById('logoutContainer');
+    const userName = document.getElementById('userName');
+    const userId = document.getElementById('userId');
+    const loginBtnContainer = document.getElementById('loginBtnContainer');
+    
+    if (isLoggedIn && authUser) {
+        // Показываем информацию пользователя
+        if (userInfo) userInfo.style.display = 'flex';
+        if (userName) userName.textContent = authUser.firstName || authUser.username;
+        if (userId) userId.textContent = `ID: ${authUser.userId}`;
+        
+        // Обновляем кнопку входа
+        if (loginBtn && loginBtnContainer) {
+            loginBtn.innerHTML = `<i class="fas fa-user-circle"></i><span>${authUser.firstName || authUser.username}</span>`;
+            loginBtn.classList.add('logged-in');
+            loginBtnContainer.style.display = 'block';
+        }
+        if (loginBtnText) loginBtnText.textContent = authUser.firstName || authUser.username;
+        
+        // Показываем контейнер с кнопкой выхода
+        if (logoutContainer) logoutContainer.style.display = 'block';
+        
+    } else {
+        // Скрываем информацию пользователя
+        if (userInfo) userInfo.style.display = 'none';
+        
+        // Обновляем кнопку входа
+        if (loginBtn && loginBtnContainer) {
+            loginBtn.innerHTML = '<i class="fas fa-user"></i><span>Войти</span>';
+            loginBtn.classList.remove('logged-in');
+            loginBtnContainer.style.display = 'block';
+        }
+        if (loginBtnText) loginBtnText.textContent = 'Войти';
+        
+        // Скрываем контейнер с кнопкой выхода
+        if (logoutContainer) logoutContainer.style.display = 'none';
+    }
+}
+
+function addTransaction(orderData) {
+    const transaction = {
+        id: Date.now(),
+        date: new Date().toLocaleString('ru-RU'),
+        items: orderData.items,
+        total: orderData.total,
+        address: orderData.deliveryAddress,
+        status: 'completed'
+    };
+    
+    transactions.unshift(transaction); // Добавляем в начало
+    
+    // Автоматическая очистка: оставляем только последние 5 транзакций
+    if (transactions.length > 5) {
+        transactions = transactions.slice(0, 5);
+    }
+    
+    saveToStorage(STORAGE_KEYS.TRANSACTIONS, transactions);
+    updateTransactionsUI();
+}
+
+function updateTransactionsUI() {
+    const transactionsList = document.getElementById('transactionsList');
+    if (!transactionsList) return;
+    
+    // Полностью очищаем контейнер
+    transactionsList.innerHTML = '';
+    
+    if (transactions.length === 0) {
+        transactionsList.innerHTML = `
+            <div class="empty-transactions">
+                <i class="fas fa-receipt"></i>
+                <p>У вас пока нет транзакций</p>
+            </div>
+        `;
+        return;
+    }
+    
+    transactions.forEach(transaction => {
+        const itemsText = transaction.items.map(item => 
+            `${item.name} × ${item.quantity}`
+        ).join(', ');
+        
+        const transactionElement = document.createElement('div');
+        transactionElement.className = 'transaction-item';
+        transactionElement.innerHTML = `
+            <div class="transaction-header">
+                <div class="transaction-date">${transaction.date}</div>
+                <div class="transaction-amount">${transaction.total.toLocaleString()} ₽</div>
+            </div>
+            <div class="transaction-items">${itemsText}</div>
+            <div class="transaction-status completed">Завершено</div>
+        `;
+        
+        transactionsList.appendChild(transactionElement);
+    });
 }
 
 function saveAddress() {
@@ -523,6 +796,98 @@ function updateAddressStatus() {
         } else {
             addressStatus.innerHTML = '<i class="fas fa-exclamation-circle" style="color: var(--color-warning);"></i> Адрес не указан';
         }
+    }
+}
+
+// ===== БАННЕРЫ =====
+function setupBanners() {
+    const bannerContainer = document.getElementById('bannerContainer');
+    if (!bannerContainer) return;
+    
+    // Очищаем контейнер
+    bannerContainer.innerHTML = '';
+    
+    // Фильтруем включенные баннеры
+    const enabledBanners = bannerConfig.banners.filter(b => b.enabled);
+    
+    if (enabledBanners.length === 0) {
+        bannerContainer.style.display = 'none';
+        return;
+    }
+    
+    enabledBanners.forEach((banner, index) => {
+        const slide = document.createElement('div');
+        slide.className = `banner-slide ${banner.type === 'image' ? 'image-banner' : banner.gradient} ${index === 0 ? 'active' : ''}`;
+        slide.dataset.bannerId = banner.id;
+        
+        // Устанавливаем изображение если тип image
+        if (banner.type === 'image' && banner.imageUrl) {
+            slide.style.backgroundImage = `url('${banner.imageUrl}')`;
+            slide.style.backgroundSize = 'cover';
+            slide.style.backgroundPosition = 'center center';
+            slide.style.backgroundRepeat = 'no-repeat';
+        } else {
+            // Для градиентных баннеров добавляем текст
+            if (banner.title || banner.text) {
+                const bannerContent = document.createElement('div');
+                bannerContent.className = 'banner-content';
+                
+                if (banner.title && banner.title.trim() !== '') {
+                    const h1 = document.createElement('h1');
+                    h1.textContent = banner.title;
+                    bannerContent.appendChild(h1);
+                }
+                
+                if (banner.text && banner.text.trim() !== '') {
+                    const p = document.createElement('p');
+                    p.innerHTML = banner.text;
+                    bannerContent.appendChild(p);
+                }
+                
+                slide.appendChild(bannerContent);
+            }
+        }
+        
+        // Добавляем ссылку если указана
+        if (banner.link && banner.link.trim() !== '') {
+            const link = document.createElement('a');
+            link.className = 'banner-link';
+            link.href = banner.link;
+            link.dataset.bannerId = banner.id;
+            
+            // Настройка для открытия ссылок
+            if (banner.link.startsWith('http')) {
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+            }
+            
+            // Ссылка не должна быть видна вообще
+            link.style.opacity = '0';
+            link.style.display = 'block';
+            link.style.width = '100%';
+            link.style.height = '100%';
+            link.style.position = 'absolute';
+            link.style.top = '0';
+            link.style.left = '0';
+            link.style.zIndex = '3';
+            
+            slide.appendChild(link);
+        }
+        
+        bannerContainer.appendChild(slide);
+    });
+    
+    // Автопереключение баннеров
+    if (enabledBanners.length > 1) {
+        let currentBannerIndex = 0;
+        setInterval(() => {
+            const slides = bannerContainer.querySelectorAll('.banner-slide');
+            if (slides.length <= 1) return;
+            
+            slides[currentBannerIndex].classList.remove('active');
+            currentBannerIndex = (currentBannerIndex + 1) % slides.length;
+            slides[currentBannerIndex].classList.add('active');
+        }, bannerConfig.switchInterval);
     }
 }
 
@@ -592,9 +957,7 @@ function renderProducts() {
             
             <div class="product-rating-wb">
                 <div class="rating-stars">
-                    ${product.rating >= 4.5 ? '<i class="fas fa-star"></i>' : 
-                      product.rating >= 3.5 ? '<i class="fas fa-star-half-alt"></i>' : 
-                      '<i class="far fa-star"></i>'}
+                    ${renderStars(product.rating, true)}
                 </div>
                 <span class="rating-value-wb">${product.rating}</span>
                 <span class="reviews-count-wb">${product.reviews} оценок</span>
@@ -630,7 +993,6 @@ function renderProducts() {
     });
 }
 
-// ФИКС: Измененная функция для отображения одной звезды вместо пяти
 function renderStars(rating, showOneStar = false) {
     if (showOneStar) {
         if (rating >= 4.5) {
@@ -724,6 +1086,11 @@ function toggleCart(productId, event) {
     
     if (existingItemIndex !== -1) {
         cart.splice(existingItemIndex, 1);
+        // Удаляем из выбранных, если был выбран
+        const selectedIndex = selectedCartItems.indexOf(productId);
+        if (selectedIndex !== -1) {
+            selectedCartItems.splice(selectedIndex, 1);
+        }
         showNotification(`${product.name} удален из корзины`, 'info');
     } else {
         cart.push({
@@ -771,21 +1138,42 @@ function updateCartPopup() {
         return;
     }
     
-    cartItems.innerHTML = '';
+    // Добавляем контролы выбора
+    cartItems.innerHTML = `
+        <div class="cart-selection-controls">
+            <div class="select-all-container">
+                <div class="select-all-checkbox ${selectedCartItems.length === cart.length && cart.length > 0 ? 'checked' : ''}" id="selectAllCheckbox">
+                    <i class="fas fa-check"></i>
+                </div>
+                <span class="select-all-label" id="selectAllLabel">Выбрать всё</span>
+            </div>
+            <span class="selected-count" id="selectedCount">Выбрано: ${selectedCartItems.length}</span>
+        </div>
+    `;
+    
+    // Добавляем обработчик для "Выбрать всё"
+    document.getElementById('selectAllCheckbox').addEventListener('click', toggleSelectAll);
+    document.getElementById('selectAllLabel').addEventListener('click', toggleSelectAll);
+    
+    // Отрисовываем товары
     cart.forEach(item => {
+        const isSelected = selectedCartItems.includes(item.id);
         const itemElement = document.createElement('div');
-        itemElement.className = 'cart-item';
+        itemElement.className = `cart-item ${isSelected ? 'selected' : ''}`;
+        itemElement.dataset.id = item.id;
+        
         itemElement.innerHTML = `
+            <div class="cart-item-checkbox">
+                <div class="checkmark ${isSelected ? 'checked' : ''}">
+                    <i class="fas fa-check"></i>
+                </div>
+            </div>
             <div class="cart-item-content">
                 <img src="${item.image}" alt="${item.name}" class="cart-item-img">
                 <div class="cart-item-details">
                     <h4 class="cart-item-title">${item.name}</h4>
-                    <div class="cart-item-meta">
-                        <span class="cart-item-volume">${item.volume} мл</span>
-                        <span class="cart-item-category">${getCategoryName(item.category)}</span>
-                    </div>
+                    <div class="cart-item-price">${item.price.toLocaleString()} ₽</div>
                 </div>
-                <div class="cart-item-price">${item.price.toLocaleString()} ₽</div>
             </div>
             <div class="cart-item-controls">
                 <div class="quantity-controls">
@@ -799,18 +1187,106 @@ function updateCartPopup() {
             </div>
         `;
         cartItems.appendChild(itemElement);
+        
+        // Добавляем обработчик для чекбокса
+        const checkbox = itemElement.querySelector('.cart-item-checkbox');
+        if (checkbox) {
+            checkbox.addEventListener('click', function(e) {
+                e.stopPropagation();
+                toggleCartItemSelection(item.id);
+            });
+        }
     });
     
     updateCartSummary();
     updateCheckoutButton();
 }
 
+function toggleCartItemSelection(productId) {
+    const index = selectedCartItems.indexOf(productId);
+    
+    if (index === -1) {
+        // Добавляем
+        selectedCartItems.push(productId);
+    } else {
+        // Удаляем
+        selectedCartItems.splice(index, 1);
+    }
+    
+    // Обновляем UI
+    const itemElement = document.querySelector(`.cart-item[data-id="${productId}"]`);
+    if (itemElement) {
+        const checkmark = itemElement.querySelector('.checkmark');
+        if (selectedCartItems.includes(productId)) {
+            itemElement.classList.add('selected');
+            if (checkmark) checkmark.classList.add('checked');
+        } else {
+            itemElement.classList.remove('selected');
+            if (checkmark) checkmark.classList.remove('checked');
+        }
+    }
+    
+    // Обновляем счетчик
+    updateSelectedCount();
+    updateSelectAllState();
+    updateCheckoutButton();
+    updateCartSummary();
+}
+
+function toggleSelectAll() {
+    const allSelected = selectedCartItems.length === cart.length && cart.length > 0;
+    
+    if (allSelected) {
+        // Снимаем выделение со всех
+        selectedCartItems = [];
+    } else {
+        // Выбираем все
+        selectedCartItems = cart.map(item => item.id);
+    }
+    
+    // Обновляем UI
+    document.querySelectorAll('.cart-item').forEach(item => {
+        const productId = parseInt(item.dataset.id);
+        const checkmark = item.querySelector('.checkmark');
+        
+        if (selectedCartItems.includes(productId)) {
+            item.classList.add('selected');
+            if (checkmark) checkmark.classList.add('checked');
+        } else {
+            item.classList.remove('selected');
+            if (checkmark) checkmark.classList.remove('checked');
+        }
+    });
+    
+    updateSelectedCount();
+    updateSelectAllState();
+    updateCheckoutButton();
+    updateCartSummary();
+}
+
+function updateSelectedCount() {
+    const selectedCountElement = document.getElementById('selectedCount');
+    if (selectedCountElement) {
+        selectedCountElement.textContent = `Выбрано: ${selectedCartItems.length}`;
+    }
+}
+
+function updateSelectAllState() {
+    const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+    if (selectAllCheckbox) {
+        const allSelected = selectedCartItems.length === cart.length && cart.length > 0;
+        selectAllCheckbox.classList.toggle('checked', allSelected);
+    }
+}
+
 function updateCartSummary() {
     const cartTotal = document.getElementById('cartTotal');
     const cartFinal = document.getElementById('cartFinal');
     
-    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const discount = cart.reduce((sum, item) => {
+    // Считаем только выбранные товары
+    const selectedItems = cart.filter(item => selectedCartItems.includes(item.id));
+    const subtotal = selectedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const discount = selectedItems.reduce((sum, item) => {
         if (item.oldPrice > 0) {
             return sum + ((item.oldPrice - item.price) * item.quantity);
         }
@@ -845,6 +1321,12 @@ function updateQuantity(productId, delta, newValue = null) {
 function removeFromCart(productId) {
     cart = cart.filter(item => item.id !== productId);
     
+    // Удаляем из выбранных
+    const selectedIndex = selectedCartItems.indexOf(productId);
+    if (selectedIndex !== -1) {
+        selectedCartItems.splice(selectedIndex, 1);
+    }
+    
     saveToStorage(STORAGE_KEYS.CART, cart);
     
     updateCartCount();
@@ -859,19 +1341,43 @@ function updateCheckoutButton() {
     if (!checkoutBtn) return;
     
     const hasItems = cart.length > 0;
+    const hasSelectedItems = selectedCartItems.length > 0;
     
-    if (!isAddressSaved || !deliveryAddress) {
-        checkoutBtn.disabled = true;
-        checkoutBtn.style.opacity = '0.5';
-        checkoutBtn.style.cursor = 'not-allowed';
-    } else if (!hasItems) {
-        checkoutBtn.disabled = true;
-        checkoutBtn.style.opacity = '0.5';
-        checkoutBtn.style.cursor = 'not-allowed';
-    } else {
-        checkoutBtn.disabled = false;
+    // Если пользователь не авторизован
+    if (!isLoggedIn) {
+        checkoutBtn.disabled = false; // Кнопка активна
+        checkoutBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Войти для заказа';
         checkoutBtn.style.opacity = '1';
         checkoutBtn.style.cursor = 'pointer';
+        checkoutBtn.title = 'Войдите в аккаунт для оформления заказа';
+        return;
+    }
+    
+    // Если пользователь авторизован, проверяем остальные условия
+    if (!isAddressSaved || !deliveryAddress) {
+        checkoutBtn.disabled = true;
+        checkoutBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Оформить заказ';
+        checkoutBtn.style.opacity = '0.5';
+        checkoutBtn.style.cursor = 'not-allowed';
+        checkoutBtn.title = 'Укажите адрес доставки';
+    } else if (!hasItems) {
+        checkoutBtn.disabled = true;
+        checkoutBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Оформить заказа';
+        checkoutBtn.style.opacity = '0.5';
+        checkoutBtn.style.cursor = 'not-allowed';
+        checkoutBtn.title = 'Добавьте товары в корзину';
+    } else if (!hasSelectedItems) {
+        checkoutBtn.disabled = true;
+        checkoutBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Оформить заказ';
+        checkoutBtn.style.opacity = '0.5';
+        checkoutBtn.style.cursor = 'not-allowed';
+        checkoutBtn.title = 'Выберите товары для заказа';
+    } else {
+        checkoutBtn.disabled = false;
+        checkoutBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Оформить заказ';
+        checkoutBtn.style.opacity = '1';
+        checkoutBtn.style.cursor = 'pointer';
+        checkoutBtn.title = 'Оформить заказ выбранных товаров';
     }
 }
 
@@ -987,6 +1493,9 @@ function showProductDetailsModal(product) {
                         </span>
                         <span class="meta-volume">
                             <i class="fas fa-weight"></i> ${product.volume} мл
+                        </span>
+                        <span class="meta-gender">
+                            <i class="fas fa-${getGenderIcon(product.gender)}"></i> ${getGenderName(product.gender)}
                         </span>
                         <span class="meta-stock ${product.inStock ? 'in-stock' : 'out-of-stock'}">
                             <i class="fas ${product.inStock ? 'fa-check-circle' : 'fa-times-circle'}"></i> 
@@ -1186,21 +1695,110 @@ function closeProductDetailsModal() {
     document.body.style.overflow = 'auto';
 }
 
+// ===== ОБРАБОТКА ЗАКАЗОВ =====
+function processOrder() {
+    // Проверяем, авторизован ли пользователь
+    if (!isLoggedIn) {
+        showNotification('Для заказа духов нужно войти в аккаунт в приложении', 'warning');
+        
+        // Закрываем корзину и открываем профиль
+        setTimeout(() => {
+            closeCartPopup();
+            setTimeout(() => {
+                openProfilePopup();
+            }, 300);
+        }, 1000);
+        
+        return;
+    }
+    
+    if (cart.length === 0) {
+        showNotification('Добавьте товары в корзину', 'info');
+        return;
+    }
+    
+    if (!isAddressSaved || !deliveryAddress) {
+        showNotification('Сначала укажите адрес доставки', 'warning');
+        
+        const addressInput = document.getElementById('deliveryAddress');
+        if (addressInput) {
+            addressInput.focus();
+        }
+        return;
+    }
+    
+    // Проверяем, что выбраны товары
+    if (selectedCartItems.length === 0) {
+        showNotification('Выберите товары для заказа', 'warning');
+        return;
+    }
+    
+    // Фильтруем только выбранные товары
+    const selectedItems = cart.filter(item => selectedCartItems.includes(item.id));
+    const total = selectedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    
+    // Формируем текст заказа
+    const orderItems = selectedItems.map(item => 
+        `${item.name} - ${item.quantity} × ${item.price.toLocaleString()}₽ = ${(item.price * item.quantity).toLocaleString()}₽`
+    ).join('\n');
+    
+    const orderText = `
+📨 **Новый заказ в Aura Atelier**
+
+📦 **Товары (${selectedItems.length}):**
+${orderItems}
+
+🧾 **Итого:** ${total.toLocaleString()}₽
+📍 **Адрес доставки:** ${deliveryAddress}
+📅 **Дата:** ${new Date().toLocaleString('ru-RU')}
+👤 **Покупатель:** ${authUser ? authUser.firstName || authUser.username : 'Неавторизованный пользователь'}
+
+💬 **Связь:** @Ayder505
+    `.trim();
+    
+    // Отправляем в Telegram через ссылку
+    const telegramUrl = `https://t.me/Ayder505?text=${encodeURIComponent(orderText)}`;
+    window.open(telegramUrl, '_blank');
+    showNotification(`Заказ на ${total.toLocaleString()}₽ отправлен менеджеру`, 'success');
+    
+    // Сохраняем транзакцию
+    addTransaction({
+        items: selectedItems,
+        total: total,
+        deliveryAddress: deliveryAddress
+    });
+    
+    // Удаляем только выбранные товары из корзины
+    cart = cart.filter(item => !selectedCartItems.includes(item.id));
+    selectedCartItems = [];
+    saveToStorage(STORAGE_KEYS.CART, cart);
+    updateCartCount();
+    updateCartPopup();
+    renderProducts();
+    
+    closeCartPopup();
+}
+
 // ===== ФИЛЬТРЫ И ПОИСК =====
 function filterProducts() {
     const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    const priceMin = parseInt(document.getElementById('filterPriceMin').value) || 0;
+    const priceMin = parseInt(document.getElementById('filterPriceMin').value) || 350;
     const priceMax = parseInt(document.getElementById('filterPriceMax').value) || 50000;
     const sortBy = document.getElementById('sortBy').value;
     
     const selectedCategories = Array.from(document.querySelectorAll('.filter-category:checked'))
         .map(cb => cb.value);
     
+    const selectedGenders = Array.from(document.querySelectorAll('.filter-gender:checked'))
+        .map(cb => cb.value);
+    
     const selectedVolumes = Array.from(document.querySelectorAll('.filter-volume:checked'))
         .map(cb => parseInt(cb.value));
     
-    const selectedRating = document.querySelector('input[name="filterRating"]:checked');
-    const minRating = selectedRating ? parseFloat(selectedRating.value) : 0;
+    const rating47Checked = document.getElementById('filterRating47')?.checked || false;
+    const originalChecked = document.getElementById('filterOriginal')?.checked || false;
+    const saleChecked = document.getElementById('filterSale')?.checked || false;
+    const cashbackChecked = document.getElementById('filterCashback')?.checked || false;
 
     filteredProducts = allProducts.filter(product => {
         if (searchTerm && !product.name.toLowerCase().includes(searchTerm) && 
@@ -1212,6 +1810,10 @@ function filterProducts() {
             return false;
         }
         
+        if (selectedGenders.length > 0 && !selectedGenders.includes(product.gender)) {
+            return false;
+        }
+        
         if (product.price < priceMin || product.price > priceMax) {
             return false;
         }
@@ -1220,35 +1822,48 @@ function filterProducts() {
             return false;
         }
         
-        if (product.rating < minRating) {
+        // Фильтр по рейтингу 4.7
+        if (rating47Checked && product.rating < 4.7) {
+            return false;
+        }
+        
+        // Фильтр "Оригинальный товар" (пока пропускаем все)
+        // if (originalChecked && !product.isOriginal) { ... }
+        
+        // Фильтр "Распродажа" - скрываем все товары
+        if (saleChecked) {
+            return false;
+        }
+        
+        // Фильтр "Кэшбэк" - скрываем все товары
+        if (cashbackChecked) {
             return false;
         }
         
         return true;
     });
     
-    switch(sortBy) {
-        case 'new':
-            filteredProducts.sort((a, b) => b.id - a.id);
-            break;
-        case 'price-low':
-            filteredProducts.sort((a, b) => a.price - b.price);
-            break;
-        case 'price-high':
-            filteredProducts.sort((a, b) => b.price - a.price);
-            break;
-        case 'rating':
-            filteredProducts.sort((a, b) => b.rating - a.rating);
-            break;
-        case 'popular':
-        default:
-            filteredProducts.sort((a, b) => {
-                if (b.rating !== a.rating) {
-                    return b.rating - a.rating;
-                }
-                return b.reviews - a.reviews;
-            });
-            break;
+    // Сортировка
+    if (sortBy === 'popular') {
+        filteredProducts.sort((a, b) => b.id - a.id); // Новые первыми
+    } else {
+        switch(sortBy) {
+            case 'new':
+                filteredProducts.sort((a, b) => b.id - a.id);
+                break;
+            case 'price-low':
+                filteredProducts.sort((a, b) => a.price - b.price);
+                break;
+            case 'price-high':
+                filteredProducts.sort((a, b) => b.price - a.price);
+                break;
+            case 'rating':
+                filteredProducts.sort((a, b) => b.rating - a.rating);
+                break;
+            default:
+                filteredProducts.sort((a, b) => b.id - a.id);
+                break;
+        }
     }
     
     currentPage = 1;
@@ -1257,7 +1872,7 @@ function filterProducts() {
 
 function resetFilters() {
     document.getElementById('searchInput').value = '';
-    document.getElementById('filterPriceMin').value = '';
+    document.getElementById('filterPriceMin').value = '350';
     document.getElementById('filterPriceMax').value = '';
     document.getElementById('sortBy').value = 'popular';
     
@@ -1265,11 +1880,18 @@ function resetFilters() {
         cb.checked = true;
     });
     
+    document.querySelectorAll('.filter-gender').forEach(cb => {
+        cb.checked = true;
+    });
+    
     document.querySelectorAll('.filter-volume').forEach(cb => {
         cb.checked = false;
     });
     
-    document.querySelector('input[name="filterRating"][value="0"]').checked = true;
+    document.getElementById('filterRating47').checked = false;
+    document.getElementById('filterOriginal').checked = false;
+    document.getElementById('filterSale').checked = false;
+    document.getElementById('filterCashback').checked = false;
     
     closeFilterPopup();
     
@@ -1287,11 +1909,6 @@ function setupFilterPopup() {
             <h4>Категории</h4>
             <div class="checkbox-group">
                 <label class="checkbox">
-                    <input type="checkbox" class="filter-category" value="arabian" checked>
-                    <span class="checkmark"></span>
-                    Арабские духи
-                </label>
-                <label class="checkbox">
                     <input type="checkbox" class="filter-category" value="premium" checked>
                     <span class="checkmark"></span>
                     Премиум
@@ -1301,19 +1918,47 @@ function setupFilterPopup() {
                     <span class="checkmark"></span>
                     Доступные
                 </label>
+                <label class="checkbox">
+                    <input type="checkbox" class="filter-category" value="new" checked>
+                    <span class="checkmark"></span>
+                    Новинки
+                </label>
+                <label class="checkbox">
+                    <input type="checkbox" class="filter-category" value="auto" checked>
+                    <span class="checkmark"></span>
+                    Авто-духи
+                </label>
             </div>
         </div>
         
         <div class="filter-group">
-            <h4>Цена, ₽</h4>
+            <h4>Пол</h4>
+            <div class="checkbox-group">
+                <label class="checkbox">
+                    <input type="checkbox" class="filter-gender" value="male" checked>
+                    <span class="checkmark"></span>
+                    Мужские
+                </label>
+                <label class="checkbox">
+                    <input type="checkbox" class="filter-gender" value="female" checked>
+                    <span class="checkmark"></span>
+                    Женские
+                </label>
+                <label class="checkbox">
+                    <input type="checkbox" class="filter-gender" value="unisex" checked>
+                    <span class="checkmark"></span>
+                    Унисекс
+                </label>
+            </div>
+        </div>
+        
+        <div class="filter-group">
+            <h4>Цена</h4>
             <div class="price-range">
                 <div class="range-inputs">
-                    <input type="number" id="filterPriceMin" placeholder="0" min="0">
+                    <input type="number" id="filterPriceMin" placeholder="350" min="350" value="350">
                     <span class="range-divider">-</span>
-                    <input type="number" id="filterPriceMax" placeholder="50000" min="0">
-                </div>
-                <div class="range-slider">
-                    <input type="range" id="filterPriceRange" min="0" max="50000" value="25000">
+                    <input type="number" id="filterPriceMax" placeholder="50000" min="350">
                 </div>
             </div>
         </div>
@@ -1322,74 +1967,45 @@ function setupFilterPopup() {
             <h4>Объем, мл</h4>
             <div class="checkbox-group">
                 <label class="checkbox">
-                    <input type="checkbox" class="filter-volume" value="30">
+                    <input type="checkbox" class="filter-volume" value="6">
                     <span class="checkmark"></span>
-                    30 мл
+                    6 мл
                 </label>
                 <label class="checkbox">
-                    <input type="checkbox" class="filter-volume" value="50">
+                    <input type="checkbox" class="filter-volume" value="10">
                     <span class="checkmark"></span>
-                    50 мл
+                    10 мл
                 </label>
                 <label class="checkbox">
-                    <input type="checkbox" class="filter-volume" value="100">
+                    <input type="checkbox" class="filter-volume" value="25">
                     <span class="checkmark"></span>
-                    100 мл
-                </label>
-                <label class="checkbox">
-                    <input type="checkbox" class="filter-volume" value="200">
-                    <span class="checkmark"></span>
-                    200 мл
+                    25 мл
                 </label>
             </div>
         </div>
         
         <div class="filter-group">
-            <h4>Рейтинг</h4>
-            <div class="rating-filter">
-                <label class="star-rating">
-                    <input type="radio" name="filterRating" value="0" checked>
-                    <span class="stars">
-                        <i class="far fa-star"></i>
-                        <i class="far fa-star"></i>
-                        <i class="far fa-star"></i>
-                        <i class="far fa-star"></i>
-                        <i class="far fa-star"></i>
-                    </span>
-                    <span class="rating-text">Любой</span>
+            <h4>Дополнительные фильтры</h4>
+            <div class="checkbox-group">
+                <label class="checkbox checkbox-with-icon">
+                    <input type="checkbox" id="filterRating47" class="filter-rating47">
+                    <span class="checkmark"></span>
+                    <i class="fas fa-star" style="color: #FFAA00;"></i> С рейтингом от 4.7
                 </label>
-                <label class="star-rating">
-                    <input type="radio" name="filterRating" value="3">
-                    <span class="stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="far fa-star"></i>
-                        <i class="far fa-star"></i>
-                    </span>
-                    <span class="rating-text">3 и выше</span>
+                <label class="checkbox checkbox-with-icon">
+                    <input type="checkbox" id="filterOriginal" class="filter-original">
+                    <span class="checkmark"></span>
+                    <i class="fas fa-shield-alt"></i> Оригинальный товар
                 </label>
-                <label class="star-rating">
-                    <input type="radio" name="filterRating" value="4">
-                    <span class="stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="far fa-star"></i>
-                    </span>
-                    <span class="rating-text">4 и выше</span>
+                <label class="checkbox checkbox-with-icon">
+                    <input type="checkbox" id="filterSale" class="filter-sale">
+                    <span class="checkmark"></span>
+                    <i class="fas fa-fire"></i> Распродажа
                 </label>
-                <label class="star-rating">
-                    <input type="radio" name="filterRating" value="4.5">
-                    <span class="stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star-half-alt"></i>
-                    </span>
-                    <span class="rating-text">4.5 и выше</span>
+                <label class="checkbox checkbox-with-icon">
+                    <input type="checkbox" id="filterCashback" class="filter-cashback">
+                    <span class="checkmark"></span>
+                    <i class="fas fa-money-bill-wave"></i> Кэшбэк
                 </label>
             </div>
         </div>
@@ -1404,27 +2020,15 @@ function setupFilterPopup() {
         </div>
     `;
     
-    const priceRange = document.getElementById('filterPriceRange');
     const priceMinInput = document.getElementById('filterPriceMin');
     const priceMaxInput = document.getElementById('filterPriceMax');
     
-    if (priceRange && priceMinInput && priceMaxInput) {
-        priceRange.addEventListener('input', function() {
-            const value = parseInt(this.value);
-            priceMinInput.value = Math.max(0, value - 10000);
-            priceMaxInput.value = Math.min(50000, value + 10000);
-        });
-        
+    if (priceMinInput && priceMaxInput) {
         priceMinInput.addEventListener('change', function() {
-            const min = parseInt(this.value) || 0;
-            const max = parseInt(priceMaxInput.value) || 50000;
-            priceRange.value = Math.floor((min + max) / 2);
-        });
-        
-        priceMaxInput.addEventListener('change', function() {
-            const min = parseInt(priceMinInput.value) || 0;
-            const max = parseInt(this.value) || 50000;
-            priceRange.value = Math.floor((min + max) / 2);
+            const min = parseInt(this.value) || 350;
+            if (min < 350) {
+                this.value = 350;
+            }
         });
     }
     
@@ -1476,19 +2080,74 @@ function closeFilterPopup() {
     document.body.style.overflow = 'auto';
 }
 
+function openProfilePopup() {
+    document.getElementById('profilePopup').classList.add('show');
+    document.getElementById('overlay').classList.add('show');
+    document.body.style.overflow = 'hidden';
+    updateProfileUI();
+}
+
+function closeProfilePopup() {
+    document.getElementById('profilePopup').classList.remove('show');
+    document.getElementById('overlay').classList.remove('show');
+    document.body.style.overflow = 'auto';
+}
+
+function openTransactionsPopup() {
+    const popup = document.getElementById('transactionsPopup');
+    const overlay = document.getElementById('overlay');
+    
+    if (popup && overlay) {
+        popup.classList.add('show');
+        overlay.classList.add('show');
+        document.body.style.overflow = 'hidden';
+        updateTransactionsUI();
+        
+        // Фокус на попапе для доступности
+        setTimeout(() => {
+            popup.focus();
+        }, 100);
+    }
+}
+
+function closeTransactionsPopup() {
+    const popup = document.getElementById('transactionsPopup');
+    const overlay = document.getElementById('overlay');
+    
+    if (popup) popup.classList.remove('show');
+    if (overlay) overlay.classList.remove('show');
+    document.body.style.overflow = 'auto';
+}
+
 // ===== УТИЛИТЫ =====
 function getCategoryName(category) {
     const categories = {
-        arabian: 'Арабские духи',
         premium: 'Премиум коллекция',
         affordable: 'Доступные духи',
         new: 'Новинки',
-        sale: 'Акции'
+        auto: 'Авто-духи'
     };
     return categories[category] || category;
 }
 
-// ФИКС: Улучшенные анимации уведомлений
+function getGenderName(gender) {
+    const genders = {
+        male: 'Мужские',
+        female: 'Женские',
+        unisex: 'Унисекс'
+    };
+    return genders[gender] || gender || 'Не указано';
+}
+
+function getGenderIcon(gender) {
+    const icons = {
+        male: 'mars',
+        female: 'venus',
+        unisex: 'transgender'
+    };
+    return icons[gender] || 'question';
+}
+
 function showNotification(message, type = 'info') {
     document.querySelectorAll('.notification').forEach(n => n.remove());
     
@@ -1534,6 +2193,7 @@ function initEventListeners() {
             this._timer = setTimeout(() => {
                 if (this.value.trim() === '') {
                     filteredProducts = [...allProducts];
+                    filteredProducts.sort((a, b) => b.id - a.id);
                     currentPage = 1;
                     renderProducts();
                 }
@@ -1543,9 +2203,7 @@ function initEventListeners() {
     
     if (searchBtn) {
         searchBtn.addEventListener('click', function() {
-            if (searchInput.value.trim() !== '') {
-                filterProducts();
-            }
+            filterProducts();
         });
     }
     
@@ -1560,6 +2218,7 @@ function initEventListeners() {
     
     document.getElementById('navCart')?.addEventListener('click', openCartPopup);
     document.getElementById('navFilter')?.addEventListener('click', openFilterPopup);
+    document.getElementById('navProfile')?.addEventListener('click', openProfilePopup);
     
     // Сохранение адреса
     document.getElementById('saveAddressBtn')?.addEventListener('click', function() {
@@ -1601,6 +2260,8 @@ function initEventListeners() {
     document.getElementById('closeCart')?.addEventListener('click', closeCartPopup);
     document.getElementById('closeFav')?.addEventListener('click', closeFavoritesPopup);
     document.getElementById('closeFilter')?.addEventListener('click', closeFilterPopup);
+    document.getElementById('profileCloseBtn')?.addEventListener('click', closeProfilePopup);
+    document.getElementById('closeTransactions')?.addEventListener('click', closeTransactionsPopup);
     
     // Оверлей для закрытия попапов
     document.getElementById('overlay')?.addEventListener('click', function() {
@@ -1608,71 +2269,56 @@ function initEventListeners() {
         closeFavoritesPopup();
         closeFilterPopup();
         closeProductDetailsModal();
+        closeProfilePopup();
+        closeTransactionsPopup();
+        closeAuthModal();
+    });
+    
+    // Обработчики для профиля
+    document.getElementById('profileLoginBtn')?.addEventListener('click', function() {
+        if (!isLoggedIn) {
+            openAuthModal();
+        } else {
+            openProfilePopup();
+        }
+    });
+    
+    document.getElementById('logoutBtn')?.addEventListener('click', logout);
+    
+    document.getElementById('transactionsBtn')?.addEventListener('click', function() {
+        if (isLoggedIn) {
+            closeProfilePopup();
+            setTimeout(() => {
+                openTransactionsPopup();
+            }, 300);
+        } else {
+            showNotification('Сначала войдите в аккаунт', 'warning');
+        }
+    });
+    
+    document.getElementById('referralBtn')?.addEventListener('click', function() {
+        showNotification('Реферальная программа временно недоступна', 'info');
     });
     
     // Оформление заказа
-    document.getElementById('checkoutBtn')?.addEventListener('click', function() {
-        if (cart.length === 0) {
-            showNotification('Добавьте товары в корзину', 'info');
+    document.getElementById('checkoutBtn')?.addEventListener('click', function(e) {
+        // Если пользователь не авторизован, перенаправляем в профиль
+        if (!isLoggedIn) {
+            e.preventDefault();
+            e.stopPropagation();
+            showNotification('Для заказа духов нужно войти в аккаунт в приложении', 'warning');
+            
+            // Закрываем корзину и открываем профиль
+            closeCartPopup();
+            setTimeout(() => {
+                openProfilePopup();
+            }, 300);
+            
             return;
         }
         
-        if (!isAddressSaved || !deliveryAddress) {
-            showNotification('Сначала укажите адрес доставки', 'warning');
-            
-            this.classList.add('shake');
-            setTimeout(() => this.classList.remove('shake'), 500);
-            
-            const addressInput = document.getElementById('deliveryAddress');
-            if (addressInput) {
-                addressInput.focus();
-            }
-            return;
-        }
-        
-        const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        const orderItems = cart.map(item => 
-            `${item.name} - ${item.quantity} × ${item.price.toLocaleString()}₽ = ${(item.price * item.quantity).toLocaleString()}₽`
-        ).join('\n');
-        
-        const orderText = `
-📨 **Новый заказ в Aura Atelier**
-
-📦 **Товары:**
-${orderItems}
-
-🧾 **Итого:** ${total.toLocaleString()}₽
-📍 **Адрес доставки:** ${deliveryAddress}
-📅 **Дата:** ${new Date().toLocaleString('ru-RU')}
-
-💬 **Связь:** @Ayder505,
-        `.trim();
-        
-        if (tg.sendData) {
-            const orderData = {
-                userId: user.id,
-                username: user.username,
-                items: cart,
-                total: total,
-                deliveryAddress: deliveryAddress,
-                timestamp: new Date().toISOString()
-            };
-            
-            tg.sendData(JSON.stringify(orderData));
-            tg.showAlert(`Заказ оформлен!\n\nСумма: ${total.toLocaleString()}₽\nТоваров: ${cart.length}\nАдрес: ${deliveryAddress}\n\nС вами свяжется менеджер для подтверждения.`);
-        } else {
-            const telegramUrl = `https://t.me/Ayder505?text=${encodeURIComponent(orderText)}`;
-            window.open(telegramUrl, '_blank');
-            showNotification(`Заказ на ${total.toLocaleString()}₽ отправлен менеджеру`, 'success');
-        }
-        
-        cart = [];
-        saveToStorage(STORAGE_KEYS.CART, cart);
-        updateCartCount();
-        updateCartPopup();
-        renderProducts();
-        
-        closeCartPopup();
+        // Если авторизован, обрабатываем заказ
+        processOrder();
     });
     
     // Обработка кликов по кнопкам в карточках товаров
@@ -1740,6 +2386,19 @@ ${orderItems}
         }
     });
     
+    // Вход по Enter в модалке авторизации
+    document.getElementById('authUsername')?.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            document.getElementById('authPassword').focus();
+        }
+    });
+    
+    document.getElementById('authPassword')?.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            handleLogin();
+        }
+    });
+    
     // Закрытие по клавише ESC
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
@@ -1747,6 +2406,9 @@ ${orderItems}
             closeFavoritesPopup();
             closeFilterPopup();
             closeProductDetailsModal();
+            closeProfilePopup();
+            closeTransactionsPopup();
+            closeAuthModal();
         }
     });
 }
@@ -1766,7 +2428,15 @@ window.app = {
     openCartPopup,
     openFavoritesPopup,
     openFilterPopup,
-    saveAddress
+    openProfilePopup,
+    closeProfilePopup,
+    saveAddress,
+    bannerConfig,
+    setupBanners,
+    login: handleLogin,
+    logout,
+    isLoggedIn,
+    authUser
 };
 
 console.log('Aura Atelier приложение инициализировано');
