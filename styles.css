@@ -2186,12 +2186,6 @@ body {
     min-height: 40px;
 }
 
-.note-tag::before {
-    content: '♨️';
-    font-size: 0.9rem;
-    opacity: 0.8;
-}
-
 .note-tag:hover {
     background: rgba(138, 43, 226, 0.25);
     border-color: var(--color-primary);
