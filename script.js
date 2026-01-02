@@ -454,6 +454,57 @@ const PRODUCTS_DATA = [
         popular: true,
         notes: ["пряности", "древесные ноты", "амбра"] // Добавлено
     },
+    {
+        id: 24,
+        name: "SAFARI",
+        description: "Сердце аромата: магнолия, лотос и пион — цветочная радуга, которая смягчает фруктовый старт и добавляет нежности. База аромата: мускус, амбра и древесные ноты (кедр/махагон) — создают теплую, стойкую основу, которая держит аромат на коже в течение дня.",
+        price: 800,
+        oldPrice: 0,
+        category: "premium",
+        volume: 25,
+        gender: "female",
+        rating: 4.9,
+        reviews: 100,
+        image: "https://sun9-12.userapi.com/s/v1/ig2/3vGLyndCyqwNM0-w7eIA0PIdx6n_Cd9HBuc7azsGlWj-aB5I44nNTQjVT8uKDZsD83fjLS6MJwo6rXg4uwM7jxVM.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,896x896&from=bu&u=vRsucq0db2Bi7ZAjQFaLB2xXi81-r80xDpPFw7TnrsM&cs=360x0",
+        badge: "new",
+        inStock: true,
+        popular: true,
+        notes: ["магнолия", "лотос", "пион", "мускус", "амбра", "кедр"]
+    },
+    {
+        id: 25,
+        name: "HAYATI Attar Collection",
+        description: "HAYATI — это изысканный аромат, который сочетает свежесть цитрусовых с цветочными нотами жасмина и розы. Завершает композицию теплая база из древесных и восточных акцентов, таких как сандал и амбра, создавая чарующий шлейф.",
+        price: 800,
+        oldPrice: 0,
+        category: "premium",
+        volume: 25,
+        gender: "unisex",
+        rating: 4.8,
+        reviews: 150,
+        image: "https://sun9-31.userapi.com/s/v1/ig2/NUGvQ3BkqYE1h19FCOjekQa1jAK7OnF-ABl-hn7GyHdxS2XPQp3El3O2vOD1Bta_2CkzgZkX8vtTGNhXHiHrRVfN.jpg?quality=95&as=32x33,48x49,72x74,108x111,160x164,240x246,360x370,480x493,540x555,640x657,720x739,1080x1109,1280x1314,1440x1479,2493x2560&from=bu&u=nBnHhs5iZ8bE3H5UlBH5DMQEPCQRF7l4XG47Mu3RomY&cs=360x0",
+        badge: "new",
+        inStock: true,
+        popular: true,
+        notes: ["цитрусовые", "жасмин", "роза", "сандал", "амбра"]
+    },
+    {
+        id: 26,
+        name: "Victoria's Secret Bombshell",
+        description: "Ваш идеальный аромат для любого случая! Фруктово-цветочный букет: сочетание свежих верхних нот маракуйи и цитрусовых создает яркое первое впечатление. Цветочная сердцевина: нежный пион и изысканная орхидея дарят аромату утончённость и романтичность. Теплая база: мускус и амбра добавляют глубину и стойкость, оставляя за вами шлейф загадочности. Идеальный подарок!",
+        price: 800,
+        oldPrice: 0,
+        category: "premium",
+        volume: 25,
+        gender: "female",
+        rating: 4.9,
+        reviews: 200,
+        image: "https://sun9-37.userapi.com/s/v1/ig2/OSyspV5A9zMA9cCmMDXroRIlit6E9u7jrQwBx-mFWtihk0E7MPslT3_g1GLvHEQ-vVWcQ2aRlHaDJyI72ayveTtx.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,928x928&from=bu&u=cXiZ0kx8AnS-17Zi50s06tstbHc21xK_PSUPCP49T9c&cs=360x0",
+        badge: "new",
+        inStock: true,
+        popular: true,
+        notes: ["маракуйя", "цитрусовые", "пион", "орхидея", "мускус", "амбра"]
+    }
 ];
 
 // ===== ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ =====
